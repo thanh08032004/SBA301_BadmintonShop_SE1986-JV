@@ -1,0 +1,68 @@
+{
+  "users": [
+    {
+      "email": "admin1@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Admin 1",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "email": "admin2@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Admin 2",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "email": "staff1@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Staff 1",
+      "roles": [
+        "STAFF"
+      ]
+    },
+    {
+      "email": "staff2@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Staff 2",
+      "roles": [
+        "STAFF"
+      ]
+    },
+    {
+      "email": "manager1@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Manager 1",
+      "roles": [
+        "MANAGER"
+      ]
+    },
+    {
+      "email": "manager2@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Manager 2",
+      "roles": [
+        "MANAGER"
+      ]
+    },
+    {
+      "email": "customer1@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 1",
+      "roles": [
+        "CUSTOMER"
+      ]
+    },
+    {
+      "email": "customer2@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 2",
+      "roles": [
+        "CUSTOMER"
+      ]
+    }
+  ]
+}
