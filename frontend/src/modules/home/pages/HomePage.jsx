@@ -9,9 +9,14 @@ function HomePage() {
         <h1 className="h2 mb-0">Dashboard</h1>
       </div>
 
-      <Button as={Link} to="/payment" variant="outline-secondary">
-        Payment
-      </Button>
+      <div className="d-flex flex-wrap gap-2">
+        <Button as={Link} to="/payment" variant="outline-secondary">
+          Payment
+        </Button>
+        <Button as={Link} to="/login" variant="outline-secondary">
+          Login
+        </Button>
+      </div>
     </Container>
   );
 }
