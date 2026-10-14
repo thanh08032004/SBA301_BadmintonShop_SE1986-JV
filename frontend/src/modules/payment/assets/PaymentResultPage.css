@@ -1,0 +1,119 @@
+.payment-result-page {
+  min-height: 100%;
+  background: #f7f8fa;
+}
+
+.payment-result-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  border: 1px solid #e8ebef;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgb(23 43 77 / 5%);
+  text-align: center;
+}
+
+.payment-result-eyebrow {
+  color: #718096;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.payment-result-icon {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 1.25rem;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.payment-result-success .payment-result-icon {
+  background: #e9f6ef;
+  color: #16865b;
+}
+
+.payment-result-failed .payment-result-icon {
+  background: #fff0e8;
+  color: #d9482b;
+}
+
+.payment-result-pending .payment-result-icon {
+  background: #fff7e6;
+  color: #b7791f;
+}
+
+.payment-result-description {
+  color: #718096;
+}
+
+.payment-result-details {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e8ebef;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.payment-result-details > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.payment-result-details span {
+  color: #718096;
+}
+
+.payment-result-details strong {
+  color: #263746;
+  text-align: right;
+}
+
+.payment-result-details .payment-result-status {
+  color: inherit;
+}
+
+.payment-result-success .payment-result-status {
+  color: #16865b;
+}
+
+.payment-result-failed .payment-result-status {
+  color: #d9482b;
+}
+
+.payment-result-pending .payment-result-status {
+  color: #b7791f;
+}
+
+.payment-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 575.98px) {
+  .payment-result-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .payment-result-details {
+    padding: 1rem;
+  }
+
+  .payment-result-details > div {
+    align-items: flex-start;
+  }
+
+  .payment-result-details strong {
+    max-width: 58%;
+  }
+}
