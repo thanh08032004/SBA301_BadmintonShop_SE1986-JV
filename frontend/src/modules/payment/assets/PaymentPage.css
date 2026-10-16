@@ -1,6 +1,6 @@
 .payment-page {
   min-height: 100%;
-  background: #f7f8fa;
+  background: transparent;
 }
 
 .payment-heading {
@@ -9,7 +9,7 @@
 
 .payment-eyebrow,
 .payment-step {
-  color: #16865b;
+  color: #237db4;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -42,8 +42,8 @@
 
 .payment-method:hover,
 .payment-method.is-selected {
-  border-color: #16865b;
-  background: #f4fbf7;
+  border-color: #2386c8;
+  background: #f0f8fd;
 }
 
 .payment-method .form-check {
@@ -60,8 +60,8 @@
 }
 
 .payment-method .form-check-input:checked {
-  border-color: #16865b;
-  background-color: #16865b;
+  border-color: #2386c8;
+  background-color: #2386c8;
 }
 
 .payment-method-mark {
@@ -131,21 +131,21 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #e9f6ef;
-  color: #16865b;
+  background: #e7f4fd;
+  color: #237db4;
   font-weight: 700;
 }
 
 .payment-submit {
-  border-color: #16865b;
-  background: #16865b;
+  border-color: #2386c8;
+  background: #2386c8;
   font-weight: 700;
 }
 
 .payment-submit:hover,
 .payment-submit:focus {
-  border-color: #106b48;
-  background: #106b48;
+  border-color: #196ba2;
+  background: #196ba2;
 }
 
 .payment-submit span {
@@ -164,7 +164,7 @@
 
 .delivery-edit {
   padding: 0;
-  color: #16865b;
+  color: #237db4;
   font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
@@ -172,7 +172,7 @@
 
 .delivery-edit:hover,
 .delivery-edit:focus {
-  color: #106b48;
+  color: #196ba2;
 }
 
 .review-item-count {
@@ -203,7 +203,7 @@
 }
 
 .order-list-toggle span:last-child {
-  color: #16865b;
+  color: #237db4;
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1;
@@ -228,8 +228,8 @@
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  background: #edf4f1;
-  color: #16865b;
+  background: #e7f4fd;
+  color: #237db4;
   font-size: 0.7rem;
   font-weight: 800;
 }
@@ -277,7 +277,7 @@
 }
 
 .review-grand-total strong {
-  color: #16865b;
+  color: #237db4;
   font-size: 1.3rem;
 }
 

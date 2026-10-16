@@ -13,7 +13,7 @@ export default function PaymentResultPage() {
   const statusKey = model.order.payment_status === 'paid' ? 'success' : model.record.status === 'failed' ? 'failed' : 'pending';
   return <main className="payment-result-page py-4 py-md-5"><Container>
     <PaymentStatus payment={model.payment} status={getTransactionStatus(statusKey)} showRetry={statusKey === 'failed'}
-      onRetry={() => navigate('/payment?order=' + encodeURIComponent(model.orderId))} onHome={() => navigate('/')} />
+      onRetry={() => navigate('/payments?order=' + encodeURIComponent(model.orderId))} onHome={() => navigate('/')} />
     <div className="text-center mt-3"><Button as={Link} to="/orders" variant="outline-primary">Xem đơn hàng của tôi</Button></div>
   </Container></main>;
 }

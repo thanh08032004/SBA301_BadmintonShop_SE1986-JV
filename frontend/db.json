@@ -149,7 +149,7 @@
       "color": "Trắng",
       "size": "4U-G5",
       "price": 1450000,
-      "stock_quantity": 11,
+      "stock_quantity": 10,
       "is_active": true
     },
     {
@@ -308,7 +308,7 @@
       "id": "demo-cart",
       "user_id": "demo-customer",
       "voucher_id": null,
-      "updated_at": "2026-10-16T13:45:38.360Z"
+      "updated_at": "2026-10-16T14:16:13.137Z"
     }
   ],
   "cart_items": [],
@@ -432,6 +432,26 @@
       "note": "sâccsd",
       "created_at": "2026-10-16T11:40:13.901Z",
       "updated_at": "2026-10-16T11:40:13.901Z"
+    },
+    {
+      "id": "2e09a9f1-9c21-47a7-9955-0d51d9c0a431",
+      "order_code": "BS-1792160155144-2e09",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Vũ",
+      "receiver_phone": "0123456789",
+      "shipping_address": "ădawdawfawf",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1450000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1480000,
+      "note": "123",
+      "created_at": "2026-10-16T14:15:55.118Z",
+      "updated_at": "2026-10-16T14:15:55.118Z"
     }
   ],
   "order_items": [
@@ -500,6 +520,17 @@
       "unit_price": 1250000,
       "quantity": 3,
       "line_total": 3750000
+    },
+    {
+      "id": "c1ab06c1-158b-4328-988c-197d9c2fd6d6",
+      "order_id": "2e09a9f1-9c21-47a7-9955-0d51d9c0a431",
+      "variant_id": "2-1",
+      "product_id": "2",
+      "product_name": "Victor Thruster K 220H",
+      "variant_info": "Trắng / 4U-G5",
+      "unit_price": 1450000,
+      "quantity": 1,
+      "line_total": 1450000
     }
   ],
   "order_status_history": [
@@ -556,6 +587,15 @@
       "changed_by": "demo-customer",
       "note": "Khách hàng đặt hàng",
       "created_at": "2026-10-16T11:40:13.901Z"
+    },
+    {
+      "id": "5e2aff5b-c33f-45f2-ba4e-559f625ef876",
+      "order_id": "2e09a9f1-9c21-47a7-9955-0d51d9c0a431",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T14:15:55.118Z"
     }
   ],
   "payments": [
@@ -615,7 +655,17 @@
       "status": "pending",
       "amount": 3750000,
       "created_at": "2026-10-16T11:40:13.901Z",
-      "updated_at": "2026-10-16T11:40:16.305Z"
+      "updated_at": "2026-10-16T14:10:23.600Z"
+    },
+    {
+      "id": "441b89ff-628c-4b57-98e4-0ec6bb9505e7",
+      "order_id": "2e09a9f1-9c21-47a7-9955-0d51d9c0a431",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1480000,
+      "created_at": "2026-10-16T14:15:55.118Z",
+      "updated_at": "2026-10-16T14:16:13.137Z"
     }
   ]
 }

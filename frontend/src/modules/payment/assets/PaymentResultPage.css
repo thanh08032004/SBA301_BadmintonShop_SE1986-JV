@@ -1,13 +1,13 @@
 .payment-result-page {
   min-height: 100%;
-  background: #f7f8fa;
+  background: transparent;
 }
 
 .payment-result-card {
   max-width: 720px;
   margin: 0 auto;
   padding: 2.5rem;
-  border: 1px solid #e8ebef;
+  border: 1px solid #e2edf5;
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 8px 28px rgb(23 43 77 / 5%);
@@ -15,7 +15,7 @@
 }
 
 .payment-result-eyebrow {
-  color: #718096;
+  color: #6b8699;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.09em;

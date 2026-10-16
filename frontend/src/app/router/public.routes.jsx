@@ -1,5 +1,4 @@
 import ProtectedRouter from "./ProtectedRouter";
-import PaymentLayout from "../layouts/PaymentLayout";
 import PublicLayout from "../layouts/PublicLayout";
 import Login from "../../modules/auth/pages/LoginPage";
 import Register from "../../modules/auth/pages/RegisterPage";
@@ -26,30 +25,9 @@ export const publicRoutes = [
                     { path: "cart", element: <CartPage /> },
                     { path: "order", element: <OrderPage /> },
                     { path: "orders", element: <OrdersPage /> },
-                    {
-                        path: "/payments",
-                        element: (
-                            <PaymentLayout>
-                                <Checkout />
-                            </PaymentLayout>
-                        ),
-                    },
-                    {
-                        path: "/payments/qr",
-                        element: (
-                            <PaymentLayout>
-                                <QrPayment />
-                            </PaymentLayout>
-                        ),
-                    },
-                    {
-                        path: "/payments/result",
-                        element: (
-                            <PaymentLayout>
-                                <PaymentResult />
-                            </PaymentLayout>
-                        ),
-                    },
+                    { path: "/payments", element: <Checkout /> },
+                    { path: "/payments/qr", element: <QrPayment /> },
+                    { path: "/payments/result", element: <PaymentResult /> },
                 ],
             },
             {

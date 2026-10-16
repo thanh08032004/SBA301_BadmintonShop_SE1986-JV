@@ -1,15 +1,16 @@
 .qr-payment-page {
   min-height: 100%;
-  background: #fbfbfb;
+  background: transparent;
 }
 
 .qr-payment-card {
   max-width: 860px;
   margin: 0 auto;
   padding: 2rem;
-  border: 1px solid #e6e6e6;
-  border-radius: 14px;
+  border: 1px solid #e2edf5;
+  border-radius: 16px;
   background: #fff;
+  box-shadow: 0 8px 28px rgb(23 43 77 / 5%);
   text-align: center;
 }
 
@@ -20,7 +21,7 @@
 }
 
 .qr-payment-step {
-  color: #16865b;
+  color: #237db4;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -61,7 +62,7 @@
 }
 
 .qr-payment-amount strong {
-  color: #00a846;
+  color: #237db4;
   font-size: 1.75rem;
 }
 

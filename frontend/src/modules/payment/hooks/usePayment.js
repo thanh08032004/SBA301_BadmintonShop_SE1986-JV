@@ -74,7 +74,7 @@ export default function usePayment() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.message);
       setSnapshot({ orderId, data: result });
-      navigate("/payment/qr?order=" + encodeURIComponent(orderId));
+      navigate("/payments/qr?order=" + encodeURIComponent(orderId));
     } catch (err) {
       setError(err.message);
     } finally {

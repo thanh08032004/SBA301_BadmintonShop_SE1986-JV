@@ -56,7 +56,7 @@ export default function OrderPage() {
       });
       const order = result.orders.at(-1);
       if (paymentMethod === "prepaid")
-        navigate("/payment?order=" + encodeURIComponent(order.id));
+        navigate("/payments?order=" + encodeURIComponent(order.id));
       else navigate("/orders", { state: { placed: true } });
     } catch {
       /* Provider displays the error. */
