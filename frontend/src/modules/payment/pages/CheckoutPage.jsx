@@ -11,10 +11,9 @@ function CheckoutPage() {
   if (payment.loading) return <Container className="py-5 text-center"><Spinner animation="border" /><p>Đang tải đơn hàng…</p></Container>;
   if (!payment.available) return <Container className="py-5"><Alert variant="info">{payment.error || 'Chọn đơn hàng trả trước để tiếp tục thanh toán.'}</Alert><Button as={Link} to="/orders">Xem đơn hàng</Button></Container>;
   return (
-    <main className="payment-page py-4 py-lg-5">
+    <main className="payment-page">
       <Container>
         <div className="payment-heading mb-4">
-          <p className="payment-eyebrow mb-2">BADMINTON SHOP</p>
           <h1 className="h3 fw-bold mb-2">Thanh toán</h1>
           <p className="text-secondary mb-0">Chọn phương thức thanh toán để hoàn tất đơn hàng.</p>
         </div>

@@ -9,10 +9,10 @@ function PaymentQR({ payment, onCheckResult, onChooseAnotherMethod }) {
     : 'Sử dụng ứng dụng MB Bank hoặc ứng dụng ngân hàng hỗ trợ quét QR.';
 
   return (
-    <main className="qr-payment-page py-4 py-md-5">
+    <main className="qr-payment-page">
       <Container>
         <section className="qr-payment-card">
-          <p className="qr-payment-eyebrow mb-3">BADMINTON SHOP · THANH TOÁN</p>
+          <p className="qr-payment-eyebrow mb-3">THANH TOÁN</p>
           <p className="qr-payment-step mb-2">BƯỚC 2 / 2</p>
           <h1 className="h3 fw-bold mb-2">Quét mã QR để thanh toán</h1>
           <p className="qr-payment-instructions mb-4">{instructions}</p>
@@ -35,7 +35,7 @@ function PaymentQR({ payment, onCheckResult, onChooseAnotherMethod }) {
           <div className="qr-payment-details">
             <div>
               <span>Người nhận</span>
-              <strong>Badminton Shop</strong>
+              <strong>Cửa hàng</strong>
             </div>
             <div>
               <span>Nội dung chuyển khoản</span>
@@ -56,7 +56,7 @@ function PaymentQR({ payment, onCheckResult, onChooseAnotherMethod }) {
             Đây là bản minh họa giao diện, mã QR không dùng để thanh toán thật.
           </p>
           <div className="d-flex flex-wrap justify-content-center gap-2">
-            <Button variant="success" onClick={onCheckResult}>
+            <Button variant="primary" onClick={onCheckResult}>
               Kiểm tra kết quả giao dịch
             </Button>
             <Button variant="outline-secondary" onClick={onChooseAnotherMethod}>

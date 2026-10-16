@@ -6,7 +6,7 @@ import { formatPrice } from '../utils/paymentMapper';
 function PaymentStatus({ payment, status, onRetry, onHome, showRetry }) {
   return (
     <section className={`payment-result-card ${status.className}`}>
-      <p className="payment-result-eyebrow mb-3">BADMINTON SHOP · KẾT QUẢ GIAO DỊCH</p>
+      <p className="payment-result-eyebrow mb-3">KẾT QUẢ GIAO DỊCH</p>
       <div className="payment-result-icon" aria-hidden="true">{status.icon}</div>
       <h1 className="h3 fw-bold mb-2">{status.title}</h1>
       <p className="payment-result-description mb-4" role="status">

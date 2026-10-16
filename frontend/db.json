@@ -129,7 +129,7 @@
       "color": "Xanh biển",
       "size": "4U-G5",
       "price": 1250000,
-      "stock_quantity": 4,
+      "stock_quantity": 2,
       "is_active": true
     },
     {
@@ -149,7 +149,7 @@
       "color": "Trắng",
       "size": "4U-G5",
       "price": 1450000,
-      "stock_quantity": 10,
+      "stock_quantity": 9,
       "is_active": true
     },
     {
@@ -308,7 +308,7 @@
       "id": "demo-cart",
       "user_id": "demo-customer",
       "voucher_id": null,
-      "updated_at": "2026-10-16T14:16:13.137Z"
+      "updated_at": "2026-10-16T14:39:48.868Z"
     }
   ],
   "cart_items": [],
@@ -452,6 +452,66 @@
       "note": "123",
       "created_at": "2026-10-16T14:15:55.118Z",
       "updated_at": "2026-10-16T14:15:55.118Z"
+    },
+    {
+      "id": "da771404-fec9-416e-890d-fcd6d95c1abe",
+      "order_code": "BS-1792160291478-da77",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "123123141",
+      "receiver_phone": "0123456789",
+      "shipping_address": "adwdawdawdawdawd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1250000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1280000,
+      "note": "",
+      "created_at": "2026-10-16T14:18:11.468Z",
+      "updated_at": "2026-10-16T14:18:11.468Z"
+    },
+    {
+      "id": "598a9b42-1ade-43ac-aeb7-d6570811e796",
+      "order_code": "BS-1792160418813-598a",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "scawdawdawd",
+      "receiver_phone": "0123456789",
+      "shipping_address": "qưdqwdqwdqwd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1450000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1480000,
+      "note": "",
+      "created_at": "2026-10-16T14:20:18.813Z",
+      "updated_at": "2026-10-16T14:20:18.813Z"
+    },
+    {
+      "id": "0d79116b-25f6-4560-ac07-d125db7507d0",
+      "order_code": "BS-1792160523302-0d79",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Vua",
+      "receiver_phone": "0123456789",
+      "shipping_address": "nakjwdnawdkjkawnd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1250000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1280000,
+      "note": "",
+      "created_at": "2026-10-16T14:22:03.302Z",
+      "updated_at": "2026-10-16T14:22:03.302Z"
     }
   ],
   "order_items": [
@@ -531,6 +591,39 @@
       "unit_price": 1450000,
       "quantity": 1,
       "line_total": 1450000
+    },
+    {
+      "id": "f6db27b6-fe9b-4801-b165-0aae999d4785",
+      "order_id": "da771404-fec9-416e-890d-fcd6d95c1abe",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 1,
+      "line_total": 1250000
+    },
+    {
+      "id": "16ad8ffa-4514-486a-af02-9155c8d1bf8b",
+      "order_id": "598a9b42-1ade-43ac-aeb7-d6570811e796",
+      "variant_id": "2-1",
+      "product_id": "2",
+      "product_name": "Victor Thruster K 220H",
+      "variant_info": "Trắng / 4U-G5",
+      "unit_price": 1450000,
+      "quantity": 1,
+      "line_total": 1450000
+    },
+    {
+      "id": "e45504d5-e671-47ae-a77c-4d41ce2c6b08",
+      "order_id": "0d79116b-25f6-4560-ac07-d125db7507d0",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 1,
+      "line_total": 1250000
     }
   ],
   "order_status_history": [
@@ -596,6 +689,33 @@
       "changed_by": "demo-customer",
       "note": "Khách hàng đặt hàng",
       "created_at": "2026-10-16T14:15:55.118Z"
+    },
+    {
+      "id": "cff57800-cc5c-4f00-8a5c-ce329aa73761",
+      "order_id": "da771404-fec9-416e-890d-fcd6d95c1abe",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T14:18:11.468Z"
+    },
+    {
+      "id": "ca171bfc-ec9a-48e7-b6af-92a285a4bd24",
+      "order_id": "598a9b42-1ade-43ac-aeb7-d6570811e796",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T14:20:18.813Z"
+    },
+    {
+      "id": "a8ae3c52-4a7b-4e81-b81d-5393777c4ef1",
+      "order_id": "0d79116b-25f6-4560-ac07-d125db7507d0",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T14:22:03.302Z"
     }
   ],
   "payments": [
@@ -666,6 +786,36 @@
       "amount": 1480000,
       "created_at": "2026-10-16T14:15:55.118Z",
       "updated_at": "2026-10-16T14:16:13.137Z"
+    },
+    {
+      "id": "2cc2019c-3426-4226-8456-0a501909548f",
+      "order_id": "da771404-fec9-416e-890d-fcd6d95c1abe",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1280000,
+      "created_at": "2026-10-16T14:18:11.468Z",
+      "updated_at": "2026-10-16T14:18:44.592Z"
+    },
+    {
+      "id": "996359fe-dd59-4b14-a8a3-c77508b66456",
+      "order_id": "598a9b42-1ade-43ac-aeb7-d6570811e796",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1480000,
+      "created_at": "2026-10-16T14:20:18.813Z",
+      "updated_at": "2026-10-16T14:39:48.868Z"
+    },
+    {
+      "id": "b077cee4-12b2-4180-9bc6-bc2a40442573",
+      "order_id": "0d79116b-25f6-4560-ac07-d125db7507d0",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1280000,
+      "created_at": "2026-10-16T14:22:03.302Z",
+      "updated_at": "2026-10-16T14:35:10.125Z"
     }
   ]
 }
