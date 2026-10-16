@@ -7,6 +7,7 @@ import Checkout from "../../modules/payment/pages/CheckoutPage";
 import QrPayment from "../../modules/payment/pages/QrPaymentPage";
 import PaymentResult from "../../modules/payment/pages/PaymentResultPage";
 import Home from "../../modules/home/pages/HomePage";
+import ComplaintDashboard from "../../modules/complaint/pages/ComplaintDashboard";
 
 import CartPage from '../../modules/shop/CartPage';
 import OrderPage from '../../modules/shop/OrderPage';
@@ -20,6 +21,7 @@ export const publicRoutes = [
       { path: '/payment', element: <PaymentLayout><Checkout /></PaymentLayout> },
       { path: '/payment/qr', element: <PaymentLayout><QrPayment /></PaymentLayout> },
       { path: '/payment/result', element: <PaymentLayout><PaymentResult /></PaymentLayout> },
+      { path: '/complaint', element: <ComplaintDashboard /> },
     ],
   },
   {
