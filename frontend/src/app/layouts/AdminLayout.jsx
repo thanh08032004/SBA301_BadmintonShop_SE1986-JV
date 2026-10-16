@@ -1,8 +1,8 @@
-import { Col, Container, Row } from 'react-bootstrap'
-import { Outlet } from 'react-router'
-import AdminFooter from '../../shared/components/AdminFooter'
-import AdminHeader from '../../shared/components/AdminHeader'
-import AdminSidebar from '../../shared/components/AdminSidebar'
+import { Col, Container, Row } from "react-bootstrap";
+import { Outlet } from "react-router";
+import AdminFooter from "../../shared/components/AdminFooter";
+import AdminHeader from "../../shared/components/AdminHeader";
+import AdminSidebar from "../../shared/components/AdminSidebar";
 
 const AdminLayout = () => {
   return (
@@ -25,7 +25,7 @@ const AdminLayout = () => {
 
       <AdminFooter />
     </div>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;

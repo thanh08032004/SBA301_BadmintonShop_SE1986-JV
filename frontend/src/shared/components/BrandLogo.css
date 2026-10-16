@@ -1,12 +1,96 @@
-﻿.brand-logo { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; text-decoration: none; font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
-.brand-logo-symbol { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 15px; background: #2386c8; color: #fff; box-shadow: 0 5px 12px #2386c822; }
-.brand-logo-copy { display: flex; flex-direction: column; gap: 5px; }
-.brand-logo .brand-logo-copy strong { color: #214760; font-size: 19px; font-weight: 800; letter-spacing: -.6px; line-height: 1.1; }
-.brand-logo-copy strong span { color: #2386c8; margin-left: 5px; font-weight: 600; }
-.brand-logo-copy small { color: #6b8699; font-size: 9px; font-weight: 600; letter-spacing: 1.8px; line-height: 1.4; }
-.brand-logo:focus-visible { outline: 3px solid #8fc8ec; outline-offset: 5px; border-radius: 12px; }
-.brand-logo-compact .brand-logo-symbol { width: 36px; height: 36px; border-radius: 11px; box-shadow: none; }
-.brand-logo-compact .brand-logo-symbol svg { width: 25px; height: 25px; }
-.brand-logo.brand-logo-compact .brand-logo-copy strong { font-size: 14px; }
-@media(max-width:767px) { .brand-logo-symbol { width: 40px; height: 40px; border-radius: 12px; } .brand-logo .brand-logo-copy strong { font-size: 15px; } .brand-logo-copy small { font-size: 8px; letter-spacing: 1px; } }
-@media(max-width:480px) { .brand-logo { gap: 8px; } .brand-logo .brand-logo-copy strong { font-size: 12px; letter-spacing: -.3px; } .brand-logo-copy small { display: none; } .brand-logo-symbol { width: 34px; height: 36px; border-radius: 10px; } .brand-logo-symbol svg { width: 26px; height: 26px; } }
+﻿.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  text-decoration: none;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+.brand-logo-symbol {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: #2386c8;
+  color: #fff;
+  box-shadow: 0 5px 12px #2386c822;
+}
+.brand-logo-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.brand-logo .brand-logo-copy strong {
+  color: #214760;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+.brand-logo-copy strong span {
+  color: #2386c8;
+  margin-left: 5px;
+  font-weight: 600;
+}
+.brand-logo-copy small {
+  color: #6b8699;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
+}
+.brand-logo:focus-visible {
+  outline: 3px solid #8fc8ec;
+  outline-offset: 5px;
+  border-radius: 12px;
+}
+.brand-logo-compact .brand-logo-symbol {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  box-shadow: none;
+}
+.brand-logo-compact .brand-logo-symbol svg {
+  width: 25px;
+  height: 25px;
+}
+.brand-logo.brand-logo-compact .brand-logo-copy strong {
+  font-size: 14px;
+}
+@media (max-width: 767px) {
+  .brand-logo-symbol {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .brand-logo .brand-logo-copy strong {
+    font-size: 15px;
+  }
+  .brand-logo-copy small {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+}
+@media (max-width: 480px) {
+  .brand-logo {
+    gap: 8px;
+  }
+  .brand-logo .brand-logo-copy strong {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+  .brand-logo-copy small {
+    display: none;
+  }
+  .brand-logo-symbol {
+    width: 34px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .brand-logo-symbol svg {
+    width: 26px;
+    height: 26px;
+  }
+}

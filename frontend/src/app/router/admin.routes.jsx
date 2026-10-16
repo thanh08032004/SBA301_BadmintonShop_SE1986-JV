@@ -8,11 +8,8 @@ export const adminRoutes = [
     // {
     path: "/admin",
     element: <AdminLayout />,
-    children: [
-      { index: true, element: <>Admin</> },
-    ],
-  }
+    children: [{ index: true, element: <>Admin</> }],
+  },
   //   ]
   // }
-
 ];

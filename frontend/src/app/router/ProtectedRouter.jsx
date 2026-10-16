@@ -13,8 +13,7 @@ const ProtectedRouter = ({ allowedRoles }) => {
     ? user.roles.map((role) => role.toUpperCase())
     : [];
 
-  const isAuthenticated =
-    typeof token === "string" && token.trim() !== "";
+  const isAuthenticated = typeof token === "string" && token.trim() !== "";
 
   if (!isAuthenticated) {
     return (

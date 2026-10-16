@@ -1,5 +1,5 @@
 ﻿.store-header {
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   background: #fff;
   border-bottom: 1px solid #e3edf4;
 }
@@ -12,7 +12,12 @@
   margin: auto;
   padding: 20px 32px;
 }
-.header-actions { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
 .store-header .header-cart {
   display: inline-flex;
   align-items: center;
@@ -26,34 +31,165 @@
   font-weight: 600;
   line-height: 1.5;
 }
-.store-header .header-cart:hover, .store-header .header-cart:active { background: #edf7fe; color: #1d77b0; border-color: #deeffa; }
-.header-icon-wrap { display: inline-flex; position: relative; padding: 2px; }
-.header-cart-count { position: absolute; top: -8px; right: -9px; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border: 2px solid white; border-radius: 20px; background: #2386c8; color: white; font-size: 9px; font-weight: 700; line-height: 1; }
-.header-action-divider { width: 1px; height: 28px; background: #e3edf4; }
-.store-header .header-login { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 11px 19px; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 600; line-height: 1.5; box-shadow: 0 4px 10px #2386c815; }
-.store-header .header-account-toggle { display: flex; align-items: center; gap: 10px; padding: 5px 9px 5px 5px; border: 1px solid transparent; border-radius: 12px; background: white; color: #35556c; }
-.store-header .header-account-toggle:hover, .store-header .header-account-toggle.show { background: #f0f8fd; border-color: #deeffa; }
-.header-avatar { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border: 1px solid #d2e9f8; border-radius: 50%; background: #e7f4fd; color: #237db4; font-size: 16px; font-weight: 700; }
-.header-user-copy { display: flex; flex-direction: column; gap: 2px; text-align: left; max-width: 170px; }
-.header-user-copy small { color: #6b8699; font-size: 11px; line-height: 1.4; }
-.header-user-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; line-height: 1.5; }
-.header-account-menu { min-width: 220px; max-width: 280px; border: 1px solid #deebf4; border-radius: 12px; padding: 8px; margin-top: 10px; box-shadow: 0 12px 30px #21476015; }
-.header-account-menu .dropdown-item { border-radius: 7px; padding: 10px 12px; font-size: 13px; }
-.header-account-menu .dropdown-item:hover { background: #edf7fe; }
+.store-header .header-cart:hover,
+.store-header .header-cart:active {
+  background: #edf7fe;
+  color: #1d77b0;
+  border-color: #deeffa;
+}
+.header-icon-wrap {
+  display: inline-flex;
+  position: relative;
+  padding: 2px;
+}
+.header-cart-count {
+  position: absolute;
+  top: -8px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 2px solid white;
+  border-radius: 20px;
+  background: #2386c8;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+.header-action-divider {
+  width: 1px;
+  height: 28px;
+  background: #e3edf4;
+}
+.store-header .header-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 11px 19px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  box-shadow: 0 4px 10px #2386c815;
+}
+.store-header .header-account-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 9px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: white;
+  color: #35556c;
+}
+.store-header .header-account-toggle:hover,
+.store-header .header-account-toggle.show {
+  background: #f0f8fd;
+  border-color: #deeffa;
+}
+.header-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid #d2e9f8;
+  border-radius: 50%;
+  background: #e7f4fd;
+  color: #237db4;
+  font-size: 16px;
+  font-weight: 700;
+}
+.header-user-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  max-width: 170px;
+}
+.header-user-copy small {
+  color: #6b8699;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.header-user-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.header-account-menu {
+  min-width: 220px;
+  max-width: 280px;
+  border: 1px solid #deebf4;
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 10px;
+  box-shadow: 0 12px 30px #21476015;
+}
+.header-account-menu .dropdown-item {
+  border-radius: 7px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.header-account-menu .dropdown-item:hover {
+  background: #edf7fe;
+}
 @media (max-width: 767px) {
-  .store-header .store-navbar { padding: 16px; gap: 12px; }
-  .header-actions { gap: 10px; }
-  .header-user-copy { display: none; }
-  .store-header .header-login { padding: 10px 12px; font-size: 13px; }
-  .header-action-divider { display: none; }
+  .store-header .store-navbar {
+    padding: 16px;
+    gap: 12px;
+  }
+  .header-actions {
+    gap: 10px;
+  }
+  .header-user-copy {
+    display: none;
+  }
+  .store-header .header-login {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .header-action-divider {
+    display: none;
+  }
 }
 @media (max-width: 480px) {
-  .store-header .store-navbar { padding: 14px 12px; gap: 8px; }
-  .header-action-label { display: none; }
-  .header-actions { gap: 6px; }
-  .store-header .header-cart { padding: 10px 8px; }
-  .store-header .header-login { min-height: 42px; padding: 9px 10px; gap: 6px; font-size: 12px; }
-  .header-login svg { width: 18px; height: 18px; }
+  .store-header .store-navbar {
+    padding: 14px 12px;
+    gap: 8px;
+  }
+  .header-action-label {
+    display: none;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .store-header .header-cart {
+    padding: 10px 8px;
+  }
+  .store-header .header-login {
+    min-height: 42px;
+    padding: 9px 10px;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .header-login svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
-.store-header .btn:focus-visible { outline: 3px solid #8fc8ec; outline-offset: 3px; box-shadow: none; }
+.store-header .btn:focus-visible {
+  outline: 3px solid #8fc8ec;
+  outline-offset: 3px;
+  box-shadow: none;
+}

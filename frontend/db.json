@@ -308,7 +308,7 @@
       "id": "demo-cart",
       "user_id": "demo-customer",
       "voucher_id": null,
-      "updated_at": "2026-10-16T11:40:16.305Z"
+      "updated_at": "2026-10-16T13:45:38.360Z"
     }
   ],
   "cart_items": [],
@@ -580,12 +580,12 @@
     {
       "id": "d7131e61-26c3-48d6-8ad4-f12fe50d93b6",
       "order_id": "3a3b520b-bf78-480b-8f70-1f24de6b7b7a",
-      "method": "qr",
-      "gateway": "mbbank",
+      "method": "card",
+      "gateway": "card",
       "status": "pending",
       "amount": 1480000,
       "created_at": "2026-10-16T11:15:51.453Z",
-      "updated_at": "2026-10-16T11:15:51.453Z"
+      "updated_at": "2026-10-16T13:45:38.360Z"
     },
     {
       "id": "2f69daa1-a2c6-4880-806b-8863825f1c76",

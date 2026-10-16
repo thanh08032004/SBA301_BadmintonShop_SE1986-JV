@@ -5,7 +5,9 @@
   min-height: 48px;
   font-weight: 500;
   line-height: 1.5;
-  transition: background-color .18s, color .18s;
+  transition:
+    background-color 0.18s,
+    color 0.18s;
 }
 .sidebar-icon {
   display: inline-flex;
@@ -16,15 +18,34 @@
   flex-shrink: 0;
   color: #7391a6;
 }
-.shop-sidebar .nav-link:hover { background: #f2f8fd; color: #237db4; }
+.shop-sidebar .nav-link:hover {
+  background: #f2f8fd;
+  color: #237db4;
+}
 .shop-sidebar .nav-link.active .sidebar-icon,
-.shop-sidebar .nav-link:hover .sidebar-icon { color: #2386c8; }
-.shop-sidebar .nav-link:focus-visible { outline: 3px solid #8fc8ec; outline-offset: 2px; }
+.shop-sidebar .nav-link:hover .sidebar-icon {
+  color: #2386c8;
+}
+.shop-sidebar .nav-link:focus-visible {
+  outline: 3px solid #8fc8ec;
+  outline-offset: 2px;
+}
 @media (max-width: 767px) {
-  .shop-sidebar .nav-link { gap: 7px; min-height: 42px; }
-  .sidebar-icon { width: 20px; height: 20px; }
-  .sidebar-icon svg { width: 18px; height: 18px; }
+  .shop-sidebar .nav-link {
+    gap: 7px;
+    min-height: 42px;
+  }
+  .sidebar-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .sidebar-icon svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .shop-sidebar .nav-link { transition: none; }
+  .shop-sidebar .nav-link {
+    transition: none;
+  }
 }
