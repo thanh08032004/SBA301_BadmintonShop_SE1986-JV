@@ -10,6 +10,9 @@ import Home from "../../modules/home/pages/HomePage";
 import CartPage from "../../modules/shop/CartPage";
 import OrderPage from "../../modules/shop/OrderPage";
 import OrdersPage from "../../modules/shop/OrdersPage";
+import MySupportTicketsPage from "../../modules/shop/support-tickets/MySupportTicketsPage";
+import CreateSupportTicketPage from "../../modules/shop/support-tickets/CreateSupportTicketPage";
+import { Navigate } from "react-router";
 export const publicRoutes = [
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
@@ -25,6 +28,10 @@ export const publicRoutes = [
                     { path: "cart", element: <CartPage /> },
                     { path: "order", element: <OrderPage /> },
                     { path: "orders", element: <OrdersPage /> },
+                    { path: "support-tickets", element: <MySupportTicketsPage /> },
+                    { path: "support-tickets/create", element: <CreateSupportTicketPage /> },
+                    { path: "my-requests", element: <Navigate to="/support-tickets" replace /> },
+                    { path: "my-requests/create", element: <Navigate to="/support-tickets/create" replace /> },
                     { path: "/payments", element: <Checkout /> },
                     { path: "/payments/qr", element: <QrPayment /> },
                     { path: "/payments/result", element: <PaymentResult /> },

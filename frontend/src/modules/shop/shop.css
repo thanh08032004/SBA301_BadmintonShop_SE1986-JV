@@ -277,6 +277,7 @@
   }
   .shop-sidebar .nav {
     flex-direction: row !important;
+    flex-wrap: wrap;
     gap: 4px !important;
   }
   .shop-sidebar .nav-link {

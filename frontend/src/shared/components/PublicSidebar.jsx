@@ -7,6 +7,7 @@ const links = [
   { to: "/products", label: "Tất cả sản phẩm", icon: "products" },
   { to: "/cart", label: "Giỏ hàng", icon: "cart" },
   { to: "/orders", label: "Đơn hàng của tôi", icon: "orders" },
+  { to: "/support-tickets", label: "Support Tickets", icon: "supportTickets" },
 ];
 
 function SidebarIcon({ type }) {
@@ -37,6 +38,12 @@ function SidebarIcon({ type }) {
         <rect x="5" y="4" width="14" height="17" rx="2" />
         <rect x="9" y="2" width="6" height="4" rx="1" />
         <path d="M9 11h6M9 15h6" />
+      </>
+    ),
+    supportTickets: (
+      <>
+        <path d="M8 10h8M8 14h5" />
+        <path d="M7 3h10a2 2 0 0 1 2 2v14l-3-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
       </>
     ),
   };
