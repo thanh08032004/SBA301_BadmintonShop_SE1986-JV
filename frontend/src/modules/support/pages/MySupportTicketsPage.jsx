@@ -89,6 +89,14 @@ export default function MySupportTicketsPage() {
                       Gửi lúc {formatDate(ticket.created_at)}
                       {order && <> · Đơn hàng {order.order_code}</>}
                     </div>
+                    <Button
+                      as={Link}
+                      to={`/support-tickets/${encodeURIComponent(ticket.id)}`}
+                      variant="link"
+                      className="p-0 mt-2"
+                    >
+                      Xem chi tiết
+                    </Button>
                   </div>
                   <Badge
                     bg={status.variant}
