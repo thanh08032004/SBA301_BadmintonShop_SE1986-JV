@@ -10,13 +10,6 @@ export const paymentMethodNames = {
   card: 'Thanh toán online',
 };
 
-export const orderItems = [
-  { name: 'Vợt cầu lông Yonex Astrox', detail: '4U / Xanh đen', quantity: 1, price: 1890000 },
-  { name: 'Ống cầu lông lông vũ', detail: 'Hộp 12 quả', quantity: 2, price: 420000 },
-];
-
-export const shippingFee = 30000;
-
 export const transactionStatuses = {
   success: {
     title: 'Thanh toán thành công',

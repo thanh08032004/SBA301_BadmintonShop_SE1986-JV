@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AuthsContext } from "./AuthsContext";
 
 const AuthsProvider = ({ children }) => {
@@ -28,6 +28,11 @@ const AuthsProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser(null);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('auth-expired', logout);
+    return () => window.removeEventListener('auth-expired', logout);
+  }, [logout]);
 
   const contextValues = useMemo(
     () => ({ user, login, logout }),

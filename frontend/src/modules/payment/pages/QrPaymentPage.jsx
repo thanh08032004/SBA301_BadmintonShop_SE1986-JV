@@ -1,31 +1,15 @@
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+﻿import { Alert, Button, Container, Spinner } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router';
 import PaymentQR from '../components/PaymentQR';
-import { isValidPayment } from '../utils/paymentMapper';
+import usePayment from '../hooks/usePayment';
 import '../assets/QrPaymentPage.css';
 
-function QrPaymentPage() {
-  const location = useLocation();
+export default function QrPaymentPage() {
+  const model = usePayment();
   const navigate = useNavigate();
-  const payment = location.state;
-
-  useEffect(() => {
-    if (!isValidPayment(payment)) {
-      navigate('/payment', { replace: true });
-    }
-  }, [navigate, payment]);
-
-  if (!isValidPayment(payment)) {
-    return null;
-  }
-
-  return (
-    <PaymentQR
-      payment={payment}
-      onCheckResult={() => navigate('/payment/result', { state: { payment, status: 'pending' } })}
-      onChooseAnotherMethod={() => navigate('/payment')}
-    />
-  );
+  if (model.loading) return <Container className="py-5 text-center"><Spinner animation="border" /></Container>;
+  if (!model.available || !model.record.gateway) return <Container className="py-5"><Alert variant="info">{model.error || 'Vui lòng chọn phương thức thanh toán cho đơn hàng.'}</Alert><Button as={Link} to={model.orderId ? '/payment?order=' + encodeURIComponent(model.orderId) : '/orders'}>Quay lại</Button></Container>;
+  return <PaymentQR payment={model.payment}
+    onCheckResult={() => navigate('/payment/result?order=' + encodeURIComponent(model.orderId))}
+    onChooseAnotherMethod={() => navigate('/payment?order=' + encodeURIComponent(model.orderId))} />;
 }
-
-export default QrPaymentPage;

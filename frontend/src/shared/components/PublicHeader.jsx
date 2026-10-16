@@ -1,11 +1,45 @@
-import { Navbar } from 'react-bootstrap';
+import BrandLogo from './BrandLogo';
+import { useContext } from 'react';
+import { Navbar, Button, Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router';
+import { AuthsContext } from '../../app/provider/AuthsContext';
+import { useShop } from '../../modules/shop/ShopContext';
+import './PublicHeader.css';
 
-const PublicHeader = () => {
-  return (
-    <Navbar bg="white" expand="lg" className="border-bottom shadow-sm sticky-top">
-      Header cho Customer
+function HeaderIcon({ type }) {
+  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    {type === 'cart' ? <><path d="M3 3h2l2.4 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L22 7H6" /><circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></> : <><circle cx="12" cy="8" r="4" /><path d="M4 21v-2a8 8 0 0 1 16 0v2" /></>}
+  </svg>;
+}
+
+export default function PublicHeader() {
+  const { data } = useShop();
+  const { user, logout } = useContext(AuthsContext);
+  const count = data.cart_items.reduce((sum, item) => sum + item.quantity, 0);
+
+  return <header className="store-header">
+    <div className="shop-topbar">Đồng hành cùng đam mê cầu lông · Miễn phí giao hàng từ 2.000.000đ</div>
+    <Navbar className="store-navbar">
+      <BrandLogo />
+      <div className="header-actions">
+        <Button as={Link} to="/cart" variant="light" className="header-cart" aria-label={'Giỏ hàng, ' + count + ' sản phẩm'}>
+          <span className="header-icon-wrap"><HeaderIcon type="cart" />{count > 0 && <span className="header-cart-count">{count > 99 ? '99+' : count}</span>}</span>
+          <span className="header-action-label">Giỏ hàng</span>
+        </Button>
+        <span className="header-action-divider" aria-hidden="true" />
+        {user ? <Dropdown align="end" className="header-account">
+          <Dropdown.Toggle variant="light" className="header-account-toggle" aria-label="Mở menu tài khoản">
+            <span className="header-avatar">{(user.fullName || user.email).trim().charAt(0).toUpperCase()}</span>
+            <span className="header-user-copy"><small>Xin chào,</small><strong>{user.fullName || user.email}</strong></span>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="header-account-menu">
+            <Dropdown.Header className="text-truncate">{user.email}</Dropdown.Header>
+            <Dropdown.Item as={Link} to="/orders">Đơn hàng của tôi</Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={logout}>Đăng xuất</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown> : <Button as={Link} to="/login" className="header-login" variant="primary"><HeaderIcon type="user" /><span>Đăng nhập</span></Button>}
+      </div>
     </Navbar>
-  );
-};
-
-export default PublicHeader;
+  </header>;
+}

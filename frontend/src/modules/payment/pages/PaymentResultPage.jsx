@@ -1,42 +1,19 @@
-import { useEffect } from 'react';
-import { Container } from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router';
+﻿import { Alert, Button, Container, Spinner } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router';
 import PaymentStatus from '../components/PaymentStatus';
-import { getTransactionStatus, isValidPayment } from '../utils/paymentMapper';
+import { getTransactionStatus } from '../utils/paymentMapper';
+import usePayment from '../hooks/usePayment';
 import '../assets/PaymentResultPage.css';
 
-function PaymentResultPage() {
-  const location = useLocation();
+export default function PaymentResultPage() {
+  const model = usePayment();
   const navigate = useNavigate();
-  const payment = location.state?.payment;
-  const requestedStatus = new URLSearchParams(location.search).get('status')
-    ?? location.state?.status
-    ?? 'pending';
-  const status = getTransactionStatus(requestedStatus);
-
-  useEffect(() => {
-    if (!isValidPayment(payment) || !status) {
-      navigate('/payment', { replace: true });
-    }
-  }, [navigate, payment, status]);
-
-  if (!isValidPayment(payment) || !status) {
-    return null;
-  }
-
-  return (
-    <main className="payment-result-page py-4 py-md-5">
-      <Container>
-        <PaymentStatus
-          payment={payment}
-          status={status}
-          showRetry={requestedStatus === 'failed'}
-          onRetry={() => navigate('/payment')}
-          onHome={() => navigate('/')}
-        />
-      </Container>
-    </main>
-  );
+  if (model.loading) return <Container className="py-5 text-center"><Spinner animation="border" /></Container>;
+  if (!model.available) return <Container className="py-5"><Alert variant="info">{model.error || 'Không tìm thấy đơn hàng trả trước.'}</Alert><Button as={Link} to="/orders">Xem đơn hàng</Button></Container>;
+  const statusKey = model.order.payment_status === 'paid' ? 'success' : model.record.status === 'failed' ? 'failed' : 'pending';
+  return <main className="payment-result-page py-4 py-md-5"><Container>
+    <PaymentStatus payment={model.payment} status={getTransactionStatus(statusKey)} showRetry={statusKey === 'failed'}
+      onRetry={() => navigate('/payment?order=' + encodeURIComponent(model.orderId))} onHome={() => navigate('/')} />
+    <div className="text-center mt-3"><Button as={Link} to="/orders" variant="outline-primary">Xem đơn hàng của tôi</Button></div>
+  </Container></main>;
 }
-
-export default PaymentResultPage;

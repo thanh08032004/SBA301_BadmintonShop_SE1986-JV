@@ -1,3 +1,4 @@
+import HomeButton from '../../../shared/components/HomeButton';
 import { Button } from 'react-bootstrap';
 import { paymentMethodNames } from '../constants/paymentConstants';
 import { formatPrice } from '../utils/paymentMapper';
@@ -37,9 +38,7 @@ function PaymentStatus({ payment, status, onRetry, onHome, showRetry }) {
             Thử thanh toán lại
           </Button>
         )}
-        <Button variant="outline-secondary" onClick={onHome}>
-          Về trang chủ
-        </Button>
+        <HomeButton onClick={onHome} />
       </div>
     </section>
   );

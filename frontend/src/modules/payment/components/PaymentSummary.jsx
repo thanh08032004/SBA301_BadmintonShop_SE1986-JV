@@ -17,7 +17,7 @@ function PaymentSummary({
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
             <p className="payment-step mb-2">ĐƠN HÀNG CỦA BẠN</p>
-            <h2 className="h5 fw-bold mb-0">Review &amp; Summary</h2>
+            <h2 className="h5 fw-bold mb-0">Chi tiết đơn hàng</h2>
           </div>
           <span className="review-item-count">{itemCount} món</span>
         </div>
@@ -35,7 +35,7 @@ function PaymentSummary({
         <Collapse in={isExpanded}>
           <div className="review-items">
             {items.map((item) => (
-              <div className="review-item" key={item.name}>
+              <div className="review-item" key={item.id}>
                 <div className="review-item-image" aria-hidden="true">BS</div>
                 <div className="review-item-copy">
                   <p className="fw-semibold mb-1">{item.name}</p>

@@ -64,5 +64,558 @@
         "CUSTOMER"
       ]
     }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "Yonex Astrox 88D Play",
+      "brand": "Yonex",
+      "product_type": "racket",
+      "base_price": 1250000,
+      "description": "Cân bằng sức mạnh và khả năng kiểm soát.",
+      "is_active": true
+    },
+    {
+      "id": "2",
+      "name": "Victor Thruster K 220H",
+      "brand": "Victor",
+      "product_type": "racket",
+      "base_price": 1450000,
+      "description": "Linh hoạt cho lối chơi tấn công.",
+      "is_active": true
+    },
+    {
+      "id": "3",
+      "name": "Li-Ning Windstorm 72",
+      "brand": "Li-Ning",
+      "product_type": "racket",
+      "base_price": 1890000,
+      "description": "Trọng lượng nhẹ, xoay chuyển nhanh.",
+      "is_active": true
+    },
+    {
+      "id": "4",
+      "name": "Yonex Power Cushion 39",
+      "brand": "Yonex",
+      "product_type": "shoes",
+      "base_price": 1650000,
+      "description": "Êm ái trong từng bước di chuyển.",
+      "is_active": true
+    },
+    {
+      "id": "5",
+      "name": "Victor A170 II",
+      "brand": "Victor",
+      "product_type": "shoes",
+      "base_price": 1150000,
+      "description": "Đế bám sân, thoải mái khi luyện tập.",
+      "is_active": true
+    },
+    {
+      "id": "6",
+      "name": "Áo cầu lông Training Essential",
+      "brand": "Badminton Shop",
+      "product_type": "apparel",
+      "base_price": 290000,
+      "description": "Chất liệu thoáng nhẹ cho buổi tập mỗi ngày.",
+      "is_active": true
+    }
+  ],
+  "product_variants": [
+    {
+      "id": "1-1",
+      "product_id": "1",
+      "sku": "BS-1-4U-G5",
+      "color": "Xanh biển",
+      "size": "4U-G5",
+      "price": 1250000,
+      "stock_quantity": 4,
+      "is_active": true
+    },
+    {
+      "id": "1-2",
+      "product_id": "1",
+      "sku": "BS-1-3U-G5",
+      "color": "Xanh biển",
+      "size": "3U-G5",
+      "price": 1250000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "2-1",
+      "product_id": "2",
+      "sku": "BS-2-4U-G5",
+      "color": "Trắng",
+      "size": "4U-G5",
+      "price": 1450000,
+      "stock_quantity": 11,
+      "is_active": true
+    },
+    {
+      "id": "2-2",
+      "product_id": "2",
+      "sku": "BS-2-3U-G5",
+      "color": "Trắng",
+      "size": "3U-G5",
+      "price": 1450000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "3-1",
+      "product_id": "3",
+      "sku": "BS-3-4U-G5",
+      "color": "Xanh biển",
+      "size": "4U-G5",
+      "price": 1890000,
+      "stock_quantity": 12,
+      "is_active": true
+    },
+    {
+      "id": "3-2",
+      "product_id": "3",
+      "sku": "BS-3-3U-G5",
+      "color": "Xanh biển",
+      "size": "3U-G5",
+      "price": 1890000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "4-1",
+      "product_id": "4",
+      "sku": "BS-4-40",
+      "color": "Trắng",
+      "size": "40",
+      "price": 1650000,
+      "stock_quantity": 12,
+      "is_active": true
+    },
+    {
+      "id": "4-2",
+      "product_id": "4",
+      "sku": "BS-4-41",
+      "color": "Trắng",
+      "size": "41",
+      "price": 1650000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "4-3",
+      "product_id": "4",
+      "sku": "BS-4-42",
+      "color": "Trắng",
+      "size": "42",
+      "price": 1650000,
+      "stock_quantity": 14,
+      "is_active": true
+    },
+    {
+      "id": "4-4",
+      "product_id": "4",
+      "sku": "BS-4-43",
+      "color": "Trắng",
+      "size": "43",
+      "price": 1650000,
+      "stock_quantity": 15,
+      "is_active": true
+    },
+    {
+      "id": "5-1",
+      "product_id": "5",
+      "sku": "BS-5-40",
+      "color": "Xanh biển",
+      "size": "40",
+      "price": 1150000,
+      "stock_quantity": 12,
+      "is_active": true
+    },
+    {
+      "id": "5-2",
+      "product_id": "5",
+      "sku": "BS-5-41",
+      "color": "Xanh biển",
+      "size": "41",
+      "price": 1150000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "5-3",
+      "product_id": "5",
+      "sku": "BS-5-42",
+      "color": "Xanh biển",
+      "size": "42",
+      "price": 1150000,
+      "stock_quantity": 14,
+      "is_active": true
+    },
+    {
+      "id": "5-4",
+      "product_id": "5",
+      "sku": "BS-5-43",
+      "color": "Xanh biển",
+      "size": "43",
+      "price": 1150000,
+      "stock_quantity": 15,
+      "is_active": true
+    },
+    {
+      "id": "6-1",
+      "product_id": "6",
+      "sku": "BS-6-S",
+      "color": "Trắng",
+      "size": "S",
+      "price": 290000,
+      "stock_quantity": 12,
+      "is_active": true
+    },
+    {
+      "id": "6-2",
+      "product_id": "6",
+      "sku": "BS-6-M",
+      "color": "Trắng",
+      "size": "M",
+      "price": 290000,
+      "stock_quantity": 13,
+      "is_active": true
+    },
+    {
+      "id": "6-3",
+      "product_id": "6",
+      "sku": "BS-6-L",
+      "color": "Trắng",
+      "size": "L",
+      "price": 290000,
+      "stock_quantity": 14,
+      "is_active": true
+    },
+    {
+      "id": "6-4",
+      "product_id": "6",
+      "sku": "BS-6-XL",
+      "color": "Trắng",
+      "size": "XL",
+      "price": 290000,
+      "stock_quantity": 15,
+      "is_active": true
+    }
+  ],
+  "carts": [
+    {
+      "id": "demo-cart",
+      "user_id": "demo-customer",
+      "voucher_id": null,
+      "updated_at": "2026-10-16T11:40:16.305Z"
+    }
+  ],
+  "cart_items": [],
+  "orders": [
+    {
+      "id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
+      "order_code": "BS-1792148654606-01a0",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Long, Quảng Ninh",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 2500000,
+      "discount_amount": 0,
+      "shipping_fee": 0,
+      "total_amount": 2500000,
+      "note": "dewde",
+      "created_at": "2026-10-16T11:04:14.606Z",
+      "updated_at": "2026-10-16T11:04:14.606Z"
+    },
+    {
+      "id": "a8b5ba45-9018-4fc2-894e-36a4c0922bc4",
+      "order_code": "BS-1792149064570-a8b5",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Longfcdswvsd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1250000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1280000,
+      "note": "xsac",
+      "created_at": "2026-10-16T11:11:04.570Z",
+      "updated_at": "2026-10-16T11:11:04.570Z"
+    },
+    {
+      "id": "3a3b520b-bf78-480b-8f70-1f24de6b7b7a",
+      "order_code": "BS-1792149351454-3a3b",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Longfcdswvsd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1450000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1480000,
+      "note": "",
+      "created_at": "2026-10-16T11:15:51.453Z",
+      "updated_at": "2026-10-16T11:15:51.453Z"
+    },
+    {
+      "id": "03097620-6abf-4a03-9918-68efecdab942",
+      "order_code": "BS-1792149369962-0309",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Longfcdswvsd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1250000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1280000,
+      "note": "",
+      "created_at": "2026-10-16T11:16:09.962Z",
+      "updated_at": "2026-10-16T11:16:09.962Z"
+    },
+    {
+      "id": "10ca4e90-90a9-4c9f-bc14-a5739b90aaa6",
+      "order_code": "BS-1792149500903-10ca",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Longfcdswvsd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 1250000,
+      "discount_amount": 0,
+      "shipping_fee": 30000,
+      "total_amount": 1280000,
+      "note": "xswx",
+      "created_at": "2026-10-16T11:18:20.903Z",
+      "updated_at": "2026-10-16T11:18:20.903Z"
+    },
+    {
+      "id": "2a690361-9748-47d8-8ad7-b477799bb044",
+      "order_code": "BS-1792150813902-2a69",
+      "user_id": "demo-customer",
+      "channel": "online",
+      "status": "pending",
+      "payment_status": "unpaid",
+      "receiver_name": "Phạm Thành",
+      "receiver_phone": "0326538343",
+      "shipping_address": "Hạ Longfcdswvsd",
+      "voucher_id": null,
+      "voucher_code": null,
+      "subtotal": 3750000,
+      "discount_amount": 0,
+      "shipping_fee": 0,
+      "total_amount": 3750000,
+      "note": "sâccsd",
+      "created_at": "2026-10-16T11:40:13.901Z",
+      "updated_at": "2026-10-16T11:40:13.901Z"
+    }
+  ],
+  "order_items": [
+    {
+      "id": "22c74b0a-9936-4888-b202-f6859bd04a34",
+      "order_id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 2,
+      "line_total": 2500000
+    },
+    {
+      "id": "af240c20-2c23-4a27-919b-a0f41504f17d",
+      "order_id": "a8b5ba45-9018-4fc2-894e-36a4c0922bc4",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 1,
+      "line_total": 1250000
+    },
+    {
+      "id": "e7ee9d36-199b-42ee-9b66-f5b9e09b003d",
+      "order_id": "3a3b520b-bf78-480b-8f70-1f24de6b7b7a",
+      "variant_id": "2-1",
+      "product_id": "2",
+      "product_name": "Victor Thruster K 220H",
+      "variant_info": "Trắng / 4U-G5",
+      "unit_price": 1450000,
+      "quantity": 1,
+      "line_total": 1450000
+    },
+    {
+      "id": "fbcc6151-60d4-407b-b5ec-59b0dd4d6cdb",
+      "order_id": "03097620-6abf-4a03-9918-68efecdab942",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 1,
+      "line_total": 1250000
+    },
+    {
+      "id": "0348a6cb-87b7-4f46-9acb-2dab30558331",
+      "order_id": "10ca4e90-90a9-4c9f-bc14-a5739b90aaa6",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 1,
+      "line_total": 1250000
+    },
+    {
+      "id": "12f48d4e-60e9-4d66-8586-1eadd254dfea",
+      "order_id": "2a690361-9748-47d8-8ad7-b477799bb044",
+      "variant_id": "1-1",
+      "product_id": "1",
+      "product_name": "Yonex Astrox 88D Play",
+      "variant_info": "Xanh biển / 4U-G5",
+      "unit_price": 1250000,
+      "quantity": 3,
+      "line_total": 3750000
+    }
+  ],
+  "order_status_history": [
+    {
+      "id": "eaf25aae-801d-4799-a904-b5abb2fa533d",
+      "order_id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:04:14.606Z"
+    },
+    {
+      "id": "041b6e58-b8d7-4df4-ba12-fd0acbaadc04",
+      "order_id": "a8b5ba45-9018-4fc2-894e-36a4c0922bc4",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:11:04.570Z"
+    },
+    {
+      "id": "7f810233-2993-4cce-9711-77a623350ebc",
+      "order_id": "3a3b520b-bf78-480b-8f70-1f24de6b7b7a",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:15:51.453Z"
+    },
+    {
+      "id": "cc40cfd2-966e-4c98-83b3-6fe58c381ea7",
+      "order_id": "03097620-6abf-4a03-9918-68efecdab942",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:16:09.962Z"
+    },
+    {
+      "id": "4a4cecc7-7c73-44ca-a835-1e6bef70b801",
+      "order_id": "10ca4e90-90a9-4c9f-bc14-a5739b90aaa6",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:18:20.903Z"
+    },
+    {
+      "id": "25d12a4f-c113-4ae0-8638-ade4dbebde69",
+      "order_id": "2a690361-9748-47d8-8ad7-b477799bb044",
+      "from_status": null,
+      "to_status": "pending",
+      "changed_by": "demo-customer",
+      "note": "Khách hàng đặt hàng",
+      "created_at": "2026-10-16T11:40:13.901Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "fd87c28e-e935-4641-8530-2fa19a669cba",
+      "order_id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
+      "method": "cod",
+      "status": "pending",
+      "amount": 2500000,
+      "created_at": "2026-10-16T11:04:14.606Z",
+      "updated_at": "2026-10-16T11:04:14.606Z"
+    },
+    {
+      "id": "6468147c-1377-4062-aef2-432dbe0107dd",
+      "order_id": "a8b5ba45-9018-4fc2-894e-36a4c0922bc4",
+      "method": "cod",
+      "status": "pending",
+      "amount": 1280000,
+      "created_at": "2026-10-16T11:11:04.570Z",
+      "updated_at": "2026-10-16T11:11:04.570Z"
+    },
+    {
+      "id": "d7131e61-26c3-48d6-8ad4-f12fe50d93b6",
+      "order_id": "3a3b520b-bf78-480b-8f70-1f24de6b7b7a",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1480000,
+      "created_at": "2026-10-16T11:15:51.453Z",
+      "updated_at": "2026-10-16T11:15:51.453Z"
+    },
+    {
+      "id": "2f69daa1-a2c6-4880-806b-8863825f1c76",
+      "order_id": "03097620-6abf-4a03-9918-68efecdab942",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1280000,
+      "created_at": "2026-10-16T11:16:09.962Z",
+      "updated_at": "2026-10-16T11:16:09.962Z"
+    },
+    {
+      "id": "5bb46108-4ca3-4c08-8b40-a7a4b68d3dd4",
+      "order_id": "10ca4e90-90a9-4c9f-bc14-a5739b90aaa6",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 1280000,
+      "created_at": "2026-10-16T11:18:20.903Z",
+      "updated_at": "2026-10-16T11:18:23.838Z"
+    },
+    {
+      "id": "17540fae-29d1-42d6-a934-e83aad027ec0",
+      "order_id": "2a690361-9748-47d8-8ad7-b477799bb044",
+      "method": "qr",
+      "gateway": "mbbank",
+      "status": "pending",
+      "amount": 3750000,
+      "created_at": "2026-10-16T11:40:13.901Z",
+      "updated_at": "2026-10-16T11:40:16.305Z"
+    }
   ]
 }

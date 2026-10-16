@@ -22,7 +22,7 @@ const ProtectedRouter = ({ allowedRoles }) => {
         to="/login"
         state={{
           from: location,
-          message: "Please log in to access this page.",
+          message: "Vui lòng đăng nhập để sử dụng chức năng này.",
         }}
         replace
       />

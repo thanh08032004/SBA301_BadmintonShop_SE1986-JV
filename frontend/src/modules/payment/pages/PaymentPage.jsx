@@ -1,7 +1,7 @@
 import { Button, Card, Form } from 'react-bootstrap';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 
-function PaymentPage({ paymentMethod, onPaymentMethodChange, onSubmit }) {
+function PaymentPage({ paymentMethod, onPaymentMethodChange, onSubmit, busy = false, paid = false }) {
   return (
     <Card className="payment-card h-100">
       <Card.Body className="p-4 p-md-5">
@@ -12,10 +12,10 @@ function PaymentPage({ paymentMethod, onPaymentMethodChange, onSubmit }) {
         </div>
 
         <Form onSubmit={onSubmit}>
-          <PaymentMethodSelector
+          <fieldset disabled={busy || paid}><PaymentMethodSelector
             paymentMethod={paymentMethod}
             onChange={onPaymentMethodChange}
-          />
+          /></fieldset>
 
           {paymentMethod === 'card' && (
             <p className="payment-note small text-secondary mt-3 mb-0">
@@ -27,8 +27,8 @@ function PaymentPage({ paymentMethod, onPaymentMethodChange, onSubmit }) {
             <span aria-hidden="true">✓</span>
             Thanh toán an toàn và bảo mật
           </div>
-          <Button className="payment-submit w-100 mt-4" type="submit" size="lg">
-            Thanh toán ngay <span aria-hidden="true">→</span>
+          <Button className="payment-submit w-100 mt-4" type="submit" size="lg" disabled={busy || paid}>
+            {paid ? 'Đơn hàng đã thanh toán' : busy ? 'Đang xử lý…' : 'Tiếp tục thanh toán'}
           </Button>
         </Form>
       </Card.Body>

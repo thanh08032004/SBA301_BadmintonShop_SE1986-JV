@@ -1,0 +1,40 @@
+﻿body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+.btn {
+  --bs-btn-border-radius: 10px;
+  --bs-btn-font-size: 14px;
+  --bs-btn-font-weight: 600;
+  --bs-btn-padding-x: 18px;
+  --bs-btn-padding-y: 10px;
+  line-height: 1.5;
+  transition: background-color .18s, border-color .18s, box-shadow .18s;
+}
+.btn svg { flex-shrink: 0; vertical-align: middle; }
+.btn-primary, .shop-app .btn-primary, .payment-page .payment-submit {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #2386c8;
+  --bs-btn-border-color: #2386c8;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #196ba2;
+  --bs-btn-hover-border-color: #196ba2;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #196ba2;
+  --bs-btn-active-border-color: #196ba2;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #2386c8;
+  --bs-btn-disabled-border-color: #2386c8;
+  background-color: var(--bs-btn-bg);
+  border-color: var(--bs-btn-border-color);
+  color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus-visible, .payment-page .payment-submit:hover, .payment-page .payment-submit:focus { background-color: #196ba2; border-color: #196ba2; color: #fff; }
+.btn-outline-primary { --bs-btn-color: #237db4; --bs-btn-border-color: #b9d7eb; --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #2386c8; --bs-btn-hover-border-color: #2386c8; --bs-btn-active-bg: #196ba2; --bs-btn-active-border-color: #196ba2; }
+.btn-outline-secondary { --bs-btn-color: #426b87; --bs-btn-border-color: #d5e4ee; --bs-btn-hover-bg: #edf7fe; --bs-btn-hover-color: #205e86; --bs-btn-hover-border-color: #bad8eb; --bs-btn-active-bg: #e0eff9; --bs-btn-active-color: #205e86; }
+.btn-light { --bs-btn-bg: #f1f7fb; --bs-btn-color: #35556c; --bs-btn-border-color: #e5eef5; --bs-btn-hover-bg: #e4f1fa; --bs-btn-hover-color: #205e86; --bs-btn-hover-border-color: #c9e1f1; }
+.btn-link { font-weight: 500; text-decoration: none; }
+.btn-link:hover { text-decoration: underline; }
+.btn:focus-visible { outline: 3px solid #8fc8ec; outline-offset: 3px; }
+.btn.home-button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap; min-height: 44px; background: #f5faff; border-color: #deebf4; color: #426b87; font-size: 13px; padding: 10px 15px; }
+.btn.home-button:hover { background: #e7f4fd; border-color: #bad8eb; color: #205e86; }
+.simple-page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fff; padding: 20px 32px; border-bottom: 1px solid #e3edf4; }
+@media(max-width:575px) { .simple-page-header { padding: 16px 12px; gap: 10px; } .btn.home-button { padding: 9px 10px; min-height: 40px; font-size: 12px; gap: 6px; } }
+@media(prefers-reduced-motion:reduce) { .btn { transition: none; } }
