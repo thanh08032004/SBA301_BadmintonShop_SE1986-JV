@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Button, Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
-import { useShop } from "../ShopContext";
+import { useShop } from "../../shop/ShopContext";
 
 const ticketTypes = [
   { value: "return", label: "Đổi trả" },

@@ -10,8 +10,8 @@ import Home from "../../modules/home/pages/HomePage";
 import CartPage from "../../modules/shop/CartPage";
 import OrderPage from "../../modules/shop/OrderPage";
 import OrdersPage from "../../modules/shop/OrdersPage";
-import MySupportTicketsPage from "../../modules/shop/support-tickets/MySupportTicketsPage";
-import CreateSupportTicketPage from "../../modules/shop/support-tickets/CreateSupportTicketPage";
+import MySupportTicketsPage from "../../modules/support/pages/MySupportTicketsPage";
+import CreateSupportTicketPage from "../../modules/support/pages/CreateSupportTicketPage";
 import { Navigate } from "react-router";
 export const publicRoutes = [
     { path: "/login", element: <Login /> },

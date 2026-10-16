@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
 import { Alert, Badge, Button, Card } from "react-bootstrap";
 import { Link } from "react-router";
-import { useShop } from "../ShopContext";
+import { useShop } from "../../shop/ShopContext";
 
 const ticketTypes = {
   return: "Đổi trả",
