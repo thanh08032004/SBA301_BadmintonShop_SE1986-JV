@@ -78,7 +78,7 @@ export default function OrdersPage() {
               ) && (
                 <Button
                   as={Link}
-                  to={"/payment?order=" + encodeURIComponent(o.id)}
+                  to={"/payments?order=" + encodeURIComponent(o.id)}
                   variant="outline-primary"
                   className="mt-2"
                 >
