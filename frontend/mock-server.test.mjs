@@ -1,6 +1,8 @@
 ﻿import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { mutate, startServer } from "./mock-server.mjs";
 const seed = () => {
   const db = JSON.parse(
@@ -109,6 +111,67 @@ test("create support ticket rejects invalid order, type and reason", () => {
     assert.equal(db.support_tickets.length, 0);
   }
 });
+
+test("update support ticket stores handling decision, response and timestamps", () => {
+  const db = seed();
+  db.support_tickets.push({
+    id: "ticket-1",
+    status: "open",
+    reviewed_at: null,
+    resolved_at: null,
+    updated_at: "2026-10-16T12:00:00.000Z",
+  });
+
+  mutate(db, {
+    type: "update_support_ticket",
+    ticket_id: "ticket-1",
+    status: "resolved",
+    resolution_type: "refund",
+    proposed_resolution: "Đã hoàn tất hoàn tiền.",
+    proposed_refund_amount: 125000,
+    handled_by: "staff1@gmail.com",
+  });
+
+  const ticket = db.support_tickets[0];
+  assert.equal(ticket.status, "resolved");
+  assert.equal(ticket.resolution_type, "refund");
+  assert.equal(ticket.proposed_resolution, "Đã hoàn tất hoàn tiền.");
+  assert.equal(ticket.proposed_refund_amount, 125000);
+  assert.equal(ticket.handled_by, "staff1@gmail.com");
+  assert.ok(ticket.reviewed_at);
+  assert.ok(ticket.resolved_at);
+  assert.equal(ticket.updated_at, ticket.resolved_at);
+});
+
+test("update support ticket rejects invalid status, refund and missing final response", () => {
+  const db = seed();
+  db.support_tickets.push({
+    id: "ticket-1",
+    status: "open",
+    reviewed_at: null,
+    resolved_at: null,
+  });
+  const action = {
+    type: "update_support_ticket",
+    ticket_id: "ticket-1",
+    status: "approved",
+    resolution_type: "refund",
+    proposed_resolution: "Đã duyệt yêu cầu hoàn tiền.",
+    proposed_refund_amount: 100000,
+  };
+
+  for (const invalid of [
+    { ...action, status: "unknown" },
+    { ...action, status: "rejected", proposed_resolution: "" },
+    { ...action, proposed_refund_amount: -1 },
+    { ...action, proposed_refund_amount: "100000" },
+  ]) {
+    assert.throws(() => mutate(db, invalid));
+    assert.equal(db.support_tickets[0].status, "open");
+    assert.equal(db.support_tickets[0].reviewed_at, null);
+  }
+});
+
 test("HTTP API excludes existing user passwords, returns empty request lists for guests and rejects invalid actions", async () => {
   const server = startServer(0);
   await new Promise((resolve) => server.once("listening", resolve));
@@ -153,6 +216,87 @@ test("customer login checks credentials and returns public profile only", async 
     assert.equal((await fetch(url)).status, 405);
   } finally {
     await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test("only managers and staff can update support tickets through the HTTP API", async () => {
+  const db = seed();
+  db.support_tickets.push({
+    id: "ticket-auth",
+    status: "open",
+    reviewed_at: null,
+    resolved_at: null,
+  });
+  const tempDir = mkdtempSync(join(tmpdir(), "badminton-shop-test-"));
+  const databasePath = join(tempDir, "db.json");
+  writeFileSync(databasePath, JSON.stringify(db));
+  const server = startServer(0, databasePath);
+  await new Promise((resolve) => server.once("listening", resolve));
+  try {
+    const url = "http://127.0.0.1:" + server.address().port + "/api/shop";
+    const login = async (email) => {
+      const response = await fetch("http://127.0.0.1:" + server.address().port + "/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: "123" }),
+      });
+      return response.json();
+    };
+    const customer = await login("customer1@gmail.com");
+    const admin = await login("admin1@gmail.com");
+    const manager = await login("manager1@gmail.com");
+    const staff = await login("staff1@gmail.com");
+    const action = {
+      type: "update_support_ticket",
+      ticket_id: "ticket-auth",
+      status: "under_review",
+      resolution_type: null,
+      proposed_resolution: "Đang kiểm tra yêu cầu.",
+    };
+    const denied = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + customer.authToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+    assert.equal(denied.status, 403);
+
+    const adminDenied = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + admin.authToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+    assert.equal(adminDenied.status, 403);
+
+    const managerAccepted = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + manager.authToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+    assert.equal(managerAccepted.status, 200);
+
+    const accepted = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + staff.authToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+    assert.equal(accepted.status, 200);
+    const responseData = await accepted.json();
+    assert.equal(responseData.support_tickets[0].status, "under_review");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+    rmSync(tempDir, { recursive: true, force: true });
   }
 });
 

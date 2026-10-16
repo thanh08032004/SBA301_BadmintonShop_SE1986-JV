@@ -1,7 +1,7 @@
 export const ROLE_PATHS = {
   ADMIN: "/admin",
-  MANAGER: "/admin",
-  STAFF: "/admin",
+  MANAGER: "/management",
+  STAFF: "/management",
   CUSTOMER: "/",
 };
 
@@ -10,12 +10,15 @@ export const getRoleHomePath = (roles = []) => {
     ? roles.map((role) => role.toUpperCase())
     : [];
 
+  if (normalizedRoles.includes("ADMIN")) {
+    return ROLE_PATHS.ADMIN;
+  }
+
   if (
-    normalizedRoles.includes("ADMIN") ||
     normalizedRoles.includes("MANAGER") ||
     normalizedRoles.includes("STAFF")
   ) {
-    return ROLE_PATHS.ADMIN;
+    return ROLE_PATHS.MANAGER;
   }
 
   if (normalizedRoles.includes("CUSTOMER")) {

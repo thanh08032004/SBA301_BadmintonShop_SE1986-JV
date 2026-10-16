@@ -1,29 +1,11 @@
 import { Badge, Button, Card } from "react-bootstrap";
 import { Link, useParams } from "react-router";
 import { money, useShop } from "../../shop/ShopContext";
-
-const ticketTypes = {
-  return: "Đổi trả",
-  exchange: "Đổi sản phẩm",
-  warranty: "Bảo hành",
-  complaint: "Khiếu nại",
-};
-
-const ticketStatuses = {
-  open: { label: "Mới gửi", variant: "primary" },
-  under_review: { label: "Đang xem xét", variant: "warning" },
-  approved: { label: "Đã chấp thuận", variant: "success" },
-  rejected: { label: "Từ chối", variant: "danger" },
-  resolved: { label: "Đã hoàn tất", variant: "success" },
-  cancelled: { label: "Đã hủy", variant: "secondary" },
-};
-
-const resolutionTypes = {
-  refund: "Hoàn tiền",
-  exchange: "Đổi sản phẩm",
-  repair: "Sửa chữa",
-  none: "Không áp dụng",
-};
+import {
+  resolutionTypes,
+  ticketStatuses,
+  ticketTypes,
+} from "../supportTicketConstants";
 
 function formatDate(date) {
   if (!date) return "Chưa cập nhật";

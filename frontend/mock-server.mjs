@@ -261,6 +261,56 @@ export function mutate(db, action) {
       created_at: now,
       updated_at: now,
     });
+  } else if (action.type === "update_support_ticket") {
+    const ticket = db.support_tickets.find(
+      (item) => item.id === action.ticket_id,
+    );
+    const status = String(action.status || "");
+    const resolutionType = action.resolution_type ?? null;
+    const proposedResolution = String(action.proposed_resolution || "").trim();
+    const handledBy = String(action.handled_by || "").trim();
+    const refundAmount = action.proposed_refund_amount ?? null;
+    check(ticket, "Không tìm thấy phiếu hỗ trợ.");
+    check(
+      ["under_review", "approved", "rejected", "resolved", "cancelled"].includes(
+        status,
+      ),
+      "Trạng thái xử lý phiếu hỗ trợ không hợp lệ.",
+    );
+    check(
+      resolutionType === null ||
+        ["refund", "exchange", "repair", "none"].includes(resolutionType),
+      "Hướng xử lý phiếu hỗ trợ không hợp lệ.",
+    );
+    check(
+      proposedResolution.length <= 5000,
+      "Phản hồi phiếu hỗ trợ tối đa 5000 ký tự.",
+    );
+    check(
+      !["approved", "rejected", "resolved"].includes(status) ||
+        proposedResolution.length > 0,
+      "Vui lòng nhập phản hồi trước khi chốt kết quả xử lý.",
+    );
+    check(
+      refundAmount === null ||
+        (typeof refundAmount === "number" &&
+          Number.isFinite(refundAmount) &&
+          refundAmount >= 0),
+      "Số tiền hoàn dự kiến không hợp lệ.",
+    );
+    check(
+      handledBy.length <= 200,
+      "Thông tin nhân viên xử lý không hợp lệ.",
+    );
+    ticket.status = status;
+    ticket.resolution_type = resolutionType;
+    ticket.proposed_resolution = proposedResolution || null;
+    ticket.proposed_refund_amount =
+      resolutionType === "refund" ? refundAmount : null;
+    ticket.handled_by = handledBy || ticket.handled_by || null;
+    ticket.reviewed_at = ticket.reviewed_at || now;
+    ticket.resolved_at = status === "resolved" ? now : null;
+    ticket.updated_at = now;
   } else if (action.type === "start_payment") {
     const order = db.orders.find((o) => o.id === action.order_id);
     check(
@@ -290,7 +340,7 @@ export function mutate(db, action) {
   cart.updated_at = now;
   return db;
 }
-export function startServer(port = 3000) {
+export function startServer(port = 3000, databasePath = dbPath) {
   const sessions = new Map();
   const server = createServer(async (req, res) => {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -311,7 +361,7 @@ export function startServer(port = 3000) {
         check(body.length < 10000, "Yêu cầu quá lớn.");
       }
       // Read after receiving the body; synchronous mutation and rename keep each write together.
-      const db = JSON.parse(readFileSync(dbPath, "utf8"));
+      const db = JSON.parse(readFileSync(databasePath, "utf8"));
       if (req.url === "/api/auth/login") {
         if (req.method !== "POST") {
           res.writeHead(405);
@@ -382,9 +432,27 @@ export function startServer(port = 3000) {
         return;
       }
       if (req.method === "POST") {
-        mutate(db, JSON.parse(body));
-        writeFileSync(dbPath + ".tmp", JSON.stringify(db, null, 2) + "\n");
-        renameSync(dbPath + ".tmp", dbPath);
+        const action = JSON.parse(body);
+        if (action.type === "update_support_ticket") {
+          const email = sessions.get(token);
+          const actor = db.users.find((user) => user.email === email);
+          if (
+            !actor?.roles?.some((role) =>
+              ["MANAGER", "STAFF"].includes(role.toUpperCase()),
+            )
+          ) {
+            res.writeHead(403);
+            res.end(
+              JSON.stringify({
+                message: "Bạn không có quyền xử lý phiếu hỗ trợ.",
+              }),
+            );
+            return;
+          }
+        }
+        mutate(db, action);
+        writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
+        renameSync(databasePath + ".tmp", databasePath);
       }
       res.end(JSON.stringify(view(db)));
     } catch (error) {

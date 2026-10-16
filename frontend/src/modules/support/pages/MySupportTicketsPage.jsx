@@ -2,22 +2,10 @@ import { useLocation } from "react-router";
 import { Alert, Badge, Button, Card } from "react-bootstrap";
 import { Link } from "react-router";
 import { useShop } from "../../shop/ShopContext";
-
-const ticketTypes = {
-  return: "Đổi trả",
-  exchange: "Đổi sản phẩm",
-  warranty: "Bảo hành",
-  complaint: "Khiếu nại",
-};
-
-const ticketStatuses = {
-  open: { label: "Mới gửi", variant: "primary" },
-  under_review: { label: "Đang xem xét", variant: "warning" },
-  approved: { label: "Đã chấp thuận", variant: "success" },
-  rejected: { label: "Từ chối", variant: "danger" },
-  resolved: { label: "Đã hoàn tất", variant: "success" },
-  cancelled: { label: "Đã hủy", variant: "secondary" },
-};
+import {
+  ticketStatuses,
+  ticketTypes,
+} from "../supportTicketConstants";
 
 function formatDate(date) {
   return new Date(date).toLocaleString("vi-VN", {
