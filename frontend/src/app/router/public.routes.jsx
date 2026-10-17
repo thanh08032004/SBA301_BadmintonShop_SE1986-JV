@@ -13,6 +13,7 @@ import OrdersPage from "../../modules/shop/OrdersPage";
 import MySupportTicketsPage from "../../modules/support/pages/MySupportTicketsPage";
 import CreateSupportTicketPage from "../../modules/support/pages/CreateSupportTicketPage";
 import SupportTicketDetailPage from "../../modules/support/pages/SupportTicketDetailPage";
+import OrderTrackingPage from "../../modules/delivery/pages/OrderTrackingPage";
 import { Navigate } from "react-router";
 export const publicRoutes = [
     { path: "/login", element: <Login /> },
@@ -29,6 +30,7 @@ export const publicRoutes = [
                     { path: "cart", element: <CartPage /> },
                     { path: "order", element: <OrderPage /> },
                     { path: "orders", element: <OrdersPage /> },
+                    { path: "orders/:orderId/tracking", element: <OrderTrackingPage /> },
                     { path: "support-tickets", element: <MySupportTicketsPage /> },
                     { path: "support-tickets/create", element: <CreateSupportTicketPage /> },
                     { path: "support-tickets/:ticketId", element: <SupportTicketDetailPage /> },

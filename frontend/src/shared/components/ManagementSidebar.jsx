@@ -15,6 +15,14 @@ const ManagementSidebar = () => {
         >
           Support tickets
         </NavLink>
+        <NavLink
+          to="/management/deliveries"
+          className={({ isActive }) =>
+            `nav-link rounded ${isActive ? "active bg-primary text-white" : "text-dark"}`
+          }
+        >
+          Quản lý giao hàng
+        </NavLink>
       </Nav>
     </aside>
   );
