@@ -1,0 +1,157 @@
+﻿.manager-page h1{font-size:28px;font-weight:750;color:#173d5b}.manager-page h2{font-size:17px;font-weight:700;color:#214760}.manager-title{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.manager-title p{color:#7890a2;margin:8px 0 0;font-size:14px}.manager-panel{background:white;border:1px solid #e3edf4;border-radius:16px;padding:24px;min-width:0}.manager-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:24px}.manager-stats span{font-size:13px}.manager-stats strong{display:block;font-size:25px;margin-top:14px;color:#167dbb;overflow-wrap:anywhere}.manager-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}.manager-filters{display:flex;gap:12px;margin-bottom:20px}.manager-filters>*{flex:1;min-width:0}.manager-table{font-size:13px;white-space:nowrap}.manager-table th{background:#f5f9fc;color:#6d8598;padding:15px;border-bottom:1px solid #e3edf4}.manager-table td{padding:15px;max-width:260px;overflow:hidden;text-overflow:ellipsis}.manager-form{display:grid;grid-template-columns:1fr 1fr;gap:16px}.manager-summary{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #edf3f7;font-size:14px}.manager-chart{display:flex;gap:8px;align-items:flex-end;min-height:215px;padding-top:30px}.manager-chart>div{flex:1;text-align:center;min-width:0}.manager-bar{background:linear-gradient(#60b5e5,#2386c8);border-radius:5px 5px 0 0;margin-bottom:8px;min-width:8px}.manager-bar-value{display:none}.manager-chart>div:hover .manager-bar-value{display:block;font-size:10px;overflow-wrap:anywhere}.manager-timeline{border-left:2px solid #d6eaf8;margin-left:10px;padding-left:24px}.manager-timeline li{padding:8px}.manager-sidebar .nav-link{font-size:13px;padding:9px 12px;min-height:40px}.manager-sidebar{width:250px}.manager-sidebar .eyebrow{margin-top:14px;margin-bottom:14px}
+@media(max-width:1100px){.manager-stats{grid-template-columns:1fr 1fr}.manager-grid{grid-template-columns:1fr}}
+@media(max-width:767px){.manager-sidebar{width:100%}.manager-title{align-items:flex-start;flex-wrap:wrap}.manager-panel{padding:16px}.manager-filters{flex-wrap:wrap}.manager-filters>*{flex-basis:100%}.manager-form{grid-template-columns:1fr}.manager-stats{gap:10px}.manager-stats strong{font-size:20px}.manager-page h1{font-size:24px}}
+.manager-detail {display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.manager-detail dt {font-size:12px;color:#7890a2;margin-bottom:5px}
+.manager-detail dd {overflow-wrap:anywhere;font-size:14px}
+.manager-preview {max-width:100%;height:180px;object-fit:contain;margin-bottom:20px}
+.manager-empty {padding:50px 20px;text-align:center;color:#7890a2;background:#f5f9fc;border-radius:12px}
+.manager-order-actions {padding:20px;background:#f1f8fd;border:1px solid #dfedf6;border-radius:12px}
+.manager-chart {overflow-x:auto}
+.manager-chart>div {min-width:70px}
+@media(max-width:767px){.manager-detail{grid-template-columns:1fr}.manager-order-actions{padding:14px}}
+.manager-section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:28px 0 20px}
+.manager-section-heading h2{font-size:21px;margin-bottom:8px}.manager-section-heading p{font-size:13px;color:#7890a2;margin:0;max-width:720px}
+.manager-stock-stats small{display:block;font-size:11px;line-height:1.6;color:#7890a2;margin-top:12px}
+.manager-stock-signals{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:18px;margin:0 0 24px}
+.manager-signal{border:1px solid #dceaf4;background:#edf7ff;color:#346b8e;border-radius:14px;padding:20px;text-align:left;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.manager-signal strong{font-size:28px}.manager-signal span{font-size:13px}.manager-signal small{width:100%;font-size:11px}.manager-signal.warning{background:#fff8e9;border-color:#f1dfad;color:#936817}.manager-signal.danger{background:#fff0f0;border-color:#f4d6d6;color:#b54e4e}.manager-signal.selected{outline:2px solid currentColor;outline-offset:2px}
+.manager-stock-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}.manager-stock-groups button{background:#f5f9fc;border:1px solid #e3edf4;border-radius:12px;padding:18px;text-align:left;color:#254d67}.manager-stock-groups button.selected{border-color:#2386c8}.manager-stock-groups button>div:first-child{display:flex;justify-content:space-between;gap:12px;font-size:13px}.manager-stock-groups small{font-size:11px;color:#7890a2}.manager-stock-track{height:7px;border-radius:10px;background:#e0edf5;margin:18px 0 10px;overflow:hidden}.manager-stock-track span{display:block;height:100%;background:#2386c8;border-radius:10px}
+.manager-variant-row>td{background:#f5f9fc!important;max-width:none!important;padding:20px!important}.manager-demo-note{padding:12px 16px;background:#e7f4fd;border:1px solid #cee7f7;border-radius:10px;color:#44738d;font-size:12px;margin-bottom:20px}
+@media(max-width:1100px){.manager-stock-groups{grid-template-columns:1fr}.manager-stock-signals{grid-template-columns:1fr 1fr}.manager-stock-signals>div{grid-column:1/-1}}
+@media(max-width:767px){.manager-section-heading{flex-wrap:wrap}.manager-signal{padding:14px;gap:6px}.manager-signal strong{font-size:22px}.manager-stock-signals{gap:10px}}
+.manager-overview-banner{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0}.manager-overview-banner a{display:block;padding:26px 28px;border-radius:16px;background:linear-gradient(120deg,#e6f4ff,#f5fbff);border:1px solid #d1e7f7;text-decoration:none;color:#1c5e88!important}.manager-overview-banner a:last-child{background:linear-gradient(120deg,#e7f7f3,#f6fcfb);border-color:#cde9e0;color:#277761!important}.manager-overview-banner span{font-size:11px;font-weight:700;letter-spacing:1.4px}.manager-overview-banner strong{display:block;font-size:34px;margin:12px 0}.manager-overview-banner strong small{font-size:16px;font-weight:500}.manager-overview-banner p{font-size:12px;margin:0}#dashboard-inventory,#dashboard-revenue{scroll-margin-top:24px}
+@media(max-width:767px){.manager-overview-banner{grid-template-columns:1fr;gap:12px}.manager-overview-banner a{padding:20px}.manager-overview-banner strong{font-size:28px}}
+.manager-entity-summary{display:flex;align-items:center;gap:24px;padding:22px;background:#fff;border:1px solid #e0edf5;border-radius:16px;margin-bottom:24px}.manager-entity-summary>img{width:100px;height:100px;object-fit:contain;background:#f1f8fd;border-radius:12px}.manager-entity-summary strong{display:block;font-size:24px;color:#216a99;margin:10px 0}.manager-entity-summary p{margin:0;color:#7890a2;font-size:13px}.manager-entity-tabs{gap:6px;margin-bottom:24px;flex-wrap:wrap}.manager-entity-tabs .nav-link{font-size:13px;color:#6d8598;border-radius:9px 9px 0 0;padding:13px}.manager-entity-tabs .nav-link.active{background:#e9f5fe;color:#167dbb;border-color:#d6eaf8;font-weight:600}.manager-embedded .manager-title{margin-bottom:18px}.manager-embedded .manager-title p{font-size:12px}.manager-embedded .manager-panel{padding:18px}.manager-image-thumb{width:110px;height:90px;object-fit:contain;background:#f1f8fd;border-radius:10px}.manager-voucher-mark{display:grid;place-items:center;width:88px;height:88px;border-radius:16px;background:#e9f5fe;color:#2386c8;font-size:40px;font-weight:700}
+@media(max-width:767px){.manager-entity-summary{padding:16px;gap:14px}.manager-entity-summary>img{width:70px;height:70px}.manager-entity-tabs .nav-link{padding:10px;font-size:12px}}
+/* Management surfaces share the storefront palette. Delivery content is excluded. */
+.management-delivery { flex: 1; min-width: 0; }
+.management-content { --manager-border: #e0eaf2; --manager-muted: #7890a2; padding: 32px; }
+.management-content .manager-page { max-width: 1240px; margin-inline: auto; }
+.management-content .manager-title { align-items: flex-start; margin-bottom: 28px; }
+.management-content h1 { letter-spacing: -.7px; line-height: 1.3; }
+.management-content .manager-title p { line-height: 1.7; max-width: 650px; }
+.management-content .manager-panel,
+.management-content .card { border: 1px solid #e0eaf2 !important; border-radius: 16px; box-shadow: 0 3px 15px #264f7004; }
+.management-content .btn,
+.manager-modal .btn { border-radius: 9px; font-size: 13px; font-weight: 600; padding: 10px 16px; box-shadow: none; }
+.management-content .btn-sm,
+.manager-modal .btn-sm { padding: 8px 12px; font-size: 12px; }
+.management-content .btn-light,
+.manager-modal .btn-light { background: #f3f8fc; border-color: #e0eaf2; color: #58758c; }
+.management-content .btn-outline-primary,
+.manager-modal .btn-outline-primary { --bs-btn-color: #2386c8; --bs-btn-border-color: #cfe3f1; --bs-btn-hover-color: #167dbb; --bs-btn-hover-bg: #e9f5fe; --bs-btn-hover-border-color: #a8d2ec; }
+.management-content .btn-outline-secondary,
+.manager-modal .btn-outline-secondary { --bs-btn-color: #657e91; --bs-btn-border-color: #dce6ee; --bs-btn-hover-color: #345c77; --bs-btn-hover-bg: #f1f7fb; --bs-btn-hover-border-color: #c8dce9; }
+.management-content .alert { border-radius: 11px; font-size: 13px; line-height: 1.65; padding: 12px 16px; }
+.management-content .alert-info { color: #547a93; background: #eff8fe; border-color: #dfedf7; }
+.management-content .form-control,
+.management-content .form-select,
+.manager-modal .form-control,
+.manager-modal .form-select { min-height: 44px; padding: 10px 13px; border: 1px solid #dbe6ee; border-radius: 9px; background-color: #fcfdff; color: #29495f; font-size: 13px; }
+.management-content .form-control:focus,
+.management-content .form-select:focus,
+.manager-modal .form-control:focus,
+.manager-modal .form-select:focus { border-color: #8ec5e6; box-shadow: 0 0 0 3px #2386c812; background-color: white; }
+.management-content .form-label,
+.manager-modal .form-label { font-size: 12px; font-weight: 600; color: #657f92; margin-bottom: 8px; }
+.management-content textarea.form-control,
+.manager-modal textarea.form-control { min-height: 110px; line-height: 1.7; }
+.management-content .manager-filters { gap: 12px; align-items: end; padding: 0 0 18px; margin-bottom: 0; }
+.management-content .manager-filters > .form-select { flex: 0 1 220px; }
+.manager-search { position: relative; flex: 1 1 300px !important; min-width: 160px; }
+.manager-search > svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8aa2b4; pointer-events: none; }
+.management-content .manager-search .form-control { padding-left: 42px; width: 100%; }
+.manager-list-panel .table-responsive { border: 1px solid #e8eff5; border-radius: 12px; }
+.management-content .manager-table,
+.manager-modal .manager-table { font-size: 13px; white-space: normal; --bs-table-hover-bg: #f7fbfe; margin-bottom: 0; }
+.management-content .manager-table th,
+.manager-modal .manager-table th { background: #f5f9fc; color: #6c8598; font-size: 11px; font-weight: 650; letter-spacing: .2px; padding: 14px 16px; border-bottom: 1px solid #e3edf4; white-space: normal; }
+.management-content .manager-table td,
+.manager-modal .manager-table td { padding: 16px; border-color: #edf3f7; max-width: none; overflow: visible; white-space: normal; overflow-wrap: anywhere; text-overflow: clip; line-height: 1.6; color: #36566e; vertical-align: middle; }
+.management-content .manager-table td small { font-size: 11px; line-height: 1.6; margin-top: 4px; }
+.manager-list-panel > .table-responsive > .manager-table { width: 100%; table-layout: fixed; }
+.manager-list-panel > .table-responsive > .manager-table th:first-child { width: 29%; }
+.manager-list-panel > .table-responsive > .manager-table th:last-child,
+.manager-list-panel > .table-responsive > .manager-table td:last-child { width: 156px; position: sticky; right: 0; text-align: right; background: white; box-shadow: -8px 0 12px -12px #3b6388; }
+.manager-list-panel > .table-responsive > .manager-table th:last-child { background: #f5f9fc; }
+.manager-action-cell { text-align: right; white-space: nowrap !important; }
+.manager-action-cell .btn { white-space: nowrap; }
+.management-content .badge,
+.manager-modal .badge { border-radius: 6px; padding: 6px 9px; font-size: 10px; font-weight: 600; letter-spacing: .1px; }
+.management-content .badge.bg-success,
+.manager-modal .badge.bg-success { background: #e8f6ef !important; color: #34835f !important; }
+.management-content .badge.bg-info,
+.manager-modal .badge.bg-info { background: #e8f4fd !important; color: #3581b0 !important; }
+.management-content .badge.bg-secondary,
+.manager-modal .badge.bg-secondary { background: #eef2f6 !important; color: #788b9b !important; }
+.management-content .badge.bg-warning,
+.manager-modal .badge.bg-warning { background: #fff4dc !important; color: #9b782d !important; }
+.management-content .badge.bg-danger,
+.manager-modal .badge.bg-danger { background: #fdeceb !important; color: #b96662 !important; }
+.manager-pagination { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 20px; margin-top: 6px; }
+.manager-result-count { color: #8a9daa; font-size: 12px; }
+.manager-result-count strong { color: #526e83; font-weight: 600; }
+.manager-pagination nav { display: flex; gap: 6px; align-items: center; }
+.management-content .manager-pagination .btn { display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; font-size: 12px; }
+.manager-pagination .btn:disabled { opacity: .4; }
+.manager-pagination nav > span { color: #9aaebb; }
+.management-content .manager-entity-summary { background: linear-gradient(100deg,#fff,#f3f9fd); padding: 26px; border-radius: 17px; }
+.management-content .manager-entity-tabs { border: 0; padding: 6px; gap: 5px; background: #eaf2f8; border-radius: 12px; }
+.management-content .manager-entity-tabs .nav-link { border: 0; border-radius: 8px; background: transparent; padding: 11px 15px; color: #6c8497; }
+.management-content .manager-entity-tabs .nav-link.active { background: white; color: #217fb9; box-shadow: 0 2px 7px #294f6c0b; }
+.management-content .manager-detail,
+.manager-modal .manager-detail { gap: 0; margin: 0; grid-template-columns: 1fr 1fr; }
+.management-content .manager-detail > div,
+.manager-modal .manager-detail > div { padding: 18px; border-bottom: 1px solid #e9f0f6; min-width: 0; }
+.management-content .manager-detail dt,
+.manager-modal .manager-detail dt { font-size: 11px; font-weight: 500; color: #8a9eac; margin-bottom: 8px; }
+.management-content .manager-detail dd,
+.manager-modal .manager-detail dd { color: #35576e; font-size: 14px; font-weight: 550; line-height: 1.75; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.manager-detail-wide { grid-column: 1 / -1; }
+.manager-record-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.manager-info-card .manager-record-actions { padding: 22px 18px 4px; }
+.manager-modal { --bs-primary-rgb: 35,134,200; color: #20364b; }
+.manager-modal .modal-dialog { max-width: 880px; }
+.manager-modal .modal-content { border: 1px solid #dfebf3; border-radius: 18px; overflow: hidden; box-shadow: 0 25px 80px #173d5b24; }
+.manager-modal .modal-header { padding: 22px 26px; border-color: #e5eef5; background: #f8fbfd; }
+.manager-modal .modal-title { color: #244c68; font-size: 18px; font-weight: 700; }
+.manager-modal .modal-body { padding: 26px; }
+.manager-modal .modal-footer { padding: 18px 26px; border-color: #e5eef5; background: #fbfdfe; gap: 8px; }
+.manager-modal .btn-primary { --bs-btn-bg: #2386c8; --bs-btn-border-color: #2386c8; --bs-btn-hover-bg: #196ba2; --bs-btn-hover-border-color: #196ba2; --bs-btn-disabled-bg: #2386c8; --bs-btn-disabled-border-color: #2386c8; }
+.manager-modal .manager-form { gap: 20px; }
+.manager-modal .manager-detail { border: 1px solid #e4edf4; border-radius: 12px; background: #fbfdff; overflow: hidden; }
+.manager-modal .manager-preview { display: block; width: 100%; max-height: 280px; height: auto; padding: 20px; background: #f3f8fc; border-radius: 12px; margin-top: 20px; }
+.manager-detail-block { background: #f6fafd; border: 1px solid #e5eef5; border-radius: 12px; padding: 20px; margin-bottom: 22px; }
+.manager-detail-block p { font-size: 13px; line-height: 1.9; margin-bottom: 8px; }
+.manager-modal h2.h6 { font-size: 14px; color: #2b5672; font-weight: 700; }
+.manager-modal .manager-timeline { margin: 18px 0 0 9px; padding-left: 26px; }
+.manager-modal .manager-timeline li { position: relative; list-style: none; padding: 0 0 22px; font-size: 13px; }
+.manager-modal .manager-timeline li::before { content: ''; position: absolute; left: -33px; top: 3px; width: 11px; height: 11px; border: 3px solid #e5f3fd; border-radius: 50%; background: #2386c8; }
+.manager-modal .manager-timeline p { color: #7f94a3; font-size: 12px; margin-top: 5px; }
+.manager-support-page > .card { overflow: hidden; }
+.manager-support-page .row.g-3 > div > .card { background: #fff; }
+.manager-support-page .card h2 { font-size: 16px; color: #325b75; }
+.manager-support-page .card .fw-semibold { font-size: 13px; line-height: 1.8; }
+.manager-support-page .card p { font-size: 13px; line-height: 1.9; }
+@media(max-width:1100px) {
+  .management-content { padding: 24px; }
+  .manager-list-panel > .table-responsive > .manager-table th:last-child,
+  .manager-list-panel > .table-responsive > .manager-table td:last-child { width: 142px; }
+}
+@media(max-width:767px) {
+  .management-content { padding: 22px 14px; }
+  .management-content .manager-panel { padding: 16px; }
+  .management-content .manager-filters > * { flex-basis: 100% !important; }
+  .management-content .manager-table td,.management-content .manager-table th { padding: 12px; }
+  .manager-list-panel > .table-responsive > .manager-table { min-width: 620px; }
+  .manager-pagination { align-items: flex-start; flex-direction: column; }
+  .manager-pagination nav { max-width: 100%; flex-wrap: wrap; }
+  .manager-modal .modal-dialog { margin: 12px; }
+  .manager-modal .modal-header,.manager-modal .modal-body,.manager-modal .modal-footer { padding: 18px; }
+  .manager-modal .manager-detail,.management-content .manager-detail { grid-template-columns: 1fr; }
+  .management-content .manager-entity-summary { padding: 18px; }
+}
+.manager-list-panel > .table-responsive > .manager-table .manager-variant-row > td { position: static; width: auto; text-align: left; box-shadow: none; }
+.manager-support-page .manager-action-cell { position: sticky; right: 0; background: #fff; min-width: 130px; }
+.manager-support-page th.manager-action-cell { background: #f5f9fc; }

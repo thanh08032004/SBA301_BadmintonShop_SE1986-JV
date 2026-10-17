@@ -1,3 +1,4 @@
+import { calculateVoucher } from "./voucherRules";
 import Icon from "../../shared/components/Icon";
 import QuantityControl from "../../shared/components/QuantityControl";
 import "./commerce.css";
@@ -12,6 +13,9 @@ export default function OrderPage() {
   const directVariant = params.get("variant");
   const fromCart = !directVariant && params.get("source") === "cart";
   const [quantity, setQuantity] = useState(1);
+  const [voucherCode, setVoucherCode] = useState("");
+  const [appliedCode, setAppliedCode] = useState("");
+  const [voucherError, setVoucherError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [form, setForm] = useState({
     receiver_name: "",
@@ -40,6 +44,13 @@ export default function OrderPage() {
   );
   const shipping = subtotal >= 2000000 ? 0 : 30000;
 
+  let discount = 0, calculationError = '';
+  try { discount = calculateVoucher(data, appliedCode, items, data.carts[0]?.user_id).discount; }
+  catch (e) { calculationError = e.message; }
+  function applyVoucher() {
+    try { calculateVoucher(data, voucherCode, items, data.carts[0]?.user_id); setAppliedCode(voucherCode.trim()); setVoucherError(''); }
+    catch (e) { setAppliedCode(''); setVoucherError(e.message); }
+  }
   async function submit(event) {
     event.preventDefault();
     if (lock.current) return;
@@ -52,6 +63,7 @@ export default function OrderPage() {
         quantity,
         cart_item_ids: fromCart ? items.map((item) => item.id) : undefined,
         payment_method: paymentMethod,
+        voucher_code: appliedCode,
         ...form,
       });
       const order = result.orders.at(-1);
@@ -256,14 +268,16 @@ export default function OrderPage() {
                   <span>Phí vận chuyển</span>
                   <span>{money(shipping)}</span>
                 </div>
+                <Form.Group className="my-3" controlId="checkout-voucher"><Form.Label>Mã giảm giá</Form.Label><div className="d-flex gap-2"><Form.Control placeholder="Nhập mã voucher" value={voucherCode} onChange={e => setVoucherCode(e.target.value.toUpperCase())} /><Button type="button" variant="outline-primary" onClick={applyVoucher}>Áp dụng</Button></div>{(voucherError || calculationError) && <p className="text-danger small mt-2">{voucherError || calculationError}</p>}{appliedCode && !calculationError && <p className="text-success small mt-2">Đã áp dụng {appliedCode} <Button type="button" size="sm" variant="link" onClick={() => { setAppliedCode(''); setVoucherCode(''); }}>Bỏ mã</Button></p>}</Form.Group>
+                <div className="summary-row"><span>Giảm giá</span><span>−{money(discount)}</span></div>
                 <div className="commerce-total">
                   <span>Tổng thanh toán</span>
-                  <strong>{money(subtotal + shipping)}</strong>
+                  <strong>{money(subtotal - discount + shipping)}</strong>
                 </div>
                 <Button
                   type="submit"
                   disabled={
-                    busy ||
+                    busy || !!calculationError ||
                     (directVariant &&
                       (!quantity || quantity > variant.stock_quantity))
                   }

@@ -101,9 +101,9 @@ export default function SupportTicketManagementDetailPage() {
   }
 
   return (
-    <>
+    <section className="manager-page manager-support-page">
       <div className="eyebrow">QUẢN LÝ VẬN HÀNH</div>
-      <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+      <div className="manager-title">
         <div>
           <h1 className="h2 fw-bold mb-2">Xử lý support ticket</h1>
           <p className="text-secondary mb-0">
@@ -335,6 +335,6 @@ export default function SupportTicketManagementDetailPage() {
           </Form>
         </Card.Body>
       </Card>
-    </>
+    </section>
   );
 }

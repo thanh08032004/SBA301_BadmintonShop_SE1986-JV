@@ -36,7 +36,7 @@ function HeaderIcon({ type }) {
   );
 }
 
-export default function PublicHeader() {
+export default function PublicHeader({ management = false }) {
   const { data } = useShop();
   const { user, logout } = useContext(AuthsContext);
   const count = data.cart_items.reduce((sum, item) => sum + item.quantity, 0);
@@ -44,27 +44,27 @@ export default function PublicHeader() {
   return (
     <header className="store-header">
       <div className="shop-topbar">
-        Đồng hành cùng đam mê cầu lông · Miễn phí giao hàng từ 2.000.000đ
+        {management ? "Badminton Shop · Không gian quản lý cửa hàng" : "Đồng hành cùng đam mê cầu lông · Miễn phí giao hàng từ 2.000.000đ"}
       </div>
       <Navbar className="store-navbar">
         <BrandLogo />
         <div className="header-actions">
           <Button
             as={Link}
-            to="/cart"
+            to={management ? "/management/orders" : "/cart"}
             variant="light"
             className="header-cart"
-            aria-label={"Giỏ hàng, " + count + " sản phẩm"}
+            aria-label={management ? "Đơn hàng khách hàng" : "Giỏ hàng, " + count + " sản phẩm"}
           >
             <span className="header-icon-wrap">
               <HeaderIcon type="cart" />
-              {count > 0 && (
+              {!management && count > 0 && (
                 <span className="header-cart-count">
                   {count > 99 ? "99+" : count}
                 </span>
               )}
             </span>
-            <span className="header-action-label">Giỏ hàng</span>
+            <span className="header-action-label">{management ? "Đơn hàng" : "Giỏ hàng"}</span>
           </Button>
           <span className="header-action-divider" aria-hidden="true" />
           {user ? (
@@ -86,8 +86,8 @@ export default function PublicHeader() {
                 <Dropdown.Header className="text-truncate">
                   {user.email}
                 </Dropdown.Header>
-                <Dropdown.Item as={Link} to="/orders">
-                  Đơn hàng của tôi
+                <Dropdown.Item as={Link} to={management ? "/management" : "/orders"}>
+                  {management ? "Dashboard quản lý" : "Đơn hàng của tôi"}
                 </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={logout}>Đăng xuất</Dropdown.Item>

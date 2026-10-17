@@ -39,6 +39,9 @@ export default function HomePage({ catalog = false }) {
   }
   const products = data.products.filter(
     (p) =>
+      p.is_active &&
+      !(data.brands || []).some(b => b.id === p.brand_id && !b.is_active) &&
+      !(data.categories || []).some(c => c.id === p.category_id && !c.is_active) &&
       p.name.toLocaleLowerCase("vi").includes(search.toLocaleLowerCase("vi")) &&
       (!type || p.product_type === type),
   );
@@ -131,9 +134,11 @@ export default function HomePage({ catalog = false }) {
       <Row className="g-4">
         {products.map((p) => {
           const options = data.product_variants.filter(
-              (v) => v.product_id === p.id,
+              (v) => v.product_id === p.id && v.is_active,
             ),
             v = options.find((v) => v.id === choices[p.id]) || options[0];
+          if (!v) return null;
+          const image = (data.product_images || []).filter(i => i.product_id === p.id && (!i.variant_id || i.variant_id === v.id)).sort((a,b) => a.sort_order - b.sort_order)[0];
           return (
             <Col sm={6} xl={4} key={p.id}>
               <Card className="product-card h-100">
@@ -142,7 +147,7 @@ export default function HomePage({ catalog = false }) {
                     {p.brand}
                   </Badge>
                   <img
-                    src={"/products/" + p.product_type + ".svg"}
+                    src={image?.url || "/products/" + p.product_type + ".svg"}
                     alt={p.name}
                   />
                 </div>

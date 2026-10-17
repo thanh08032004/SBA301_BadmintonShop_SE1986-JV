@@ -34,7 +34,7 @@ export default function ShopProvider({ children }) {
       })
       .catch(() => {
         if (active)
-          setError("Không kết nối được dữ liệu. Hãy chạy npm run server.");
+          setError("Không tải được dữ liệu. Hãy khởi động ứng dụng bằng npm run dev rồi thử lại.");
       });
     return () => {
       active = false;
@@ -53,7 +53,7 @@ export default function ShopProvider({ children }) {
     }
   }
   return (
-    <ShopContext.Provider value={{ data, busy, act }}>
+    <ShopContext.Provider value={{ data, busy, act, refresh: () => act(null) }}>
       {error && (
         <Alert variant="danger" className="m-3">
           {error}{" "}

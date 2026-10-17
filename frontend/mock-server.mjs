@@ -1,3 +1,7 @@
+import { calculateVoucher } from "./src/modules/shop/voucherRules.js";
+import { deleteCatalog, updateManagedOrder } from "./management-actions.mjs";
+import { catalogs } from "./src/modules/management/catalogs.js";
+import { catalogView, saveCatalog } from "./management-api.mjs";
 import { createServer } from "node:http";
 import { readFileSync, writeFileSync, renameSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -30,6 +34,7 @@ function view(db) {
     support_tickets,
     ticket_items,
     deliveries: deliveries || [],
+    ...catalogView(db),
   };
 }
 function check(condition, message) {
@@ -39,7 +44,12 @@ export function mutate(db, action) {
   const now = new Date().toISOString();
   const cart = db.carts[0];
   const variant = (id) =>
-    db.product_variants.find((v) => v.id === id && v.is_active);
+    db.product_variants.find((v) => {
+      const product = db.products.find(p => p.id === v.product_id);
+      return v.id === id && v.is_active && product?.is_active &&
+        !(db.brands || []).some(b => b.id === product.brand_id && !b.is_active) &&
+        !(db.categories || []).some(c => c.id === product.category_id && !c.is_active);
+    });
   if (action.type === "add") {
     const v = variant(action.variant_id);
     check(v, "Không tìm thấy biến thể sản phẩm.");
@@ -153,6 +163,7 @@ export function mutate(db, action) {
       (s, i) => s + variant(i.variant_id).price * i.quantity,
       0,
     );
+    const { voucher, discount } = calculateVoucher(db, action.voucher_code, items, cart.user_id);
     const shipping_fee = subtotal >= 2000000 ? 0 : 30000;
     const id = randomUUID();
     const order = {
@@ -165,17 +176,21 @@ export function mutate(db, action) {
       receiver_name,
       receiver_phone,
       shipping_address,
-      voucher_id: null,
-      voucher_code: null,
+      voucher_id: voucher?.id || null,
+      voucher_code: voucher?.code || null,
       subtotal,
-      discount_amount: 0,
+      discount_amount: discount,
       shipping_fee,
-      total_amount: subtotal + shipping_fee,
+      total_amount: subtotal - discount + shipping_fee,
       note,
       created_at: now,
       updated_at: now,
     };
     db.orders.push(order);
+    if (voucher) {
+      voucher.used_count++;
+      (db.voucher_usages ||= []).push({ id: randomUUID(), voucher_id: voucher.id, user_id: cart.user_id, order_id: order.id, discount_amount: discount, used_at: now });
+    }
     for (const i of items) {
       const v = variant(i.variant_id),
         p = db.products.find((p) => p.id === v.product_id);
@@ -460,9 +475,9 @@ export function mutate(db, action) {
   cart.updated_at = now;
   return db;
 }
-export function startServer(port = 3000, databasePath = dbPath) {
+export function createApiHandler(databasePath = dbPath) {
   const sessions = new Map();
-  const server = createServer(async (req, res) => {
+  return async (req, res) => {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     if (req.url !== "/api/shop" && req.url !== "/api/auth/login") {
       res.writeHead(404);
@@ -539,6 +554,9 @@ export function startServer(port = 3000, databasePath = dbPath) {
           JSON.stringify({
             products: db.products,
             product_variants: db.product_variants,
+            brands: db.brands || [],
+            categories: db.categories || [],
+            product_images: db.product_images || [],
             carts: [],
             cart_items: [],
             orders: [],
@@ -554,7 +572,7 @@ export function startServer(port = 3000, databasePath = dbPath) {
       }
       if (req.method === "POST") {
         const action = JSON.parse(body);
-        if (action.type === "update_support_ticket") {
+        if (["update_support_ticket", "catalog_save", "catalog_delete", "manager_update_order"].includes(action.type)) {
           const email = sessions.get(token);
           const actor = db.users.find((user) => user.email === email);
           if (
@@ -565,13 +583,20 @@ export function startServer(port = 3000, databasePath = dbPath) {
             res.writeHead(403);
             res.end(
               JSON.stringify({
-                message: "Bạn không có quyền xử lý phiếu hỗ trợ.",
+                message: "Bạn không có quyền quản lý dữ liệu cửa hàng.",
               }),
             );
             return;
           }
         }
-        mutate(db, action);
+        if (action.type === "catalog_save") {
+          const actor = db.users.find(user => user.email === sessions.get(token));
+          saveCatalog(db, action, actor.id || actor.email);
+        } else if (action.type === "catalog_delete") deleteCatalog(db, action, catalogs);
+        else if (action.type === "manager_update_order") {
+          const actor = db.users.find(user => user.email === sessions.get(token));
+          updateManagedOrder(db, action, actor.id || actor.email);
+        } else mutate(db, action);
         writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
         renameSync(databasePath + ".tmp", databasePath);
       }
@@ -580,7 +605,10 @@ export function startServer(port = 3000, databasePath = dbPath) {
       res.writeHead(400);
       res.end(JSON.stringify({ message: error.message }));
     }
-  });
+  };
+}
+export function startServer(port = 3000, databasePath = dbPath) {
+  const server = createServer(createApiHandler(databasePath));
   server.listen(port, "127.0.0.1", () =>
     console.log(
       "Mock API: http://127.0.0.1:" + server.address().port + "/api/shop",

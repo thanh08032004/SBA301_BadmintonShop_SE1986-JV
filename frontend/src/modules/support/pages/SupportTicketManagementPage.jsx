@@ -1,3 +1,4 @@
+import { ManagerSearch, ManagerPagination } from '../../management/ManagerControls';
 import { useMemo, useState } from "react";
 import { Alert, Badge, Card, Form, Table } from "react-bootstrap";
 import { Link, useLocation } from "react-router";
@@ -23,6 +24,7 @@ export default function SupportTicketManagementPage() {
   const { data } = useShop();
   const { state } = useLocation();
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const tickets = data.support_tickets || EMPTY_LIST;
   const orders = data.orders || EMPTY_LIST;
@@ -59,9 +61,9 @@ export default function SupportTicketManagementPage() {
     tickets.filter((ticket) => ticket.status === status).length;
 
   return (
-    <>
+    <section className="manager-page manager-support-page">
       <div className="eyebrow">QUẢN LÝ VẬN HÀNH</div>
-      <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+      <div className="manager-title">
         <div>
           <h1 className="h2 fw-bold mb-2">Quản lý support ticket</h1>
           <p className="text-secondary mb-0">
@@ -100,20 +102,14 @@ export default function SupportTicketManagementPage() {
           <div className="row g-3 mb-3">
             <div className="col-md-8">
               <Form.Label htmlFor="ticket-search">Tìm kiếm phiếu</Form.Label>
-              <Form.Control
-                id="ticket-search"
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Mã phiếu, đơn hàng, khách hàng hoặc nội dung"
-              />
+              <ManagerSearch label="Tìm kiếm phiếu" value={query} onChange={value => { setQuery(value); setPage(1); }} placeholder="Tìm mã phiếu, khách hàng, đơn hàng…" />
             </div>
             <div className="col-md-4">
               <Form.Label htmlFor="ticket-status-filter">Trạng thái</Form.Label>
               <Form.Select
                 id="ticket-status-filter"
                 value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
+                onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }}
               >
                 <option value="all">Tất cả trạng thái</option>
                 {Object.entries(ticketStatuses).map(([value, status]) => (
@@ -133,19 +129,19 @@ export default function SupportTicketManagementPage() {
               </p>
             </div>
           ) : (
-            <Table responsive hover className="align-middle mb-0">
+            <Table responsive hover className="manager-table align-middle mb-0">
               <thead>
                 <tr>
                   <th>Mã phiếu</th>
                   <th>Khách hàng / Đơn hàng</th>
                   <th>Loại yêu cầu</th>
-                  <th>Ngày gửi</th>
+                  
                   <th>Trạng thái</th>
-                  <th className="text-end">Thao tác</th>
+                  <th className="manager-action-cell text-end">Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredTickets.map((ticket) => {
+                {filteredTickets.slice((Math.min(page, Math.max(1, Math.ceil(filteredTickets.length / 10))) - 1) * 10, Math.min(page, Math.max(1, Math.ceil(filteredTickets.length / 10))) * 10).map((ticket) => {
                   const status = ticketStatuses[ticket.status] || {
                     label: ticket.status || "Chưa xác định",
                     variant: "secondary",
@@ -162,13 +158,7 @@ export default function SupportTicketManagementPage() {
                         >
                           {ticket.ticket_code}
                         </Link>
-                        <div
-                          className="small text-secondary text-truncate"
-                          style={{ maxWidth: 260 }}
-                          title={ticket.reason}
-                        >
-                          {ticket.reason}
-                        </div>
+                        <small className="d-block text-secondary">{formatDate(ticket.created_at)}</small>
                       </td>
                       <td>
                         <div>{order?.receiver_name || ticket.user_id}</div>
@@ -177,9 +167,7 @@ export default function SupportTicketManagementPage() {
                         </div>
                       </td>
                       <td>{ticketTypes[ticket.ticket_type] || ticket.ticket_type}</td>
-                      <td className="text-nowrap">
-                        {formatDate(ticket.created_at)}
-                      </td>
+
                       <td>
                         <Badge
                           bg={status.variant}
@@ -202,8 +190,9 @@ export default function SupportTicketManagementPage() {
               </tbody>
             </Table>
           )}
+          <ManagerPagination total={filteredTickets.length} page={page} onChange={setPage} />
         </Card.Body>
       </Card>
-    </>
+    </section>
   );
 }

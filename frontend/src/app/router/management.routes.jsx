@@ -4,7 +4,10 @@ import SupportTicketManagementPage from "../../modules/support/pages/SupportTick
 import SupportTicketManagementDetailPage from "../../modules/support/pages/SupportTicketManagementDetailPage";
 import DeliveryManagementPage from "../../modules/delivery/pages/DeliveryManagementPage";
 import DeliveryManagementDetailPage from "../../modules/delivery/pages/DeliveryManagementDetailPage";
-import { Navigate } from "react-router";
+import DashboardPage from "../../modules/management/DashboardPage";
+import CatalogPage from "../../modules/management/CatalogPage";
+import ManagerOrdersPage from "../../modules/management/ManagerOrdersPage";
+
 
 export const managementRoutes = [
   {
@@ -14,7 +17,9 @@ export const managementRoutes = [
         path: "/management",
         element: <ManagementLayout />,
         children: [
-          { index: true, element: <Navigate to="support-tickets" replace /> },
+          { index: true, element: <DashboardPage /> },
+          { path: "orders", element: <ManagerOrdersPage /> },
+          { path: "catalog/:catalog", element: <CatalogPage /> },
           {
             path: "support-tickets",
             element: <SupportTicketManagementPage />,
