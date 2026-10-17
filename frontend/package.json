@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "server": "node --watch mock-server.mjs",
     "test:shop": "node --test mock-server.test.mjs",
-    "test:management": "node --test management-api.test.mjs management-actions.test.mjs dashboard.test.mjs verification/management-render.test.mjs",
+    "test:management": "node --test management-api.test.mjs management-actions.test.mjs invoice-actions.test.mjs dashboard.test.mjs verification/management-render.test.mjs",
     "seed:management": "node seed-management.mjs",
     "seed:dashboard": "node seed-dashboard.mjs"
   },

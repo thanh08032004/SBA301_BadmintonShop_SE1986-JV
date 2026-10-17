@@ -2,13 +2,14 @@ import { calculateVoucher } from "./src/modules/shop/voucherRules.js";
 import { deleteCatalog, updateManagedOrder } from "./management-actions.mjs";
 import { catalogs } from "./src/modules/management/catalogs.js";
 import { catalogView, saveCatalog } from "./management-api.mjs";
+import { manageInvoice, syncCompletedOrderInvoices } from "./invoice-actions.mjs";
 import { createServer } from "node:http";
 import { readFileSync, writeFileSync, renameSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 const dbPath = fileURLToPath(new URL("./db.json", import.meta.url));
-function view(db) {
+function view(db, includeInvoices = true) {
   const {
     products,
     product_variants,
@@ -21,6 +22,9 @@ function view(db) {
     support_tickets,
     ticket_items,
     deliveries,
+    invoices,
+    invoice_items,
+    invoice_deliveries,
   } = db;
   return {
     products,
@@ -34,6 +38,9 @@ function view(db) {
     support_tickets,
     ticket_items,
     deliveries: deliveries || [],
+    invoices: includeInvoices ? invoices || [] : [],
+    invoice_items: includeInvoices ? invoice_items || [] : [],
+    invoice_deliveries: includeInvoices ? invoice_deliveries || [] : [],
     ...catalogView(db),
   };
 }
@@ -537,6 +544,8 @@ export function createApiHandler(databasePath = dbPath) {
       }
       const token = req.headers.authorization?.replace(/^Bearer /, "");
       const authenticated = sessions.has(token);
+      const sessionUser = db.users.find((user) => user.email === sessions.get(token));
+      const canViewInvoices = sessionUser?.roles?.some((role) => role.toUpperCase() === "MANAGER");
       if (
         (token && !authenticated) ||
         (req.method === "POST" && !authenticated)
@@ -566,20 +575,25 @@ export function createApiHandler(databasePath = dbPath) {
             support_tickets: [],
             ticket_items: [],
             deliveries: [],
+            invoices: [],
+            invoice_items: [],
+            invoice_deliveries: [],
           }),
         );
         return;
       }
+      if (syncCompletedOrderInvoices(db)) {
+        writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
+        renameSync(databasePath + ".tmp", databasePath);
+      }
       if (req.method === "POST") {
         const action = JSON.parse(body);
-        if (["update_support_ticket", "catalog_save", "catalog_delete", "manager_update_order"].includes(action.type)) {
+        const invoiceAction = action.type?.startsWith("invoice_");
+        if (["update_support_ticket", "catalog_save", "catalog_delete", "manager_update_order"].includes(action.type) || invoiceAction) {
           const email = sessions.get(token);
           const actor = db.users.find((user) => user.email === email);
-          if (
-            !actor?.roles?.some((role) =>
-              ["MANAGER", "STAFF"].includes(role.toUpperCase()),
-            )
-          ) {
+          const allowedRoles = invoiceAction ? ["MANAGER"] : ["MANAGER", "STAFF"];
+          if (!actor?.roles?.some((role) => allowedRoles.includes(role.toUpperCase()))) {
             res.writeHead(403);
             res.end(
               JSON.stringify({
@@ -596,11 +610,15 @@ export function createApiHandler(databasePath = dbPath) {
         else if (action.type === "manager_update_order") {
           const actor = db.users.find(user => user.email === sessions.get(token));
           updateManagedOrder(db, action, actor.id || actor.email);
+        } else if (action.type?.startsWith("invoice_")) {
+          const actor = db.users.find(user => user.email === sessions.get(token));
+          manageInvoice(db, action, actor.id ?? null);
         } else mutate(db, action);
+        syncCompletedOrderInvoices(db);
         writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
         renameSync(databasePath + ".tmp", databasePath);
       }
-      res.end(JSON.stringify(view(db)));
+      res.end(JSON.stringify(view(db, canViewInvoices)));
     } catch (error) {
       res.writeHead(400);
       res.end(JSON.stringify({ message: error.message }));
