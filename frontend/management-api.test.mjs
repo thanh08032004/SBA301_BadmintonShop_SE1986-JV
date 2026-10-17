@@ -12,6 +12,7 @@ test('catalog saves price history with actor and rejects invalid stock',()=>{
  assert.equal(variant.price,old+1000);
  assert.equal(db.product_price_history.at(-1).old_price,old);
  assert.equal(db.product_price_history.at(-1).changed_by,'manager');
+ assert.throws(()=>saveCatalog(db,{table:'product_variants',id:variant.id,record:{...variant,stock_quantity:variant.stock_quantity+1}},'manager'),/Quản lý kho/);
  assert.throws(()=>saveCatalog(db,{table:'product_variants',id:variant.id,record:{...variant,stock_quantity:-1}},'manager'));
  assert.equal(variant.stock_quantity,seed().product_variants[0].stock_quantity);
 });

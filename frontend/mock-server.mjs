@@ -3,13 +3,14 @@ import { deleteCatalog, updateManagedOrder } from "./management-actions.mjs";
 import { catalogs } from "./src/modules/management/catalogs.js";
 import { catalogView, saveCatalog } from "./management-api.mjs";
 import { manageInvoice, syncCompletedOrderInvoices } from "./invoice-actions.mjs";
+import { manageInventory, prepareInventoryData, recordOrderStockOut } from "./inventory-actions.mjs";
 import { createServer } from "node:http";
 import { readFileSync, writeFileSync, renameSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 const dbPath = fileURLToPath(new URL("./db.json", import.meta.url));
-function view(db, includeInvoices = true) {
+function view(db, includeManagement = true) {
   const {
     products,
     product_variants,
@@ -25,6 +26,13 @@ function view(db, includeInvoices = true) {
     invoices,
     invoice_items,
     invoice_deliveries,
+    suppliers,
+    goods_receipts,
+    goods_receipt_items,
+    inventory_movements,
+    stock_audits,
+    stock_audit_items,
+    stock_alerts,
   } = db;
   return {
     products,
@@ -38,9 +46,16 @@ function view(db, includeInvoices = true) {
     support_tickets,
     ticket_items,
     deliveries: deliveries || [],
-    invoices: includeInvoices ? invoices || [] : [],
-    invoice_items: includeInvoices ? invoice_items || [] : [],
-    invoice_deliveries: includeInvoices ? invoice_deliveries || [] : [],
+    invoices: includeManagement ? invoices || [] : [],
+    invoice_items: includeManagement ? invoice_items || [] : [],
+    invoice_deliveries: includeManagement ? invoice_deliveries || [] : [],
+    suppliers: includeManagement ? suppliers || [] : [],
+    goods_receipts: includeManagement ? goods_receipts || [] : [],
+    goods_receipt_items: includeManagement ? goods_receipt_items || [] : [],
+    inventory_movements: includeManagement ? inventory_movements || [] : [],
+    stock_audits: includeManagement ? stock_audits || [] : [],
+    stock_audit_items: includeManagement ? stock_audit_items || [] : [],
+    stock_alerts: includeManagement ? stock_alerts || [] : [],
     ...catalogView(db),
   };
 }
@@ -214,6 +229,7 @@ export function mutate(db, action) {
       });
       v.stock_quantity -= i.quantity;
     }
+    recordOrderStockOut(db, order, cart.user_id, now);
     db.payments.push({
       id: randomUUID(),
       order_id: id,
@@ -545,7 +561,9 @@ export function createApiHandler(databasePath = dbPath) {
       const token = req.headers.authorization?.replace(/^Bearer /, "");
       const authenticated = sessions.has(token);
       const sessionUser = db.users.find((user) => user.email === sessions.get(token));
-      const canViewInvoices = sessionUser?.roles?.some((role) => role.toUpperCase() === "MANAGER");
+      const canViewManagement = sessionUser?.roles?.some((role) =>
+        ["MANAGER", "STAFF"].includes(role.toUpperCase()),
+      );
       if (
         (token && !authenticated) ||
         (req.method === "POST" && !authenticated)
@@ -582,17 +600,19 @@ export function createApiHandler(databasePath = dbPath) {
         );
         return;
       }
-      if (syncCompletedOrderInvoices(db)) {
+      const inventoryChanged = prepareInventoryData(db);
+      if (syncCompletedOrderInvoices(db) || inventoryChanged) {
         writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
         renameSync(databasePath + ".tmp", databasePath);
       }
       if (req.method === "POST") {
         const action = JSON.parse(body);
         const invoiceAction = action.type?.startsWith("invoice_");
-        if (["update_support_ticket", "catalog_save", "catalog_delete", "manager_update_order"].includes(action.type) || invoiceAction) {
+        const inventoryAction = action.type?.startsWith("inventory_");
+        if (["update_support_ticket", "catalog_save", "catalog_delete", "manager_update_order"].includes(action.type) || invoiceAction || inventoryAction) {
           const email = sessions.get(token);
           const actor = db.users.find((user) => user.email === email);
-          const allowedRoles = invoiceAction ? ["MANAGER"] : ["MANAGER", "STAFF"];
+          const allowedRoles = ["MANAGER", "STAFF"];
           if (!actor?.roles?.some((role) => allowedRoles.includes(role.toUpperCase()))) {
             res.writeHead(403);
             res.end(
@@ -613,12 +633,16 @@ export function createApiHandler(databasePath = dbPath) {
         } else if (action.type?.startsWith("invoice_")) {
           const actor = db.users.find(user => user.email === sessions.get(token));
           manageInvoice(db, action, actor.id ?? null);
+        } else if (action.type?.startsWith("inventory_")) {
+          const actor = db.users.find(user => user.email === sessions.get(token));
+          manageInventory(db, action, actor.id ?? null);
         } else mutate(db, action);
         syncCompletedOrderInvoices(db);
+        prepareInventoryData(db);
         writeFileSync(databasePath + ".tmp", JSON.stringify(db, null, 2) + "\n");
         renameSync(databasePath + ".tmp", databasePath);
       }
-      res.end(JSON.stringify(view(db, canViewInvoices)));
+      res.end(JSON.stringify(view(db, canViewManagement)));
     } catch (error) {
       res.writeHead(400);
       res.end(JSON.stringify({ message: error.message }));

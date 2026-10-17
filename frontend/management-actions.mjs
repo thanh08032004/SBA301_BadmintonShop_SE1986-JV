@@ -1,5 +1,6 @@
 ﻿import { randomUUID } from 'node:crypto';
 import { orderTransitions } from './src/modules/management/managementUtils.js';
+import { recordOrderStockReturn } from './inventory-actions.mjs';
 const check = (ok, message) => { if (!ok) throw new Error(message); };
 export function updateManagedOrder(db, action, actor) {
   const order = db.orders.find(o => String(o.id) === String(action.id));
@@ -28,7 +29,10 @@ export function updateManagedOrder(db, action, actor) {
     if (['cancelled', 'returned'].includes(next)) {
       for (const item of db.order_items.filter(i => i.order_id === order.id)) {
         const variant = db.product_variants.find(v => v.id === item.variant_id);
-        if (variant) variant.stock_quantity += item.quantity;
+        if (variant) {
+          variant.stock_quantity += item.quantity;
+          recordOrderStockReturn(db, order, item, actor, now);
+        }
       }
     }
     if (next === 'confirmed') { order.confirmed_by = actor; order.confirmed_at = now; }

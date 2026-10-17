@@ -1,5 +1,6 @@
 ﻿import { randomUUID } from 'node:crypto';
 import { catalogs } from './src/modules/management/catalogs.js';
+import { recordInitialStock } from './inventory-actions.mjs';
 const check = (ok,message) => { if (!ok) throw new Error(message); };
 export function catalogView(db) { return Object.fromEntries(Object.keys(catalogs).map(k=>[k,db[k] || []])); }
 export function saveCatalog(db, action, actor) {
@@ -33,6 +34,7 @@ export function saveCatalog(db, action, actor) {
  if(table === 'products' && previous && previous.product_type !== row.product_type) check(!['racket_specs','shoe_specs','apparel_specs'].some(t=>(db[t]||[]).some(r=>String(r.product_id) === String(previous.id))),'Cần xử lý thông số hiện có trước khi đổi loại sản phẩm.');
  if(table === 'product_variants') {
   for(const f of ['stock_quantity','low_stock_threshold']) check(Number.isInteger(row[f]),'Số lượng và ngưỡng tồn kho phải là số nguyên.');
+  if(previous) check(Number(row.stock_quantity) === Number(previous.stock_quantity), 'Tồn kho chỉ được thay đổi tại trang Quản lý kho để ghi nhận sổ biến động.');
   check(!rows.some(r=>r !== previous && String(r.product_id) === row.product_id && (r.color || null) === row.color && (r.size || null) === row.size),'Biến thể màu/kích cỡ đã tồn tại.');
  }
  if(table === 'product_images' && row.variant_id) check(String(db.product_variants.find(v=>String(v.id) === row.variant_id)?.product_id) === row.product_id,'Biến thể không thuộc sản phẩm đã chọn.');
@@ -58,4 +60,5 @@ export function saveCatalog(db, action, actor) {
  if(table === 'vouchers') row.created_by = previous?.created_by || actor;
  if(table === 'product_variants' && previous && previous.price !== row.price) (db.product_price_history ||= []).push({id:randomUUID(),variant_id:previous.id,old_price:previous.price,new_price:row.price,changed_by:actor,changed_at:now});
  if(previous) Object.assign(previous,row); else rows.push(row);
+ if(table === 'product_variants' && !previous) recordInitialStock(db, row, actor);
 }

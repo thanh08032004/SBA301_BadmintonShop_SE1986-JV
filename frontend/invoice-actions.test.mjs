@@ -122,7 +122,7 @@ test("cancellation and invoice delivery respect statuses and delivery schema", (
   assert.throws(() => manageInvoice(db, { type: "invoice_cancel", invoice_id: invoice.id }), /đang phát hành/);
 });
 
-test("completed invoices are backfilled for managers and hidden from staff", async () => {
+test("completed invoices are backfilled and visible to managers and staff", async () => {
   const directory = mkdtempSync(join(tmpdir(), "invoice-management-"));
   const path = join(directory, "db.json");
   const db = JSON.parse(readFileSync(new URL("./db.json", import.meta.url), "utf8"));
@@ -165,8 +165,8 @@ test("completed invoices are backfilled for managers and hidden from staff", asy
       headers: { Authorization: "Bearer " + staff.authToken },
     });
     const staffData = await staffRead.json();
-    assert.deepEqual(staffData.invoices, []);
-    assert.deepEqual(staffData.invoice_items, []);
+    assert.equal(staffData.invoices.length, 1);
+    assert.equal(staffData.invoice_items.length, 1);
     assert.deepEqual(staffData.invoice_deliveries, []);
   } finally {
     await new Promise((resolve) => server.close(resolve));

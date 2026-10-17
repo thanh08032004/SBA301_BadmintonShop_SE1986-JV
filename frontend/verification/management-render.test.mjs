@@ -55,5 +55,16 @@ test('management pages render database records and actionable controls', async (
     }
     const orders = renderManagement('/management/orders', data);
     assert.ok(orders.includes([...data.orders].sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0].order_code)); assert.ok(orders.includes('Xem &amp; xử lý'));
+    const inventory = renderManagement('/management/inventory', data);
+    assert.ok(inventory.includes('Quản lý inventory'));
+    assert.ok(inventory.includes('Phiếu nhập'));
+    assert.ok(inventory.includes('Kiểm kê'));
+    assert.ok(inventory.includes('Sổ kho'));
+    const invoices = renderManagement('/management/invoices', data);
+    assert.ok(invoices.includes('Quản lý hóa đơn'));
+    assert.ok(invoices.includes('Tự động tạo khi đơn hàng hoàn tất') || invoices.includes('Hóa đơn được tự động tạo'));
+    const staffSidebar = renderManagement('/management', data, ['STAFF']);
+    assert.ok(staffSidebar.includes('Quản lý kho'));
+    assert.ok(staffSidebar.includes('Hóa đơn'));
   } finally { await server.close(); }
 });

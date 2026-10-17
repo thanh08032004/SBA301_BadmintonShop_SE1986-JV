@@ -19,8 +19,8 @@ function createSaleInvoice(db, action, issuedBy, now, parent = null) {
   );
   check(order, "Không tìm thấy đơn hàng.");
   check(
-    order.payment_status === "paid",
-    "Chỉ lập hóa đơn cho đơn hàng đã thanh toán.",
+    order.status === "completed" && order.payment_status === "paid",
+    "Chỉ tạo hóa đơn cho đơn đã hoàn tất và thanh toán.",
   );
   check(
     !db.invoices.some(

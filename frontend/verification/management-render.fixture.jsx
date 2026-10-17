@@ -10,14 +10,16 @@ import ManagementSidebar from '../src/shared/components/ManagementSidebar';
 import DashboardPage from '../src/modules/management/DashboardPage';
 import CatalogPage from '../src/modules/management/CatalogPage';
 import ManagerOrdersPage from '../src/modules/management/ManagerOrdersPage';
+import InventoryManagementPage from '../src/modules/management/InventoryManagementPage';
+import InvoiceManagementPage from '../src/modules/management/InvoiceManagementPage';
 
-export function renderManagement(path, data) {
+export function renderManagement(path, data, roles = ['MANAGER']) {
   return renderToStaticMarkup(
-    <AuthsContext.Provider value={{ user: { email: 'manager1@gmail.com', fullName: 'Manager', roles: ['MANAGER'] }, logout: () => {} }}>
+    <AuthsContext.Provider value={{ user: { email: 'manager1@gmail.com', fullName: 'Manager', roles }, logout: () => {} }}>
       <ShopContext.Provider value={{ data, busy: false, act: async () => data, refresh: async () => data }}>
         <MemoryRouter initialEntries={[path]}>
           <div className="shop-app"><PublicHeader management /><div className="shop-layout"><ManagementSidebar /><main className={path.startsWith('/management/deliveries') ? 'management-delivery' : 'shop-main management-content'}>
-            <Routes><Route path="/management/deliveries" element={<DeliveryManagementPage />} /><Route path="/management/support-tickets" element={<SupportTicketManagementPage />} /><Route path="/management/support-tickets/:ticketId" element={<SupportTicketManagementDetailPage />} /><Route path="/management" element={<DashboardPage />} /><Route path="/management/catalog/:catalog" element={<CatalogPage />} /><Route path="/management/orders" element={<ManagerOrdersPage />} /></Routes>
+            <Routes><Route path="/management/deliveries" element={<DeliveryManagementPage />} /><Route path="/management/support-tickets" element={<SupportTicketManagementPage />} /><Route path="/management/support-tickets/:ticketId" element={<SupportTicketManagementDetailPage />} /><Route path="/management" element={<DashboardPage />} /><Route path="/management/inventory" element={<InventoryManagementPage />} /><Route path="/management/invoices" element={<InvoiceManagementPage />} /><Route path="/management/catalog/:catalog" element={<CatalogPage />} /><Route path="/management/orders" element={<ManagerOrdersPage />} /></Routes>
           </main></div></div>
         </MemoryRouter>
       </ShopContext.Provider>

@@ -8,6 +8,7 @@ import DashboardPage from "../../modules/management/DashboardPage";
 import CatalogPage from "../../modules/management/CatalogPage";
 import ManagerOrdersPage from "../../modules/management/ManagerOrdersPage";
 import InvoiceManagementPage from "../../modules/management/InvoiceManagementPage";
+import InventoryManagementPage from "../../modules/management/InventoryManagementPage";
 
 
 export const managementRoutes = [
@@ -20,11 +21,8 @@ export const managementRoutes = [
         children: [
           { index: true, element: <DashboardPage /> },
           { path: "orders", element: <ManagerOrdersPage /> },
-          {
-            path: "invoices",
-            element: <ProtectedRouter allowedRoles={["MANAGER"]} />,
-            children: [{ index: true, element: <InvoiceManagementPage /> }],
-          },
+          { path: "invoices", element: <InvoiceManagementPage /> },
+          { path: "inventory", element: <InventoryManagementPage /> },
           { path: "catalog/:catalog", element: <CatalogPage /> },
           {
             path: "support-tickets",
