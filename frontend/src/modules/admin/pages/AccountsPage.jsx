@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
-import { Table, Badge, Button, Form, Alert, Spinner, Card } from 'react-bootstrap';
+import { useState, useEffect, useContext } from 'react';
+import { Table, Badge, Button, Form, Alert, Spinner } from 'react-bootstrap';
 import { AuthsContext } from '../../../app/provider/AuthsContext';
 import { adminApi } from '../api/admin.api';
 import UserFormModal from '../component/UserFormModal';
@@ -21,7 +21,7 @@ export default function AccountsPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const loadUsers = useCallback(async () => {
+  const loadUsers = async () => {
     setLoading(true);
     setError('');
     try {
@@ -32,41 +32,38 @@ export default function AccountsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     loadUsers();
-  }, [loadUsers]);
+  }, []);
 
   // Statistics
-  const stats = useMemo(() => {
-    const total = users.length;
-    const managers = users.filter((u) => u.roles?.includes('MANAGER')).length;
-    const staff = users.filter((u) => u.roles?.includes('STAFF')).length;
-    const customers = users.filter((u) => u.roles?.includes('CUSTOMER')).length;
-    const inactive = users.filter((u) => u.isActive === false).length;
-    return { total, managers, staff, customers, inactive };
-  }, [users]);
+  const stats = {
+    total: users.length,
+    managers: users.filter((u) => u.roles?.includes('MANAGER')).length,
+    staff: users.filter((u) => u.roles?.includes('STAFF')).length,
+    customers: users.filter((u) => u.roles?.includes('CUSTOMER')).length,
+    inactive: users.filter((u) => u.isActive === false).length,
+  };
 
   // Filtered users
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const matchSearch =
-        search.trim() === '' ||
-        String(u.fullName || '').toLowerCase().includes(search.toLowerCase()) ||
-        String(u.email || '').toLowerCase().includes(search.toLowerCase());
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      search.trim() === '' ||
+      String(u.fullName).toLowerCase().includes(search.toLowerCase()) ||
+      String(u.email).toLowerCase().includes(search.toLowerCase());
 
-      const matchRole =
-        roleFilter === 'ALL' || (Array.isArray(u.roles) && u.roles.includes(roleFilter));
+    const matchRole =
+      roleFilter === 'ALL' || (Array.isArray(u.roles) && u.roles.includes(roleFilter));
 
-      const matchStatus =
-        statusFilter === 'ALL' ||
-        (statusFilter === 'ACTIVE' && u.isActive !== false) ||
-        (statusFilter === 'INACTIVE' && u.isActive === false);
+    const matchStatus =
+      statusFilter === 'ALL' ||
+      (statusFilter === 'ACTIVE' && u.isActive !== false) ||
+      (statusFilter === 'INACTIVE' && u.isActive === false);
 
-      return matchSearch && matchRole && matchStatus;
-    });
-  }, [users, search, roleFilter, statusFilter]);
+    return matchSearch && matchRole && matchStatus;
+  });
 
   const handleCreate = () => {
     setSelectedUser(null);
@@ -90,7 +87,7 @@ export default function AccountsPage() {
   };
 
   const roleBadge = (roles = []) => {
-    const role = roles[0] || 'CUSTOMER';
+    const role = roles[0];
     const config = {
       ADMIN: { bg: 'danger', label: 'Quản trị viên (ADMIN)' },
       MANAGER: { bg: 'primary', label: 'Quản lý (MANAGER)' },
@@ -217,7 +214,7 @@ export default function AccountsPage() {
           <div className="col-12 col-md-5">
             <Form.Control
               type="text"
-              placeholder="🔍 Tìm theo họ tên, email..."
+              placeholder="Tìm theo họ tên, email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -274,7 +271,6 @@ export default function AccountsPage() {
                 </tr>
               ) : (
                 filteredUsers.map((u) => {
-                  const isAdminUser = u.roles?.includes('ADMIN');
                   const isCurrent = String(u.email).toLowerCase() === String(currentAdmin?.email).toLowerCase();
                   const isUserActive = u.isActive !== false;
 

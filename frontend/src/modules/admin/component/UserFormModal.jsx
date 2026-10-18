@@ -3,8 +3,8 @@ import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
 export default function UserFormModal({ show, onHide, user, onSave }) {
   const isEditing = Boolean(user);
-  const isCustomer = isEditing && (user.roles || []).includes('CUSTOMER');
-  const isCurrentAdmin = isEditing && (user.roles || []).includes('ADMIN');
+  const isCustomer = isEditing && (user.roles).includes('CUSTOMER');
+  const isCurrentAdmin = isEditing && (user.roles).includes('ADMIN');
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -20,11 +20,11 @@ export default function UserFormModal({ show, onHide, user, onSave }) {
   useEffect(() => {
     if (user) {
       setFormData({
-        fullName: user.fullName || '',
-        email: user.email || '',
-        roles: Array.isArray(user.roles) ? user.roles : [user.roles || 'STAFF'],
-        password: user.password || '',
-        isActive: user.isActive !== undefined ? user.isActive : true,
+        fullName: user.fullName,
+        email: user.email,
+        roles: user.roles,
+        password: user.password,
+        isActive: user.isActive,
       });
     } else {
       setFormData({
