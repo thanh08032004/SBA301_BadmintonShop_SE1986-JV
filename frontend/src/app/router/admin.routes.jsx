@@ -1,4 +1,6 @@
 import ProtectedRouter from "./ProtectedRouter";
+import AdminLayout from "../layouts/AdminLayout";
+import AccountsPage from "../../modules/admin/pages/AccountsPage";
 
 export const adminRoutes = [
   {
@@ -6,12 +8,10 @@ export const adminRoutes = [
     children: [
       {
         path: "/admin",
-        element: (
-          <main className="p-4">
-            <div className="eyebrow">QUẢN TRỊ HỆ THỐNG</div>
-            <h1 className="h2 fw-bold">Admin</h1>
-          </main>
-        ),
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AccountsPage /> },
+        ],
       },
     ],
   },

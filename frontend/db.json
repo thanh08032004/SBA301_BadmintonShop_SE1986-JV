@@ -1,52 +1,194 @@
 {
   "users": [
     {
-      "email": "admin1@gmail.com",
+      "id": "1",
+      "email": "admin@gmail.com",
       "password": "123",
-      "fullName": "Nguyen Văn Admin 1",
-      "roles": ["ADMIN"]
+      "fullName": "Nguyen Văn Admin",
+      "roles": [
+        "ADMIN"
+      ],
+      "isActive": true
     },
     {
-      "email": "admin2@gmail.com",
-      "password": "123",
-      "fullName": "Nguyen Văn Admin 2",
-      "roles": ["ADMIN"]
-    },
-    {
+      "id": "2",
       "email": "staff1@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Staff 1",
-      "roles": ["STAFF"]
+      "roles": [
+        "STAFF"
+      ],
+      "isActive": true
     },
     {
+      "id": "3",
       "email": "staff2@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Staff 2",
-      "roles": ["STAFF"]
+      "roles": [
+        "STAFF"
+      ],
+      "isActive": true
     },
     {
+      "id": "4",
       "email": "manager1@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Manager 1",
-      "roles": ["MANAGER"]
+      "roles": [
+        "MANAGER"
+      ],
+      "isActive": true
     },
     {
+      "id": "5",
       "email": "manager2@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Manager 2",
-      "roles": ["MANAGER"]
+      "roles": [
+        "MANAGER"
+      ],
+      "isActive": true
     },
     {
+      "id": "6",
       "email": "customer1@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Customer 1",
-      "roles": ["CUSTOMER"]
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
     },
     {
+      "id": "7",
       "email": "customer2@gmail.com",
       "password": "123",
       "fullName": "Nguyen Văn Customer 2",
-      "roles": ["CUSTOMER"]
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "8",
+      "email": "customer3@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 3",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "9",
+      "email": "customer4@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 4",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "10",
+      "email": "customer5@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 5",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "11",
+      "email": "customer6@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 6",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "12",
+      "email": "customer7@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 7",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "13",
+      "email": "customer8@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 8",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "14",
+      "email": "customer9@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 9",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "15",
+      "email": "customer10@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 10",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "16",
+      "email": "customer11@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 11",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "17",
+      "email": "customer12@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 12",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "18",
+      "email": "customer13@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 13",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "19",
+      "email": "customer14@gmail.com",
+      "password": "123",
+      "fullName": "Nguyen Văn Customer 14",
+      "roles": [
+        "CUSTOMER"
+      ],
+      "isActive": true
     }
   ],
   "products": [
@@ -520,7 +662,7 @@
       "id": "demo-cart",
       "user_id": "demo-customer",
       "voucher_id": null,
-      "updated_at": "2026-10-17T18:03:42.197Z"
+      "updated_at": "2026-10-17T10:45:43.204Z"
     }
   ],
   "cart_items": [],
@@ -530,8 +672,8 @@
       "order_code": "BS-1792148654606-01a0",
       "user_id": "demo-customer",
       "channel": "online",
-      "status": "completed",
-      "payment_status": "paid",
+      "status": "pending",
+      "payment_status": "unpaid",
       "receiver_name": "Phạm Thành",
       "receiver_phone": "0326538343",
       "shipping_address": "Hạ Long, Quảng Ninh",
@@ -590,8 +732,8 @@
       "order_code": "BS-1792149369962-0309",
       "user_id": "demo-customer",
       "channel": "online",
-      "status": "completed",
-      "payment_status": "paid",
+      "status": "pending",
+      "payment_status": "unpaid",
       "receiver_name": "Phạm Thành",
       "receiver_phone": "0326538343",
       "shipping_address": "Hạ Longfcdswvsd",
@@ -4917,24 +5059,6 @@
       "changed_by": "manager1@gmail.com",
       "note": "",
       "created_at": "2026-10-17T12:23:07.294Z"
-    },
-    {
-      "id": "d39a3fae-d4f5-473f-9c15-cfa024e167ab",
-      "order_id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
-      "from_status": "shipping",
-      "to_status": "completed",
-      "changed_by": "system_carrier_sync",
-      "note": "ĐVVC GHN xác nhận giao thành công mã GHN-8829104VN",
-      "created_at": "2026-10-17T05:56:58.475Z"
-    },
-    {
-      "id": "98df230b-924f-461e-8bc9-751a2daea302",
-      "order_id": "03097620-6abf-4a03-9918-68efecdab942",
-      "from_status": "shipping",
-      "to_status": "completed",
-      "changed_by": "system_carrier_sync",
-      "note": "ĐVVC GHN xác nhận giao thành công mã GHN-9918234VN",
-      "created_at": "2026-10-17T05:57:22.019Z"
     }
   ],
   "payments": [
@@ -4942,7 +5066,7 @@
       "id": "fd87c28e-e935-4641-8530-2fa19a669cba",
       "order_id": "01a01a92-e0a8-43f7-8aaf-fb7f823b9a7b",
       "method": "cod",
-      "status": "completed",
+      "status": "pending",
       "amount": 2500000,
       "created_at": "2026-10-16T11:04:14.606Z",
       "updated_at": "2026-10-16T11:04:14.606Z"
@@ -4971,7 +5095,7 @@
       "order_id": "03097620-6abf-4a03-9918-68efecdab942",
       "method": "qr",
       "gateway": "mbbank",
-      "status": "completed",
+      "status": "pending",
       "amount": 1280000,
       "created_at": "2026-10-16T11:16:09.962Z",
       "updated_at": "2026-10-16T11:16:09.962Z"
@@ -5943,37 +6067,21 @@
       "service_type": "standard",
       "shipping_fee": 30000,
       "cod_amount": 2500000,
-      "status": "delivered",
-      "carrier_status_text": "Giao hàng thành công - Khách hàng đã nhận và ký xác nhận",
+      "status": "in_transit",
+      "carrier_status_text": "Đang luân chuyển qua kho trung chuyển Hải Phòng SOC",
       "receiver_name": "Phạm Thành",
       "receiver_phone": "0326538343",
       "shipping_address": "Hạ Long, Quảng Ninh",
       "note": "Gọi trước khi giao",
-      "shipper_name": "Nguyễn Văn Tuấn (Bưu tá ĐVVC)",
-      "shipper_phone": "0987.654.321",
+      "shipper_name": null,
+      "shipper_phone": null,
       "estimated_delivery_date": "2026-10-18T18:00:00.000Z",
       "shipped_at": "2026-10-16T14:30:00.000Z",
-      "delivered_at": "2026-10-17T05:56:58.475Z",
-      "last_synced_at": "2026-10-17T05:57:00.731Z",
+      "delivered_at": null,
+      "last_synced_at": "2026-10-17T09:15:00.000Z",
       "created_at": "2026-10-16T11:20:00.000Z",
-      "updated_at": "2026-10-17T05:57:00.731Z",
+      "updated_at": "2026-10-17T09:15:00.000Z",
       "tracking_logs": [
-        {
-          "id": "log-56e305b8",
-          "timestamp": "2026-10-17T05:56:58.475Z",
-          "status": "delivered",
-          "title": "Giao thành công",
-          "location": "Hạ Long, Quảng Ninh",
-          "note": "Khách hàng đã nhận kiện hàng nguyên vẹn và hoàn tất đối soát."
-        },
-        {
-          "id": "log-69bf4ba7",
-          "timestamp": "2026-10-17T05:56:56.860Z",
-          "status": "out_for_delivery",
-          "title": "Bưu tá đang phát hàng",
-          "location": "Bưu cục phát gần nhất",
-          "note": "Bưu tá Nguyễn Văn Tuấn (Bưu tá ĐVVC) (0987.654.321) đang đi giao."
-        },
         {
           "id": "log-01-3",
           "timestamp": "2026-10-17T09:15:00.000Z",
@@ -6117,37 +6225,21 @@
       "service_type": "standard",
       "shipping_fee": 30000,
       "cod_amount": 1280000,
-      "status": "delivered",
-      "carrier_status_text": "Giao hàng thành công - Khách hàng đã nhận và ký xác nhận",
+      "status": "in_transit",
+      "carrier_status_text": "Đã lấy hàng - Đang luân chuyển qua kho trung chuyển",
       "receiver_name": "Phạm Thành",
       "receiver_phone": "0326538343",
       "shipping_address": "Hạ Long, Quảng Ninh",
       "note": "",
-      "shipper_name": "Nguyễn Văn Tuấn (Bưu tá ĐVVC)",
-      "shipper_phone": "0987.654.321",
+      "shipper_name": null,
+      "shipper_phone": null,
       "estimated_delivery_date": "2026-10-19T18:00:00.000Z",
       "shipped_at": "2026-10-17T05:34:43.074Z",
-      "delivered_at": "2026-10-17T05:57:22.019Z",
-      "last_synced_at": "2026-10-17T09:51:33.370Z",
+      "delivered_at": null,
+      "last_synced_at": "2026-10-17T05:34:43.074Z",
       "created_at": "2026-10-16T11:40:00.000Z",
-      "updated_at": "2026-10-17T09:51:33.370Z",
+      "updated_at": "2026-10-17T05:34:43.074Z",
       "tracking_logs": [
-        {
-          "id": "log-bd4b8d2b",
-          "timestamp": "2026-10-17T05:57:22.019Z",
-          "status": "delivered",
-          "title": "Giao thành công",
-          "location": "Hạ Long, Quảng Ninh",
-          "note": "Khách hàng đã nhận kiện hàng nguyên vẹn và hoàn tất đối soát."
-        },
-        {
-          "id": "log-9f73c83e",
-          "timestamp": "2026-10-17T05:57:20.331Z",
-          "status": "out_for_delivery",
-          "title": "Bưu tá đang phát hàng",
-          "location": "Bưu cục phát gần nhất",
-          "note": "Bưu tá Nguyễn Văn Tuấn (Bưu tá ĐVVC) (0987.654.321) đang đi giao."
-        },
         {
           "id": "log-1fbc3661",
           "timestamp": "2026-10-17T05:34:43.074Z",
@@ -6189,7 +6281,6 @@
       "last_synced_at": "2026-10-17T10:45:43.204Z",
       "created_at": "2026-10-16T11:50:00.000Z",
       "updated_at": "2026-10-17T10:45:43.204Z",
-
       "tracking_logs": [
         {
           "id": "log-05-3",
