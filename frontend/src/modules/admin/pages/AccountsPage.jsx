@@ -16,6 +16,8 @@ export default function AccountsPage() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Modal
   const [showModal, setShowModal] = useState(false);
@@ -64,6 +66,12 @@ export default function AccountsPage() {
 
     return matchSearch && matchRole && matchStatus;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredUsers.length / pageSize) || 1;
+  const validPage = Math.min(Math.max(1, currentPage), totalPages);
+  const startIndex = (validPage - 1) * pageSize;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + pageSize);
 
   const handleCreate = () => {
     setSelectedUser(null);
@@ -216,11 +224,20 @@ export default function AccountsPage() {
               type="text"
               placeholder="Tìm theo họ tên, email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
           <div className="col-6 col-md-3">
-            <Form.Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <Form.Select
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
               <option value="ALL">Tất cả vai trò</option>
               <option value="ADMIN">ADMIN</option>
               <option value="MANAGER">MANAGER</option>
@@ -229,7 +246,13 @@ export default function AccountsPage() {
             </Form.Select>
           </div>
           <div className="col-6 col-md-3">
-            <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <Form.Select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
               <option value="ALL">Tất cả trạng thái</option>
               <option value="ACTIVE">Đang hoạt động (Active)</option>
               <option value="INACTIVE">Đã khóa (Inactive)</option>
@@ -251,7 +274,8 @@ export default function AccountsPage() {
             <p className="mt-3 text-muted">Đang tải danh sách tài khoản từ jsonDB (port 3000)...</p>
           </div>
         ) : (
-          <Table responsive hover className="mb-0 align-middle">
+          <>
+            <Table responsive hover className="mb-0 align-middle">
             <thead style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
               <tr>
                 <th style={{ padding: '14px 18px', width: '70px', color: '#475569', fontSize: '13px' }}>ID</th>
@@ -263,14 +287,14 @@ export default function AccountsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-5 text-muted">
                     Không tìm thấy người dùng nào phù hợp với bộ lọc.
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((u) => {
+                paginatedUsers.map((u) => {
                   const isCurrent = String(u.email).toLowerCase() === String(currentAdmin?.email).toLowerCase();
                   const isUserActive = u.isActive !== false;
 
@@ -320,7 +344,63 @@ export default function AccountsPage() {
               )}
             </tbody>
           </Table>
-        )}
+
+          {/* Pagination Controls */}
+          {filteredUsers.length > 0 && (
+            <div
+              className="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top"
+              style={{ backgroundColor: '#f8fafc' }}
+            >
+              <span style={{ fontSize: '13px', color: '#64748b' }}>
+                Hiển thị <strong>{startIndex + 1}</strong> -{' '}
+                <strong>{Math.min(startIndex + pageSize, filteredUsers.length)}</strong> trong tổng số{' '}
+                <strong>{filteredUsers.length}</strong> tài khoản
+              </span>
+
+              {totalPages > 1 && (
+                <div className="d-flex align-items-center gap-1">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    disabled={validPage <= 1}
+                    onClick={() => setCurrentPage(validPage - 1)}
+                    style={{ fontSize: '12px', padding: '4px 10px' }}
+                  >
+                    &laquo; Trước
+                  </Button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <Button
+                      key={p}
+                      variant={p === validPage ? 'primary' : 'outline-secondary'}
+                      size="sm"
+                      onClick={() => setCurrentPage(p)}
+                      style={{
+                        fontSize: '12px',
+                        padding: '4px 10px',
+                        backgroundColor: p === validPage ? '#2563eb' : undefined,
+                        borderColor: p === validPage ? '#2563eb' : undefined,
+                      }}
+                    >
+                      {p}
+                    </Button>
+                  ))}
+
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    disabled={validPage >= totalPages}
+                    onClick={() => setCurrentPage(validPage + 1)}
+                    style={{ fontSize: '12px', padding: '4px 10px' }}
+                  >
+                    Sau &raquo;
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
       </div>
 
       {/* Modal create / edit */}
