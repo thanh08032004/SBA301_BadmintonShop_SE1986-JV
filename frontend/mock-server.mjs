@@ -444,8 +444,8 @@ export function mutate(db, action) {
     check(order, "Không tìm thấy đơn hàng.");
     const existing = db.deliveries.find((d) => d.order_id === order.id);
     check(!existing, "Đơn hàng này đã được tạo vận đơn trước đó.");
-    const carrier = String(action.carrier || "ghn").toLowerCase();
-    check(["ghn", "ghtk", "viettelpost"].includes(carrier), "Đơn vị vận chuyển không hợp lệ.");
+    const carrier = String(action.carrier || "fastship").toLowerCase();
+    check(["fastship", "ghn", "ghtk", "viettelpost"].includes(carrier), "Đơn vị vận chuyển không hợp lệ.");
     const serviceType = String(action.service_type || "standard");
     const trackingNumber = `${carrier.toUpperCase()}-${Date.now().toString().slice(-6)}${order.id.slice(0, 4).toUpperCase()}`;
     const id = "del-" + randomUUID().slice(0, 8);

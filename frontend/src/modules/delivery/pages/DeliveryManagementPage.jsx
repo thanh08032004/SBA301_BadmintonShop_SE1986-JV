@@ -1,5 +1,13 @@
 import { useMemo, useState } from "react";
-import { Alert, Badge, Button, Card, Form, Spinner, Table } from "react-bootstrap";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Form,
+  Spinner,
+  Table,
+} from "react-bootstrap";
 import { Link, useLocation } from "react-router";
 import {
   carriers,
@@ -27,7 +35,9 @@ export default function DeliveryManagementPage() {
   const [carrierFilter, setCarrierFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [syncingId, setSyncingId] = useState(null);
-  const [syncMessage, setSyncMessage] = useState(state?.updated ? "Đã cập nhật vận đơn thành công." : "");
+  const [syncMessage, setSyncMessage] = useState(
+    state?.updated ? "Đã cập nhật vận đơn thành công." : "",
+  );
 
   const deliveries = data.deliveries || EMPTY_LIST;
   const normalizedQuery = query.trim().toLocaleLowerCase("vi");
@@ -57,7 +67,9 @@ export default function DeliveryManagementPage() {
             (!normalizedQuery || searchableText.includes(normalizedQuery))
           );
         })
-        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)),
+        .sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        ),
     [carrierFilter, deliveries, normalizedQuery, statusFilter],
   );
 
@@ -77,7 +89,9 @@ export default function DeliveryManagementPage() {
         `Đã đồng bộ trạng thái mới nhất từ ${carrierInfo?.name || "đối tác vận chuyển"} cho mã vận đơn ${delivery.tracking_number}.`,
       );
     } catch (err) {
-      setSyncMessage(err.message || "Không thể đồng bộ với đối tác vận chuyển.");
+      setSyncMessage(
+        err.message || "Không thể đồng bộ với đối tác vận chuyển.",
+      );
     } finally {
       setSyncingId(null);
     }
@@ -90,7 +104,8 @@ export default function DeliveryManagementPage() {
         <div>
           <h1 className="h2 fw-bold mb-2">Vận đơn & Giao hàng (3rd-Party)</h1>
           <p className="text-secondary mb-0">
-            Theo dõi hành trình bưu cục và đồng bộ trạng thái trực tiếp từ các đối tác giao hàng bên thứ 3.
+            Theo dõi hành trình bưu cục và đồng bộ trạng thái trực tiếp từ các
+            đối tác giao hàng bên thứ 3.
           </p>
         </div>
         <div className="d-flex gap-2 align-items-center">
@@ -135,7 +150,10 @@ export default function DeliveryManagementPage() {
           {/* Bộ lọc & Tìm kiếm */}
           <div className="row g-3 mb-4">
             <div className="col-lg-6">
-              <Form.Label htmlFor="delivery-search" className="fw-semibold small">
+              <Form.Label
+                htmlFor="delivery-search"
+                className="fw-semibold small"
+              >
                 Tìm kiếm vận đơn
               </Form.Label>
               <Form.Control
@@ -147,7 +165,10 @@ export default function DeliveryManagementPage() {
               />
             </div>
             <div className="col-sm-6 col-lg-3">
-              <Form.Label htmlFor="carrier-filter" className="fw-semibold small">
+              <Form.Label
+                htmlFor="carrier-filter"
+                className="fw-semibold small"
+              >
                 Đối tác vận chuyển
               </Form.Label>
               <Form.Select
@@ -184,9 +205,12 @@ export default function DeliveryManagementPage() {
 
           {filteredDeliveries.length === 0 ? (
             <div className="empty-state py-5 text-center">
-              <h2 className="h5 fw-bold mb-2">Không tìm thấy vận đơn phù hợp</h2>
+              <h2 className="h5 fw-bold mb-2">
+                Không tìm thấy vận đơn phù hợp
+              </h2>
               <p className="text-secondary mb-3">
-                Thử thay đổi từ khóa tìm kiếm hoặc bỏ chọn các bộ lọc trạng thái / đối tác.
+                Thử thay đổi từ khóa tìm kiếm hoặc bỏ chọn các bộ lọc trạng thái
+                / đối tác.
               </p>
               {(query || carrierFilter !== "all" || statusFilter !== "all") && (
                 <Button
@@ -250,9 +274,14 @@ export default function DeliveryManagementPage() {
 
                       {/* Cột 2: Đơn hàng & Người nhận */}
                       <td>
-                        <div className="fw-semibold">{delivery.receiver_name}</div>
+                        <div className="fw-semibold">
+                          {delivery.receiver_name}
+                        </div>
                         <div className="small text-secondary">
-                          Đơn: <span className="font-monospace">{delivery.order_code}</span>
+                          Đơn:{" "}
+                          <span className="font-monospace">
+                            {delivery.order_code}
+                          </span>
                         </div>
                         <div
                           className="small text-muted text-truncate"
@@ -278,7 +307,8 @@ export default function DeliveryManagementPage() {
                           {carrier.shortName}
                         </span>
                         <div className="small text-secondary mt-1">
-                          {carrierServices[delivery.service_type] || "Tiêu chuẩn"}
+                          {carrierServices[delivery.service_type] ||
+                            "Tiêu chuẩn"}
                         </div>
                       </td>
 
@@ -305,7 +335,11 @@ export default function DeliveryManagementPage() {
                       <td>
                         <Badge
                           bg={statusInfo.variant}
-                          text={statusInfo.variant === "warning" ? "dark" : undefined}
+                          text={
+                            statusInfo.variant === "warning"
+                              ? "dark"
+                              : undefined
+                          }
                           className="px-2 py-1"
                         >
                           {statusInfo.label}
@@ -344,7 +378,9 @@ export default function DeliveryManagementPage() {
                                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
                               </svg>
                             )}
-                            <span className="d-none d-md-inline ms-1">Đồng bộ</span>
+                            <span className="d-none d-md-inline ms-1">
+                              Đồng bộ
+                            </span>
                           </Button>
 
                           <Link
@@ -356,7 +392,9 @@ export default function DeliveryManagementPage() {
 
                           {carrier.trackingUrl && (
                             <a
-                              href={carrier.trackingUrl(delivery.tracking_number)}
+                              href={carrier.trackingUrl(
+                                delivery.tracking_number,
+                              )}
                               target="_blank"
                               rel="noreferrer noopener"
                               className="btn btn-sm btn-light text-secondary"

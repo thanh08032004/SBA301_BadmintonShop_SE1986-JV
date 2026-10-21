@@ -1,4 +1,14 @@
 export const carriers = {
+  fastship: {
+    code: "fastship",
+    name: "FastShip Express (Đối Tác)",
+    shortName: "FastShip",
+    badgeColor: "#1d4ed8",
+    badgeBg: "#dbeafe",
+    hotline: "1900 6868",
+    website: "http://localhost:8082/track",
+    trackingUrl: (code) => `http://localhost:8082/track?code=${encodeURIComponent(code)}`,
+  },
   ghn: {
     code: "ghn",
     name: "Giao Hàng Nhanh (GHN)",
