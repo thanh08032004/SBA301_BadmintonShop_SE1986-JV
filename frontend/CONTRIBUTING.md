@@ -6,13 +6,12 @@ Mọi thành viên làm frontend phải theo file này. Leader review PR dựa t
 
 ## 1. Git và quy trình làm việc
 
-- `main`: bản ổn định để nộp/demo. **Không push thẳng.**
-- `develop`: nhánh tích hợp. Mọi PR đều merge vào đây.
-- Nhánh cá nhân tạo từ `develop`, đặt tên theo mẫu:
+- `main`: nhánh chính, bản ổn định để nộp/demo. Mọi PR đều merge vào đây. **Không push thẳng.**
+- Nhánh cá nhân tạo từ `main`, đặt tên theo mẫu:
   - `feature/<module>-<viec>` – ví dụ `feature/delivery-websocket`
   - `fix/<module>-<loi>` – ví dụ `fix/cart-quantity-negative`
   - `chore/<viec>` – cấu hình, tài liệu, dọn dẹp
-- Trước khi tạo PR: `git pull origin develop` rồi xử lý xung đột trên nhánh của mình.
+- Trước khi tạo PR: `git pull origin main` rồi xử lý xung đột trên nhánh của mình.
 - Mỗi PR chỉ làm một việc. Không trộn đổi format với đổi logic trong cùng PR.
 - Không tự sửa code trong module của người khác. Cần thay đổi thì báo người phụ trách hoặc leader.
 - File dùng chung (`src/app/`, `src/shared/`, `package.json`, `vite.config.js`, `eslint.config.js`) chỉ sửa sau khi leader đồng ý.
@@ -174,7 +173,7 @@ Cả bốn lệnh phải chạy không lỗi. Không dùng `// eslint-disable` n
 Copy vào mô tả PR và tick đủ:
 
 ```
-- [ ] Nhánh tạo từ develop, PR vào develop
+- [ ] Nhánh tạo từ main, PR vào main
 - [ ] Chỉ sửa trong module mình phụ trách (hoặc đã được leader đồng ý)
 - [ ] Đúng cấu trúc thư mục và cách đặt tên
 - [ ] Không import chéo module, không import từ mock/
