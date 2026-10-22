@@ -1,18 +1,9 @@
-import { useLocation } from "react-router";
-import { Alert, Badge, Button, Card } from "react-bootstrap";
-import { Link } from "react-router";
-import { useShop } from "../../shop/ShopContext";
-import {
-  ticketStatuses,
-  ticketTypes,
-} from "../supportTicketConstants";
-
-function formatDate(date) {
-  return new Date(date).toLocaleString("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { useLocation } from 'react-router';
+import { Alert, Badge, Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router';
+import { useShop } from '@/app/providers/shop/ShopContext';
+import { ticketStatuses, ticketTypes } from '@/modules/support/constants';
+import { formatDateTime } from '@/shared/utils/format';
 
 export default function MySupportTicketsPage() {
   const { data } = useShop();
@@ -29,9 +20,7 @@ export default function MySupportTicketsPage() {
         Theo dõi các phiếu hỗ trợ đổi trả, bảo hành và đơn hàng của bạn.
       </p>
       {state?.created && (
-        <Alert variant="success">
-          Phiếu hỗ trợ của bạn đã được gửi thành công.
-        </Alert>
+        <Alert variant="success">Phiếu hỗ trợ của bạn đã được gửi thành công.</Alert>
       )}
       <div className="d-flex justify-content-end mb-3">
         <Button as={Link} to="/support-tickets/create">
@@ -42,9 +31,7 @@ export default function MySupportTicketsPage() {
       {supportTickets.length === 0 ? (
         <div className="empty-state">
           <h2 className="h5 fw-bold">Bạn chưa có phiếu hỗ trợ nào</h2>
-          <p className="text-secondary">
-            Các phiếu hỗ trợ đã gửi sẽ được hiển thị tại đây.
-          </p>
+          <p className="text-secondary">Các phiếu hỗ trợ đã gửi sẽ được hiển thị tại đây.</p>
           <Button as={Link} to="/orders" variant="outline-primary">
             Xem đơn hàng của tôi
           </Button>
@@ -53,11 +40,9 @@ export default function MySupportTicketsPage() {
         supportTickets.map((ticket) => {
           const status = ticketStatuses[ticket.status] || {
             label: ticket.status,
-            variant: "secondary",
+            variant: 'secondary',
           };
-          const order = data.orders.find(
-            (item) => item.id === ticket.order_id,
-          );
+          const order = data.orders.find((item) => item.id === ticket.order_id);
 
           return (
             <Card key={ticket.id} className="border-0 mb-3">
@@ -65,16 +50,13 @@ export default function MySupportTicketsPage() {
                 <div className="d-flex flex-wrap justify-content-between gap-3">
                   <div>
                     <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                      <h2 className="h6 fw-bold mb-0">
-                        {ticket.ticket_code}
-                      </h2>
+                      <h2 className="h6 fw-bold mb-0">{ticket.ticket_code}</h2>
                       <Badge bg="light" text="dark">
-                        {ticketTypes[ticket.ticket_type] ||
-                          ticket.ticket_type}
+                        {ticketTypes[ticket.ticket_type] || ticket.ticket_type}
                       </Badge>
                     </div>
                     <div className="small text-secondary">
-                      Gửi lúc {formatDate(ticket.created_at)}
+                      Gửi lúc {formatDateTime(ticket.created_at)}
                       {order && <> · Đơn hàng {order.order_code}</>}
                     </div>
                     <Button
@@ -88,7 +70,7 @@ export default function MySupportTicketsPage() {
                   </div>
                   <Badge
                     bg={status.variant}
-                    text={status.variant === "warning" ? "dark" : undefined}
+                    text={status.variant === 'warning' ? 'dark' : undefined}
                     className="align-self-start"
                   >
                     {status.label}
@@ -97,13 +79,10 @@ export default function MySupportTicketsPage() {
 
                 <hr />
                 <p className="fw-semibold mb-1">{ticket.reason}</p>
-                {ticket.description && (
-                  <p className="text-secondary mb-2">{ticket.description}</p>
-                )}
+                {ticket.description && <p className="text-secondary mb-2">{ticket.description}</p>}
                 {ticket.proposed_resolution && (
                   <div className="small rounded bg-light p-3 mt-3">
-                    <strong>Phản hồi từ cửa hàng:</strong>{" "}
-                    {ticket.proposed_resolution}
+                    <strong>Phản hồi từ cửa hàng:</strong> {ticket.proposed_resolution}
                   </div>
                 )}
               </Card.Body>

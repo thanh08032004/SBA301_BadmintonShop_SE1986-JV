@@ -1,43 +1,43 @@
-import ManagementLayout from "../layouts/ManagementLayout";
-import ProtectedRouter from "./ProtectedRouter";
-import SupportTicketManagementPage from "../../modules/support/pages/SupportTicketManagementPage";
-import SupportTicketManagementDetailPage from "../../modules/support/pages/SupportTicketManagementDetailPage";
-import DeliveryManagementPage from "../../modules/delivery/pages/DeliveryManagementPage";
-import DeliveryManagementDetailPage from "../../modules/delivery/pages/DeliveryManagementDetailPage";
-import DashboardPage from "../../modules/management/DashboardPage";
-import CatalogPage from "../../modules/management/CatalogPage";
-import ManagerOrdersPage from "../../modules/management/ManagerOrdersPage";
-import InvoiceManagementPage from "../../modules/management/InvoiceManagementPage";
-import InventoryManagementPage from "../../modules/management/InventoryManagementPage";
-
+import { ROLES } from '@/shared/constants/roles';
+import ManagementLayout from '@/app/layouts/management/ManagementLayout';
+import ProtectedRoute from './ProtectedRoute';
+import SupportTicketManagementPage from '@/modules/support/pages/SupportTicketManagementPage';
+import SupportTicketManagementDetailPage from '@/modules/support/pages/SupportTicketManagementDetailPage';
+import DeliveryManagementPage from '@/modules/delivery/pages/DeliveryManagementPage';
+import DeliveryManagementDetailPage from '@/modules/delivery/pages/DeliveryManagementDetailPage';
+import DashboardPage from '@/modules/management/pages/DashboardPage';
+import CatalogPage from '@/modules/management/pages/CatalogPage';
+import ManagerOrdersPage from '@/modules/management/pages/ManagerOrdersPage';
+import InvoiceManagementPage from '@/modules/management/pages/InvoiceManagementPage';
+import InventoryManagementPage from '@/modules/management/pages/InventoryManagementPage';
 
 export const managementRoutes = [
   {
-    element: <ProtectedRouter allowedRoles={["MANAGER", "STAFF"]} />,
+    element: <ProtectedRoute allowedRoles={[ROLES.MANAGER, ROLES.STAFF]} />,
     children: [
       {
-        path: "/management",
+        path: '/management',
         element: <ManagementLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
-          { path: "orders", element: <ManagerOrdersPage /> },
-          { path: "invoices", element: <InvoiceManagementPage /> },
-          { path: "inventory", element: <InventoryManagementPage /> },
-          { path: "catalog/:catalog", element: <CatalogPage /> },
+          { path: 'orders', element: <ManagerOrdersPage /> },
+          { path: 'invoices', element: <InvoiceManagementPage /> },
+          { path: 'inventory', element: <InventoryManagementPage /> },
+          { path: 'catalog/:catalog', element: <CatalogPage /> },
           {
-            path: "support-tickets",
+            path: 'support-tickets',
             element: <SupportTicketManagementPage />,
           },
           {
-            path: "support-tickets/:ticketId",
+            path: 'support-tickets/:ticketId',
             element: <SupportTicketManagementDetailPage />,
           },
           {
-            path: "deliveries",
+            path: 'deliveries',
             element: <DeliveryManagementPage />,
           },
           {
-            path: "deliveries/:deliveryId",
+            path: 'deliveries/:deliveryId',
             element: <DeliveryManagementDetailPage />,
           },
         ],

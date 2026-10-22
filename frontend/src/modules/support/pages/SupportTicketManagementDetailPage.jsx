@@ -1,54 +1,36 @@
-import { useContext, useState } from "react";
-import { Alert, Badge, Button, Card, Form } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router";
-import { AuthsContext } from "../../../app/provider/AuthsContext";
+import { useState } from 'react';
+import { Alert, Badge, Button, Card, Form } from 'react-bootstrap';
+import { Link, useNavigate, useParams } from 'react-router';
+import { useAuth } from '@/app/providers/auth/AuthContext';
 import {
   manageableTicketStatuses,
   resolutionTypes,
   ticketStatuses,
   ticketTypes,
-} from "../supportTicketConstants";
-import { money, useShop } from "../../shop/ShopContext";
-
-function formatDate(date) {
-  if (!date) return "Chưa cập nhật";
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "Chưa cập nhật";
-  return parsedDate.toLocaleString("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+} from '@/modules/support/constants';
+import { useShop } from '@/app/providers/shop/ShopContext';
+import { formatDateTime, formatMoney } from '@/shared/utils/format';
+import { supportApi } from '@/modules/support/api/support.api';
 
 export default function SupportTicketManagementDetailPage() {
   const { ticketId } = useParams();
   const { data, busy, act } = useShop();
-  const { user } = useContext(AuthsContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const ticket = (data.support_tickets || []).find(
-    (item) => String(item.id) === ticketId,
-  );
+  const ticket = (data.support_tickets || []).find((item) => String(item.id) === ticketId);
   const [status, setStatus] = useState(() =>
-    ticket?.status === "open" ? "under_review" : ticket?.status || "under_review",
+    ticket?.status === 'open' ? 'under_review' : ticket?.status || 'under_review',
   );
-  const [resolutionType, setResolutionType] = useState(
-    ticket?.resolution_type || "",
-  );
-  const [resolution, setResolution] = useState(
-    ticket?.proposed_resolution || "",
-  );
-  const [refundAmount, setRefundAmount] = useState(
-    ticket?.proposed_refund_amount ?? "",
-  );
-  const [error, setError] = useState("");
+  const [resolutionType, setResolutionType] = useState(ticket?.resolution_type || '');
+  const [resolution, setResolution] = useState(ticket?.proposed_resolution || '');
+  const [refundAmount, setRefundAmount] = useState(ticket?.proposed_refund_amount ?? '');
+  const [error, setError] = useState('');
 
   if (!ticket) {
     return (
       <>
         <h1 className="h2 fw-bold mb-2">Không tìm thấy phiếu hỗ trợ</h1>
-        <p className="text-secondary mb-4">
-          Phiếu hỗ trợ không tồn tại hoặc đã bị xóa.
-        </p>
+        <p className="text-secondary mb-4">Phiếu hỗ trợ không tồn tại hoặc đã bị xóa.</p>
         <Button as={Link} to="/management/support-tickets" variant="outline-primary">
           Quay lại danh sách
         </Button>
@@ -56,47 +38,38 @@ export default function SupportTicketManagementDetailPage() {
     );
   }
 
-  const order = (data.orders || []).find(
-    (item) => item.id === ticket.order_id,
-  );
-  const orderItems = (data.order_items || []).filter(
-    (item) => item.order_id === ticket.order_id,
-  );
+  const order = (data.orders || []).find((item) => item.id === ticket.order_id);
+  const orderItems = (data.order_items || []).filter((item) => item.order_id === ticket.order_id);
   const ticketItems = (data.ticket_items || [])
     .filter((item) => item.ticket_id === ticket.id)
     .map((item) => ({
       ...item,
-      orderItem: orderItems.find(
-        (orderItem) => orderItem.id === item.order_item_id,
-      ),
+      orderItem: orderItems.find((orderItem) => orderItem.id === item.order_item_id),
     }))
     .filter((item) => item.orderItem);
   const currentStatus = ticketStatuses[ticket.status] || {
-    label: ticket.status || "Chưa xác định",
-    variant: "secondary",
+    label: ticket.status || 'Chưa xác định',
+    variant: 'secondary',
   };
 
   async function submitResolution(event) {
     event.preventDefault();
-    setError("");
+    setError('');
     try {
-      await act({
-        type: "update_support_ticket",
-        ticket_id: ticket.id,
-        status,
-        resolution_type: resolutionType || null,
-        proposed_resolution: resolution.trim(),
-        proposed_refund_amount:
-          resolutionType === "refund" && refundAmount !== ""
-            ? Number(refundAmount)
-            : null,
-        handled_by: user?.id || user?.email || "",
-      });
-      navigate("/management/support-tickets", { state: { updated: true } });
-    } catch (updateError) {
-      setError(
-        updateError.message || "Không thể cập nhật phiếu. Vui lòng thử lại.",
+      await act(() =>
+        supportApi.updateTicket({
+          ticket_id: ticket.id,
+          status,
+          resolution_type: resolutionType || null,
+          proposed_resolution: resolution.trim(),
+          proposed_refund_amount:
+            resolutionType === 'refund' && refundAmount !== '' ? Number(refundAmount) : null,
+          handled_by: user?.id || user?.email || '',
+        }),
       );
+      navigate('/management/support-tickets', { state: { updated: true } });
+    } catch (updateError) {
+      setError(updateError.message || 'Không thể cập nhật phiếu. Vui lòng thử lại.');
     }
   }
 
@@ -110,11 +83,7 @@ export default function SupportTicketManagementDetailPage() {
             Kiểm tra nội dung yêu cầu và cập nhật kết quả phản hồi khách hàng.
           </p>
         </div>
-        <Button
-          as={Link}
-          to="/management/support-tickets"
-          variant="outline-secondary"
-        >
+        <Button as={Link} to="/management/support-tickets" variant="outline-secondary">
           Quay lại danh sách
         </Button>
       </div>
@@ -133,15 +102,14 @@ export default function SupportTicketManagementDetailPage() {
                 </Badge>
                 {ticket.resolution_type && (
                   <Badge bg="light" text="dark">
-                    {resolutionTypes[ticket.resolution_type] ||
-                      ticket.resolution_type}
+                    {resolutionTypes[ticket.resolution_type] || ticket.resolution_type}
                   </Badge>
                 )}
               </div>
             </div>
             <Badge
               bg={currentStatus.variant}
-              text={currentStatus.variant === "warning" ? "dark" : undefined}
+              text={currentStatus.variant === 'warning' ? 'dark' : undefined}
             >
               {currentStatus.label}
             </Badge>
@@ -150,22 +118,22 @@ export default function SupportTicketManagementDetailPage() {
           <div className="row g-3">
             <div className="col-sm-6">
               <div className="small text-secondary">Ngày gửi</div>
-              <div className="fw-semibold">{formatDate(ticket.created_at)}</div>
+              <div className="fw-semibold">{formatDateTime(ticket.created_at)}</div>
             </div>
             <div className="col-sm-6">
               <div className="small text-secondary">Cập nhật lần cuối</div>
-              <div className="fw-semibold">{formatDate(ticket.updated_at)}</div>
+              <div className="fw-semibold">{formatDateTime(ticket.updated_at)}</div>
             </div>
             {ticket.reviewed_at && (
               <div className="col-sm-6">
                 <div className="small text-secondary">Ngày tiếp nhận</div>
-                <div className="fw-semibold">{formatDate(ticket.reviewed_at)}</div>
+                <div className="fw-semibold">{formatDateTime(ticket.reviewed_at)}</div>
               </div>
             )}
             {ticket.resolved_at && (
               <div className="col-sm-6">
                 <div className="small text-secondary">Ngày hoàn tất</div>
-                <div className="fw-semibold">{formatDate(ticket.resolved_at)}</div>
+                <div className="fw-semibold">{formatDateTime(ticket.resolved_at)}</div>
               </div>
             )}
           </div>
@@ -181,17 +149,14 @@ export default function SupportTicketManagementDetailPage() {
               <p className="fw-semibold">{ticket.reason}</p>
               <div className="small text-secondary mb-1">Mô tả chi tiết</div>
               <p className="mb-0 text-break">
-                {ticket.description || "Khách hàng chưa cung cấp mô tả chi tiết."}
+                {ticket.description || 'Khách hàng chưa cung cấp mô tả chi tiết.'}
               </p>
               {ticketItems.length > 0 && (
                 <>
                   <hr />
                   <h3 className="h6 fw-bold mb-3">Sản phẩm liên quan</h3>
                   {ticketItems.map(({ id, quantity, orderItem }) => (
-                    <div
-                      className="d-flex justify-content-between gap-3 mb-2"
-                      key={id}
-                    >
+                    <div className="d-flex justify-content-between gap-3 mb-2" key={id}>
                       <span>
                         {orderItem.product_name}
                         {orderItem.variant_info && (
@@ -220,25 +185,17 @@ export default function SupportTicketManagementDetailPage() {
                   <div className="small text-secondary mb-1">Mã đơn hàng</div>
                   <p className="fw-semibold">{order.order_code}</p>
                   <div className="small text-secondary mb-1">Người nhận</div>
-                  <p className="fw-semibold mb-1">
-                    {order.receiver_name || "Chưa cập nhật"}
-                  </p>
-                  {order.receiver_phone && (
-                    <p className="text-secondary">{order.receiver_phone}</p>
-                  )}
+                  <p className="fw-semibold mb-1">{order.receiver_name || 'Chưa cập nhật'}</p>
+                  {order.receiver_phone && <p className="text-secondary">{order.receiver_phone}</p>}
                   {order.shipping_address && (
                     <>
-                      <div className="small text-secondary mb-1">
-                        Địa chỉ giao hàng
-                      </div>
+                      <div className="small text-secondary mb-1">Địa chỉ giao hàng</div>
                       <p className="mb-0">{order.shipping_address}</p>
                     </>
                   )}
                 </>
               ) : (
-                <p className="text-secondary mb-0">
-                  Không tìm thấy thông tin đơn hàng liên quan.
-                </p>
+                <p className="text-secondary mb-0">Không tìm thấy thông tin đơn hàng liên quan.</p>
               )}
             </Card.Body>
           </Card>
@@ -282,7 +239,7 @@ export default function SupportTicketManagementDetailPage() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              {resolutionType === "refund" && (
+              {resolutionType === 'refund' && (
                 <div className="col-md-6">
                   <Form.Group controlId="ticket-refund-amount">
                     <Form.Label>Số tiền hoàn dự kiến (VND)</Form.Label>
@@ -304,7 +261,7 @@ export default function SupportTicketManagementDetailPage() {
                     as="textarea"
                     rows={5}
                     maxLength={5000}
-                    required={["approved", "rejected", "resolved"].includes(status)}
+                    required={['approved', 'rejected', 'resolved'].includes(status)}
                     value={resolution}
                     onChange={(event) => setResolution(event.target.value)}
                     placeholder="Nêu rõ kết quả hoặc hướng dẫn tiếp theo cho khách hàng"
@@ -315,13 +272,12 @@ export default function SupportTicketManagementDetailPage() {
             </div>
             {ticket.proposed_refund_amount != null && (
               <p className="small text-secondary mt-3 mb-0">
-                Số tiền hoàn hiện tại:{" "}
-                <strong>{money(ticket.proposed_refund_amount)}</strong>
+                Số tiền hoàn hiện tại: <strong>{formatMoney(ticket.proposed_refund_amount)}</strong>
               </p>
             )}
             <div className="d-flex flex-wrap gap-2 mt-4">
               <Button type="submit" disabled={busy}>
-                {busy ? "Đang lưu..." : "Lưu kết quả xử lý"}
+                {busy ? 'Đang lưu...' : 'Lưu kết quả xử lý'}
               </Button>
               <Button
                 as={Link}

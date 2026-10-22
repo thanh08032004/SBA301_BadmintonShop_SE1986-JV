@@ -6,14 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node --watch mock-server.mjs",
-    "partner": "node ../partner-system/start.mjs",
-    "test:shop": "node --test mock-server.test.mjs",
-    "test:management": "node --test management-api.test.mjs management-actions.test.mjs invoice-actions.test.mjs inventory-actions.test.mjs dashboard.test.mjs verification/management-render.test.mjs",
-    "seed:management": "node seed-management.mjs",
-    "seed:dashboard": "node seed-dashboard.mjs"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "mock": "node --watch mock/server.mjs",
+    "test:mock": "node --test \"mock/tests/*.test.mjs\"",
+    "test:render": "node --test \"tests/*.test.mjs\"",
+    "test": "npm run test:mock && npm run test:render",
+    "seed:management": "node mock/seed/management.mjs",
+    "seed:dashboard": "node mock/seed/dashboard.mjs",
+    "partner": "node ../partner-system/start.mjs"
   },
   "dependencies": {
     "axios": "^1.20.0",
@@ -32,7 +35,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
     "globals": "^17.12.0",
-    "json-server": "^1.0.0-beta.15",
+    "prettier": "^3.6.2",
     "vite": "^8.3.0"
   }
 }

@@ -1,4 +1,4 @@
-﻿export default function Icon({ name, size = 20 }) {
+export default function Icon({ name, size = 20 }) {
   const paths = {
     cart: (
       <>

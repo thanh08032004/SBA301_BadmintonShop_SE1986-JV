@@ -1,0 +1,317 @@
+.payment-page {
+  min-height: 100%;
+  background: transparent;
+}
+
+.payment-heading {
+  max-width: 720px;
+}
+
+.payment-eyebrow,
+.payment-step {
+  color: #237db4;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.payment-card,
+.delivery-card,
+.review-card {
+  border: 1px solid #e8ebef;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgb(23 43 77 / 5%);
+}
+
+.payment-method-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 76px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e5e9ed;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.payment-method:hover,
+.payment-method.is-selected {
+  border-color: #2386c8;
+  background: #f0f8fd;
+}
+
+.payment-method .form-check {
+  display: flex;
+  align-items: center;
+  min-height: auto;
+  margin: 0;
+}
+
+.payment-method .form-check-input {
+  float: none;
+  margin: 0;
+  cursor: pointer;
+}
+
+.payment-method .form-check-input:checked {
+  border-color: #2386c8;
+  background-color: #2386c8;
+}
+
+.payment-method-mark {
+  display: inline-flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #eef3f5;
+  color: #334155;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.payment-method-mark-mbbank {
+  background: #e9f6ef;
+  color: #16865b;
+}
+
+.payment-method-mark-momo {
+  background: #fff0f8;
+  color: #c21872;
+  font-size: 1.1rem;
+}
+
+.payment-method-mark-cod {
+  font-size: 0.55rem;
+}
+
+.payment-method-mark-card {
+  background: #edf2ff;
+  color: #3659a5;
+  font-size: 0.55rem;
+}
+
+.payment-method-copy {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.payment-method-name {
+  color: #172b4d;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.payment-method-description {
+  color: #718096;
+  font-size: 0.8rem;
+}
+
+.payment-security {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #718096;
+  font-size: 0.82rem;
+}
+
+.payment-security span {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e7f4fd;
+  color: #237db4;
+  font-weight: 700;
+}
+
+.payment-submit {
+  border-color: #2386c8;
+  background: #2386c8;
+  font-weight: 700;
+}
+
+.payment-submit:hover,
+.payment-submit:focus {
+  border-color: #196ba2;
+  background: #196ba2;
+}
+
+.payment-submit span {
+  margin-left: 0.4rem;
+}
+
+.delivery-recipient {
+  color: #263746;
+  font-size: 0.92rem;
+}
+
+.delivery-recipient span {
+  padding: 0 0.2rem;
+  color: #a0aab4;
+}
+
+.delivery-edit {
+  padding: 0;
+  color: #237db4;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.delivery-edit:hover,
+.delivery-edit:focus {
+  color: #196ba2;
+}
+
+.review-item-count {
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  background: #f1f4f6;
+  color: #657381;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.order-list-toggle {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #e8ebef;
+  border-radius: 10px;
+  color: #425466;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
+.order-list-toggle:hover,
+.order-list-toggle:focus {
+  border-color: #d5dce2;
+  background: #f7f8fa;
+  color: #263746;
+}
+
+.order-list-toggle span:last-child {
+  color: #237db4;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.review-items {
+  padding-top: 0.5rem;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eef0f2;
+}
+
+.review-item-image {
+  display: grid;
+  flex: 0 0 42px;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #e7f4fd;
+  color: #237db4;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.review-item-copy {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8rem;
+}
+
+.review-item-price {
+  color: #344454;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.review-totals {
+  display: grid;
+  gap: 0.75rem;
+  color: #667482;
+  font-size: 0.88rem;
+}
+
+.review-totals div,
+.review-grand-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.review-totals div span:last-child {
+  color: #344454;
+  font-weight: 500;
+}
+
+.review-grand-total {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e8ebef;
+  color: #263746;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.review-grand-total strong {
+  color: #237db4;
+  font-size: 1.3rem;
+}
+
+.review-caption {
+  line-height: 1.5;
+}
+
+@media (max-width: 575.98px) {
+  .payment-card .card-body,
+  .delivery-card .card-body,
+  .review-card .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .payment-method {
+    gap: 0.65rem;
+    padding: 0.75rem;
+  }
+
+  .payment-method-description {
+    font-size: 0.74rem;
+  }
+
+  .payment-qr-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .payment-qr-image {
+    flex-basis: auto;
+    align-self: center;
+  }
+
+  .review-grand-total strong {
+    font-size: 1.15rem;
+  }
+}

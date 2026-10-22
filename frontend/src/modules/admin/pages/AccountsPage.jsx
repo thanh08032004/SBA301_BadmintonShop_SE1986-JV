@@ -1,11 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Badge, Button, Form, Alert, Spinner } from 'react-bootstrap';
-import { AuthsContext } from '../../../app/provider/AuthsContext';
-import { adminApi } from '../api/admin.api';
-import UserFormModal from '../component/UserFormModal';
+import { useAuth } from '@/app/providers/auth/AuthContext';
+import { adminApi } from '@/modules/admin/api/admin.api';
+import UserFormModal from '@/modules/admin/components/UserFormModal';
 
 export default function AccountsPage() {
-  const { user: currentAdmin } = useContext(AuthsContext);
+  const { user: currentAdmin } = useAuth();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,14 +30,22 @@ export default function AccountsPage() {
       const data = await adminApi.getUsers();
       setUsers(data || []);
     } catch (err) {
-      setError(err.message || 'Không thể tải danh sách tài khoản từ jsonDB (port 3000).');
+      setError(err.message || 'Không thể tải danh sách tài khoản.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadUsers();
+    let active = true;
+    adminApi
+      .getUsers()
+      .then((data) => active && setUsers(data || []))
+      .catch((err) => active && setError(err.message || 'Không thể tải danh sách tài khoản.'))
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Statistics
@@ -174,7 +182,12 @@ export default function AccountsPage() {
         <Button
           variant="primary"
           onClick={handleCreate}
-          style={{ backgroundColor: '#2563eb', borderColor: '#2563eb', padding: '10px 18px', fontWeight: 600 }}
+          style={{
+            backgroundColor: '#2563eb',
+            borderColor: '#2563eb',
+            padding: '10px 18px',
+            fontWeight: 600,
+          }}
         >
           + Thêm người dùng mới
         </Button>
@@ -259,7 +272,12 @@ export default function AccountsPage() {
             </Form.Select>
           </div>
           <div className="col-12 col-md-1 text-end">
-            <Button variant="outline-secondary" onClick={loadUsers} title="Tải lại danh sách" className="w-100">
+            <Button
+              variant="outline-secondary"
+              onClick={loadUsers}
+              title="Tải lại danh sách"
+              className="w-100"
+            >
               🔄
             </Button>
           </div>
@@ -271,140 +289,173 @@ export default function AccountsPage() {
         {loading ? (
           <div className="p-5 text-center">
             <Spinner animation="border" variant="primary" />
-            <p className="mt-3 text-muted">Đang tải danh sách tài khoản từ jsonDB (port 3000)...</p>
+            <p className="mt-3 text-muted">Đang tải danh sách tài khoản...</p>
           </div>
         ) : (
           <>
             <Table responsive hover className="mb-0 align-middle">
-            <thead style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-              <tr>
-                <th style={{ padding: '14px 18px', width: '70px', color: '#475569', fontSize: '13px' }}>ID</th>
-                <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>Họ và tên</th>
-                <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>Email</th>
-                <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>Vai trò</th>
-                <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>Trạng thái</th>
-                <th style={{ padding: '14px 18px', textAlign: 'right', color: '#475569', fontSize: '13px' }}>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers.length === 0 ? (
+              <thead style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                 <tr>
-                  <td colSpan="6" className="text-center py-5 text-muted">
-                    Không tìm thấy người dùng nào phù hợp với bộ lọc.
-                  </td>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      width: '70px',
+                      color: '#475569',
+                      fontSize: '13px',
+                    }}
+                  >
+                    ID
+                  </th>
+                  <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>
+                    Họ và tên
+                  </th>
+                  <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>
+                    Email
+                  </th>
+                  <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>
+                    Vai trò
+                  </th>
+                  <th style={{ padding: '14px 18px', color: '#475569', fontSize: '13px' }}>
+                    Trạng thái
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      textAlign: 'right',
+                      color: '#475569',
+                      fontSize: '13px',
+                    }}
+                  >
+                    Hành động
+                  </th>
                 </tr>
-              ) : (
-                paginatedUsers.map((u) => {
-                  const isCurrent = String(u.email).toLowerCase() === String(currentAdmin?.email).toLowerCase();
-                  const isUserActive = u.isActive !== false;
+              </thead>
+              <tbody>
+                {paginatedUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-5 text-muted">
+                      Không tìm thấy người dùng nào phù hợp với bộ lọc.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedUsers.map((u) => {
+                    const isCurrent =
+                      String(u.email).toLowerCase() === String(currentAdmin?.email).toLowerCase();
+                    const isUserActive = u.isActive !== false;
 
-                  return (
-                    <tr key={u.id || u.email}>
-                      <td style={{ padding: '14px 18px', fontWeight: 600, color: '#64748b' }}>
-                        #{u.id || '—'}
-                      </td>
-                      <td style={{ padding: '14px 18px' }}>
-                        <div style={{ fontWeight: 600, color: '#1e293b' }}>
-                          {u.fullName || '—'}
-                          {isCurrent && (
-                            <Badge bg="warning" text="dark" className="ms-2" style={{ fontSize: '10px' }}>
-                              Bạn
+                    return (
+                      <tr key={u.id || u.email}>
+                        <td style={{ padding: '14px 18px', fontWeight: 600, color: '#64748b' }}>
+                          #{u.id || '—'}
+                        </td>
+                        <td style={{ padding: '14px 18px' }}>
+                          <div style={{ fontWeight: 600, color: '#1e293b' }}>
+                            {u.fullName || '—'}
+                            {isCurrent && (
+                              <Badge
+                                bg="warning"
+                                text="dark"
+                                className="ms-2"
+                                style={{ fontSize: '10px' }}
+                              >
+                                Bạn
+                              </Badge>
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ padding: '14px 18px', color: '#334155' }}>{u.email}</td>
+                        <td style={{ padding: '14px 18px' }}>{roleBadge(u.roles)}</td>
+                        <td style={{ padding: '14px 18px' }}>
+                          {isUserActive ? (
+                            <Badge bg="success" style={{ fontWeight: 500, padding: '6px 10px' }}>
+                              ● Hoạt động
+                            </Badge>
+                          ) : (
+                            <Badge bg="danger" style={{ fontWeight: 500, padding: '6px 10px' }}>
+                              ✕ Đã khóa
                             </Badge>
                           )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '14px 18px', color: '#334155' }}>{u.email}</td>
-                      <td style={{ padding: '14px 18px' }}>{roleBadge(u.roles)}</td>
-                      <td style={{ padding: '14px 18px' }}>
-                        {isUserActive ? (
-                          <Badge bg="success" style={{ fontWeight: 500, padding: '6px 10px' }}>
-                            ● Hoạt động
-                          </Badge>
-                        ) : (
-                          <Badge bg="danger" style={{ fontWeight: 500, padding: '6px 10px' }}>
-                            ✕ Đã khóa
-                          </Badge>
-                        )}
-                      </td>
-                      <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                        <div className="d-flex justify-content-end">
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => handleEdit(u)}
-                            style={{ fontSize: '12px', padding: '4px 12px' }}
-                          >
-                            Sửa
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </Table>
+                        </td>
+                        <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                          <div className="d-flex justify-content-end">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={() => handleEdit(u)}
+                              style={{ fontSize: '12px', padding: '4px 12px' }}
+                            >
+                              Sửa
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </Table>
 
-          {/* Pagination Controls */}
-          {filteredUsers.length > 0 && (
-            <div
-              className="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top"
-              style={{ backgroundColor: '#f8fafc' }}
-            >
-              <span style={{ fontSize: '13px', color: '#64748b' }}>
-                Hiển thị <strong>{startIndex + 1}</strong> -{' '}
-                <strong>{Math.min(startIndex + pageSize, filteredUsers.length)}</strong> trong tổng số{' '}
-                <strong>{filteredUsers.length}</strong> tài khoản
-              </span>
+            {/* Pagination Controls */}
+            {filteredUsers.length > 0 && (
+              <div
+                className="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top"
+                style={{ backgroundColor: '#f8fafc' }}
+              >
+                <span style={{ fontSize: '13px', color: '#64748b' }}>
+                  Hiển thị <strong>{startIndex + 1}</strong> -{' '}
+                  <strong>{Math.min(startIndex + pageSize, filteredUsers.length)}</strong> trong
+                  tổng số <strong>{filteredUsers.length}</strong> tài khoản
+                </span>
 
-              {totalPages > 1 && (
-                <div className="d-flex align-items-center gap-1">
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    disabled={validPage <= 1}
-                    onClick={() => setCurrentPage(validPage - 1)}
-                    style={{ fontSize: '12px', padding: '4px 10px' }}
-                  >
-                    &laquo; Trước
-                  </Button>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                {totalPages > 1 && (
+                  <div className="d-flex align-items-center gap-1">
                     <Button
-                      key={p}
-                      variant={p === validPage ? 'primary' : 'outline-secondary'}
+                      variant="outline-secondary"
                       size="sm"
-                      onClick={() => setCurrentPage(p)}
-                      style={{
-                        fontSize: '12px',
-                        padding: '4px 10px',
-                        backgroundColor: p === validPage ? '#2563eb' : undefined,
-                        borderColor: p === validPage ? '#2563eb' : undefined,
-                      }}
+                      disabled={validPage <= 1}
+                      onClick={() => setCurrentPage(validPage - 1)}
+                      style={{ fontSize: '12px', padding: '4px 10px' }}
                     >
-                      {p}
+                      &laquo; Trước
                     </Button>
-                  ))}
 
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    disabled={validPage >= totalPages}
-                    onClick={() => setCurrentPage(validPage + 1)}
-                    style={{ fontSize: '12px', padding: '4px 10px' }}
-                  >
-                    Sau &raquo;
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </>
-      )}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <Button
+                        key={p}
+                        variant={p === validPage ? 'primary' : 'outline-secondary'}
+                        size="sm"
+                        onClick={() => setCurrentPage(p)}
+                        style={{
+                          fontSize: '12px',
+                          padding: '4px 10px',
+                          backgroundColor: p === validPage ? '#2563eb' : undefined,
+                          borderColor: p === validPage ? '#2563eb' : undefined,
+                        }}
+                      >
+                        {p}
+                      </Button>
+                    ))}
+
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      disabled={validPage >= totalPages}
+                      onClick={() => setCurrentPage(validPage + 1)}
+                      style={{ fontSize: '12px', padding: '4px 10px' }}
+                    >
+                      Sau &raquo;
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Modal create / edit */}
       <UserFormModal
+        key={`${selectedUser?.id ?? 'new'}-${showModal}`}
         show={showModal}
         onHide={() => setShowModal(false)}
         user={selectedUser}

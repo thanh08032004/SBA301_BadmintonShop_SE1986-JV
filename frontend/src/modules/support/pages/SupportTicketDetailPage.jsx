@@ -1,28 +1,13 @@
-import { Badge, Button, Card } from "react-bootstrap";
-import { Link, useParams } from "react-router";
-import { money, useShop } from "../../shop/ShopContext";
-import {
-  resolutionTypes,
-  ticketStatuses,
-  ticketTypes,
-} from "../supportTicketConstants";
-
-function formatDate(date) {
-  if (!date) return "Chưa cập nhật";
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "Chưa cập nhật";
-  return parsedDate.toLocaleString("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { Badge, Button, Card } from 'react-bootstrap';
+import { Link, useParams } from 'react-router';
+import { useShop } from '@/app/providers/shop/ShopContext';
+import { formatDateTime, formatMoney } from '@/shared/utils/format';
+import { resolutionTypes, ticketStatuses, ticketTypes } from '@/modules/support/constants';
 
 export default function SupportTicketDetailPage() {
   const { ticketId } = useParams();
   const { data } = useShop();
-  const ticket = (data.support_tickets || []).find(
-    (item) => String(item.id) === ticketId,
-  );
+  const ticket = (data.support_tickets || []).find((item) => String(item.id) === ticketId);
 
   if (!ticket) {
     return (
@@ -40,13 +25,11 @@ export default function SupportTicketDetailPage() {
   }
 
   const status = ticketStatuses[ticket.status] || {
-    label: ticket.status || "Chưa xác định",
-    variant: "secondary",
+    label: ticket.status || 'Chưa xác định',
+    variant: 'secondary',
   };
   const order = data.orders.find((item) => item.id === ticket.order_id);
-  const orderItems = (data.order_items || []).filter(
-    (item) => item.order_id === ticket.order_id,
-  );
+  const orderItems = (data.order_items || []).filter((item) => item.order_id === ticket.order_id);
   const ticketItems = (data.ticket_items || [])
     .filter((item) => item.ticket_id === ticket.id)
     .map((item) => ({
@@ -65,11 +48,7 @@ export default function SupportTicketDetailPage() {
             Theo dõi thông tin và kết quả xử lý phiếu hỗ trợ của bạn.
           </p>
         </div>
-        <Button
-          as={Link}
-          to="/support-tickets"
-          variant="outline-secondary"
-        >
+        <Button as={Link} to="/support-tickets" variant="outline-secondary">
           Quay lại danh sách
         </Button>
       </div>
@@ -86,15 +65,14 @@ export default function SupportTicketDetailPage() {
                 </Badge>
                 {ticket.resolution_type && (
                   <Badge bg="light" text="dark">
-                    {resolutionTypes[ticket.resolution_type] ||
-                      ticket.resolution_type}
+                    {resolutionTypes[ticket.resolution_type] || ticket.resolution_type}
                   </Badge>
                 )}
               </div>
             </div>
             <Badge
               bg={status.variant}
-              text={status.variant === "warning" ? "dark" : undefined}
+              text={status.variant === 'warning' ? 'dark' : undefined}
               className="align-self-start"
             >
               {status.label}
@@ -104,26 +82,22 @@ export default function SupportTicketDetailPage() {
           <div className="row g-3">
             <div className="col-sm-6">
               <div className="small text-secondary">Ngày gửi</div>
-              <div className="fw-semibold">{formatDate(ticket.created_at)}</div>
+              <div className="fw-semibold">{formatDateTime(ticket.created_at)}</div>
             </div>
             <div className="col-sm-6">
               <div className="small text-secondary">Cập nhật lần cuối</div>
-              <div className="fw-semibold">{formatDate(ticket.updated_at)}</div>
+              <div className="fw-semibold">{formatDateTime(ticket.updated_at)}</div>
             </div>
             {ticket.reviewed_at && (
               <div className="col-sm-6">
                 <div className="small text-secondary">Ngày tiếp nhận xử lý</div>
-                <div className="fw-semibold">
-                  {formatDate(ticket.reviewed_at)}
-                </div>
+                <div className="fw-semibold">{formatDateTime(ticket.reviewed_at)}</div>
               </div>
             )}
             {ticket.resolved_at && (
               <div className="col-sm-6">
                 <div className="small text-secondary">Ngày hoàn tất</div>
-                <div className="fw-semibold">
-                  {formatDate(ticket.resolved_at)}
-                </div>
+                <div className="fw-semibold">{formatDateTime(ticket.resolved_at)}</div>
               </div>
             )}
           </div>
@@ -139,17 +113,14 @@ export default function SupportTicketDetailPage() {
               <p className="fw-semibold">{ticket.reason}</p>
               <div className="small text-secondary mb-1">Mô tả chi tiết</div>
               <p className="mb-0 text-break">
-                {ticket.description || "Bạn chưa cung cấp mô tả chi tiết."}
+                {ticket.description || 'Bạn chưa cung cấp mô tả chi tiết.'}
               </p>
               {ticketItems.length > 0 && (
                 <>
                   <hr />
                   <h3 className="h6 fw-bold mb-3">Sản phẩm liên quan</h3>
                   {ticketItems.map(({ id, quantity, orderItem }) => (
-                    <div
-                      className="d-flex justify-content-between gap-3 mb-2"
-                      key={id}
-                    >
+                    <div className="d-flex justify-content-between gap-3 mb-2" key={id}>
                       <span>
                         {orderItem.product_name}
                         {orderItem.variant_info && (
@@ -176,27 +147,19 @@ export default function SupportTicketDetailPage() {
                   <div className="small text-secondary mb-1">Mã đơn hàng</div>
                   <p className="fw-semibold">{order.order_code}</p>
                   <div className="small text-secondary mb-1">Ngày đặt hàng</div>
-                  <p className="fw-semibold">{formatDate(order.created_at)}</p>
+                  <p className="fw-semibold">{formatDateTime(order.created_at)}</p>
                   <div className="small text-secondary mb-1">Người nhận</div>
-                  <p className="fw-semibold mb-1">
-                    {order.receiver_name || "Chưa cập nhật"}
-                  </p>
-                  {order.receiver_phone && (
-                    <p className="text-secondary">{order.receiver_phone}</p>
-                  )}
+                  <p className="fw-semibold mb-1">{order.receiver_name || 'Chưa cập nhật'}</p>
+                  {order.receiver_phone && <p className="text-secondary">{order.receiver_phone}</p>}
                   {order.shipping_address && (
                     <>
-                      <div className="small text-secondary mb-1">
-                        Địa chỉ giao hàng
-                      </div>
+                      <div className="small text-secondary mb-1">Địa chỉ giao hàng</div>
                       <p className="mb-0">{order.shipping_address}</p>
                     </>
                   )}
                 </>
               ) : (
-                <p className="text-secondary mb-0">
-                  Không tìm thấy thông tin đơn hàng liên quan.
-                </p>
+                <p className="text-secondary mb-0">Không tìm thấy thông tin đơn hàng liên quan.</p>
               )}
             </Card.Body>
           </Card>
@@ -210,7 +173,7 @@ export default function SupportTicketDetailPage() {
             <p className="mb-2 text-break">{ticket.proposed_resolution}</p>
             {ticket.proposed_refund_amount != null && (
               <div className="fw-semibold text-primary">
-                Số tiền hoàn dự kiến: {money(ticket.proposed_refund_amount)}
+                Số tiền hoàn dự kiến: {formatMoney(ticket.proposed_refund_amount)}
               </div>
             )}
           </Card.Body>

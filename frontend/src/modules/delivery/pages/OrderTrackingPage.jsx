@@ -1,38 +1,22 @@
-import { useState } from "react";
-import { Alert, Badge, Button, Card, Col, Row, Spinner, Table } from "react-bootstrap";
-import { Link, useParams } from "react-router";
-import {
-  carriers,
-  carrierServices,
-  deliveryStatuses,
-} from "../deliveryConstants";
-import { money, useShop } from "../../shop/ShopContext";
-import "../delivery.css";
-
-function formatDate(date) {
-  if (!date) return "Chưa cập nhật";
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "Chưa cập nhật";
-  return parsedDate.toLocaleString("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { useState } from 'react';
+import { Alert, Badge, Button, Card, Col, Row, Spinner, Table } from 'react-bootstrap';
+import { Link, useParams } from 'react-router';
+import { carriers, carrierServices, deliveryStatuses } from '@/modules/delivery/constants';
+import { useShop } from '@/app/providers/shop/ShopContext';
+import { formatDateTime, formatMoney } from '@/shared/utils/format';
+import '@/modules/delivery/delivery.css';
+import { deliveryApi } from '@/modules/delivery/api/delivery.api';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
   const { data, act } = useShop();
   const [isSyncing, setIsSyncing] = useState(false);
-  const [syncMessage, setSyncMessage] = useState("");
-  const [error, setError] = useState("");
+  const [syncMessage, setSyncMessage] = useState('');
+  const [error, setError] = useState('');
 
   const order = (data.orders || []).find((item) => String(item.id) === orderId);
-  const delivery = (data.deliveries || []).find(
-    (item) => String(item.order_id) === orderId,
-  );
-  const orderItems = (data.order_items || []).filter(
-    (item) => String(item.order_id) === orderId,
-  );
+  const delivery = (data.deliveries || []).find((item) => String(item.order_id) === orderId);
+  const orderItems = (data.order_items || []).filter((item) => String(item.order_id) === orderId);
 
   if (!order) {
     return (
@@ -51,36 +35,35 @@ export default function OrderTrackingPage() {
 
   const carrier = delivery
     ? carriers[delivery.carrier] || {
-        name: delivery.carrier?.toUpperCase() || "Đối tác vận chuyển",
-        shortName: delivery.carrier?.toUpperCase() || "ĐVVC",
-        badgeColor: "#333",
-        badgeBg: "#eee",
-        hotline: "1900 xxxx",
+        name: delivery.carrier?.toUpperCase() || 'Đối tác vận chuyển',
+        shortName: delivery.carrier?.toUpperCase() || 'ĐVVC',
+        badgeColor: '#333',
+        badgeBg: '#eee',
+        hotline: '1900 xxxx',
       }
     : null;
 
   const statusInfo = delivery
     ? deliveryStatuses[delivery.status] || {
-        label: delivery.status || "Chưa xác định",
-        variant: "secondary",
+        label: delivery.status || 'Chưa xác định',
+        variant: 'secondary',
       }
-    : { label: "Đang chuẩn bị hàng", variant: "warning" };
+    : { label: 'Đang chuẩn bị hàng', variant: 'warning' };
 
   async function handleRefresh() {
     if (!delivery) return;
     setIsSyncing(true);
-    setError("");
-    setSyncMessage("");
+    setError('');
+    setSyncMessage('');
     try {
-      await act({
-        type: "sync_carrier_status",
-        delivery_id: delivery.id,
-      });
-      setSyncMessage(
-        `Đã làm mới thông tin hành trình mới nhất từ ${carrier?.name || "ĐVVC"}.`,
+      await act(() =>
+        deliveryApi.syncCarrierStatus({
+          delivery_id: delivery.id,
+        }),
       );
+      setSyncMessage(`Đã làm mới thông tin hành trình mới nhất từ ${carrier?.name || 'ĐVVC'}.`);
     } catch (err) {
-      setError(err.message || "Không thể làm mới hành trình giao hàng.");
+      setError(err.message || 'Không thể làm mới hành trình giao hàng.');
     } finally {
       setIsSyncing(false);
     }
@@ -93,11 +76,11 @@ export default function OrderTrackingPage() {
   // 4: Giao thành công
   let currentStep = 1;
   if (delivery) {
-    if (delivery.status === "pending_pickup") currentStep = 2;
-    else if (delivery.status === "in_transit") currentStep = 2;
-    else if (delivery.status === "out_for_delivery") currentStep = 3;
-    else if (delivery.status === "delivered") currentStep = 4;
-    else if (delivery.status === "delivery_failed") currentStep = 3;
+    if (delivery.status === 'pending_pickup') currentStep = 2;
+    else if (delivery.status === 'in_transit') currentStep = 2;
+    else if (delivery.status === 'out_for_delivery') currentStep = 3;
+    else if (delivery.status === 'delivered') currentStep = 4;
+    else if (delivery.status === 'delivery_failed') currentStep = 3;
   }
 
   const trackingLogs = delivery?.tracking_logs || [];
@@ -124,10 +107,12 @@ export default function OrderTrackingPage() {
           <p className="text-secondary mb-0">
             {delivery ? (
               <>
-                Mã vận đơn: <strong className="font-monospace text-dark">{delivery.tracking_number}</strong> · Cập nhật: {formatDate(delivery.last_synced_at)}
+                Mã vận đơn:{' '}
+                <strong className="font-monospace text-dark">{delivery.tracking_number}</strong> ·
+                Cập nhật: {formatDateTime(delivery.last_synced_at)}
               </>
             ) : (
-              "Shop đang đóng gói và chuẩn bị bàn giao cho đối tác vận chuyển."
+              'Shop đang đóng gói và chuẩn bị bàn giao cho đối tác vận chuyển.'
             )}
           </p>
         </div>
@@ -139,23 +124,13 @@ export default function OrderTrackingPage() {
       </div>
 
       {syncMessage && (
-        <Alert
-          variant="success"
-          dismissible
-          onClose={() => setSyncMessage("")}
-          className="mb-4"
-        >
+        <Alert variant="success" dismissible onClose={() => setSyncMessage('')} className="mb-4">
           {syncMessage}
         </Alert>
       )}
 
       {error && (
-        <Alert
-          variant="danger"
-          dismissible
-          onClose={() => setError("")}
-          className="mb-4"
-        >
+        <Alert variant="danger" dismissible onClose={() => setError('')} className="mb-4">
           {error}
         </Alert>
       )}
@@ -167,7 +142,7 @@ export default function OrderTrackingPage() {
             <span className="fw-bold text-dark">Tiến trình vận chuyển</span>
             <Badge
               bg={statusInfo.variant}
-              text={statusInfo.variant === "warning" ? "dark" : undefined}
+              text={statusInfo.variant === 'warning' ? 'dark' : undefined}
               className="px-3 py-2"
             >
               {statusInfo.label}
@@ -183,51 +158,59 @@ export default function OrderTrackingPage() {
             />
 
             {/* Bước 1 */}
-            <div className={`stepper-step ${currentStep >= 1 ? (currentStep > 1 ? "completed" : "active") : ""}`}>
-              <div className="stepper-circle">
-                {currentStep > 1 ? "✓" : "1"}
-              </div>
+            <div
+              className={`stepper-step ${currentStep >= 1 ? (currentStep > 1 ? 'completed' : 'active') : ''}`}
+            >
+              <div className="stepper-circle">{currentStep > 1 ? '✓' : '1'}</div>
               <div className="stepper-label">Đặt hàng thành công</div>
-              <div className="stepper-date">{formatDate(order.created_at)}</div>
+              <div className="stepper-date">{formatDateTime(order.created_at)}</div>
             </div>
 
             {/* Bước 2 */}
-            <div className={`stepper-step ${currentStep >= 2 ? (currentStep > 2 ? "completed" : "active") : ""}`}>
-              <div className="stepper-circle">
-                {currentStep > 2 ? "✓" : "2"}
-              </div>
+            <div
+              className={`stepper-step ${currentStep >= 2 ? (currentStep > 2 ? 'completed' : 'active') : ''}`}
+            >
+              <div className="stepper-circle">{currentStep > 2 ? '✓' : '2'}</div>
               <div className="stepper-label">ĐVVC đã nhận hàng</div>
               <div className="stepper-date">
-                {delivery?.shipped_at ? formatDate(delivery.shipped_at) : (currentStep >= 2 ? "Đang xử lý" : "Chờ lấy")}
+                {delivery?.shipped_at
+                  ? formatDateTime(delivery.shipped_at)
+                  : currentStep >= 2
+                    ? 'Đang xử lý'
+                    : 'Chờ lấy'}
               </div>
             </div>
 
             {/* Bước 3 */}
-            <div className={`stepper-step ${currentStep >= 3 ? (currentStep > 3 ? "completed" : "active") : ""}`}>
-              <div className="stepper-circle">
-                {currentStep > 3 ? "✓" : "3"}
-              </div>
+            <div
+              className={`stepper-step ${currentStep >= 3 ? (currentStep > 3 ? 'completed' : 'active') : ''}`}
+            >
+              <div className="stepper-circle">{currentStep > 3 ? '✓' : '3'}</div>
               <div className="stepper-label">Đang giao hàng</div>
               <div className="stepper-date">
-                {delivery?.status === "out_for_delivery" ? "Đang phát" : (currentStep > 3 ? "Đã qua" : "Dự kiến")}
+                {delivery?.status === 'out_for_delivery'
+                  ? 'Đang phát'
+                  : currentStep > 3
+                    ? 'Đã qua'
+                    : 'Dự kiến'}
               </div>
             </div>
 
             {/* Bước 4 */}
-            <div className={`stepper-step ${currentStep === 4 ? "completed" : ""}`}>
-              <div className="stepper-circle">
-                {currentStep === 4 ? "✓" : "4"}
-              </div>
+            <div className={`stepper-step ${currentStep === 4 ? 'completed' : ''}`}>
+              <div className="stepper-circle">{currentStep === 4 ? '✓' : '4'}</div>
               <div className="stepper-label">Đã nhận hàng</div>
               <div className="stepper-date">
-                {delivery?.delivered_at ? formatDate(delivery.delivered_at) : "Chưa hoàn tất"}
+                {delivery?.delivered_at ? formatDateTime(delivery.delivered_at) : 'Chưa hoàn tất'}
               </div>
             </div>
           </div>
 
           {delivery?.carrier_status_text && (
             <div className="carrier-info-box mt-3 text-center">
-              <span className="small text-secondary d-block">Trạng thái mới nhất từ {carrier?.shortName}:</span>
+              <span className="small text-secondary d-block">
+                Trạng thái mới nhất từ {carrier?.shortName}:
+              </span>
               <strong className="text-primary fs-6">{delivery.carrier_status_text}</strong>
             </div>
           )}
@@ -273,7 +256,10 @@ export default function OrderTrackingPage() {
               {!delivery ? (
                 <div className="p-4 text-center text-secondary">
                   <p className="mb-2">Kiện hàng của bạn đang được đóng gói tại shop.</p>
-                  <small>Ngay sau khi bàn giao cho đối tác vận chuyển, mã vận đơn và lộ trình sẽ hiển thị tại đây.</small>
+                  <small>
+                    Ngay sau khi bàn giao cho đối tác vận chuyển, mã vận đơn và lộ trình sẽ hiển thị
+                    tại đây.
+                  </small>
                 </div>
               ) : trackingLogs.length === 0 ? (
                 <div className="p-4 text-center text-secondary">
@@ -284,22 +270,20 @@ export default function OrderTrackingPage() {
                   {trackingLogs.map((log, index) => {
                     const isLatest = index === 0;
                     const logClass =
-                      log.status === "delivered"
-                        ? "delivered"
-                        : log.status === "delivery_failed"
-                          ? "failed"
+                      log.status === 'delivered'
+                        ? 'delivered'
+                        : log.status === 'delivery_failed'
+                          ? 'failed'
                           : isLatest
-                            ? "active"
-                            : "";
+                            ? 'active'
+                            : '';
 
                     return (
                       <div className={`timeline-item ${logClass}`} key={log.id || index}>
                         <div className="timeline-dot" />
                         <div className="timeline-content">
                           <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                            <span className="timeline-time">
-                              {formatDate(log.timestamp)}
-                            </span>
+                            <span className="timeline-time">{formatDateTime(log.timestamp)}</span>
                             {isLatest && (
                               <span className="badge bg-primary-subtle text-primary border border-primary-subtle small">
                                 Trạm hiện tại
@@ -325,9 +309,7 @@ export default function OrderTrackingPage() {
                               <span>{log.location}</span>
                             </div>
                           )}
-                          {log.note && (
-                            <div className="timeline-note">{log.note}</div>
-                          )}
+                          {log.note && <div className="timeline-note">{log.note}</div>}
                         </div>
                       </div>
                     );
@@ -351,12 +333,10 @@ export default function OrderTrackingPage() {
                       <td className="ps-0">
                         <div className="fw-semibold">{item.product_name}</div>
                         <div className="small text-secondary">
-                          {item.variant_info || "Tiêu chuẩn"} × {item.quantity}
+                          {item.variant_info || 'Tiêu chuẩn'} × {item.quantity}
                         </div>
                       </td>
-                      <td className="text-end pe-0 fw-semibold">
-                        {money(item.line_total)}
-                      </td>
+                      <td className="text-end pe-0 fw-semibold">{formatMoney(item.line_total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -371,15 +351,13 @@ export default function OrderTrackingPage() {
           {carrier && delivery && (
             <Card className="border-0 shadow-sm mb-4">
               <Card.Body className="p-4">
-                <h3 className="h6 fw-bold mb-3 border-bottom pb-2">
-                  Đơn vị vận chuyển bên thứ 3
-                </h3>
+                <h3 className="h6 fw-bold mb-3 border-bottom pb-2">Đơn vị vận chuyển bên thứ 3</h3>
 
                 <div className="d-flex align-items-center justify-content-between mb-3">
                   <div>
                     <span className="fw-bold fs-6 d-block">{carrier.name}</span>
                     <small className="text-secondary">
-                      Gói: {carrierServices[delivery.service_type] || "Tiêu chuẩn"}
+                      Gói: {carrierServices[delivery.service_type] || 'Tiêu chuẩn'}
                     </small>
                   </div>
                   <span
@@ -387,8 +365,8 @@ export default function OrderTrackingPage() {
                     style={{
                       backgroundColor: carrier.badgeBg,
                       color: carrier.badgeColor,
-                      fontSize: "13px",
-                      padding: "6px 12px",
+                      fontSize: '13px',
+                      padding: '6px 12px',
                     }}
                   >
                     {carrier.shortName}
@@ -428,9 +406,9 @@ export default function OrderTrackingPage() {
                 </div>
 
                 <div className="small text-secondary">
-                  Hotline hãng:{" "}
+                  Hotline hãng:{' '}
                   <a
-                    href={`tel:${carrier.hotline.replace(/\s+/g, "")}`}
+                    href={`tel:${carrier.hotline.replace(/\s+/g, '')}`}
                     className="fw-bold text-decoration-none text-primary"
                   >
                     {carrier.hotline}
@@ -444,16 +422,12 @@ export default function OrderTrackingPage() {
           {delivery?.shipper_name && (
             <Card className="border-0 shadow-sm mb-4 bg-primary-subtle border-primary-subtle">
               <Card.Body className="p-3">
-                <div className="small text-primary fw-bold mb-1">
-                  Bưu tá đang phát hàng cho bạn
-                </div>
-                <div className="fw-semibold fs-6 text-dark">
-                  {delivery.shipper_name}
-                </div>
+                <div className="small text-primary fw-bold mb-1">Bưu tá đang phát hàng cho bạn</div>
+                <div className="fw-semibold fs-6 text-dark">{delivery.shipper_name}</div>
                 {delivery.shipper_phone && (
                   <div className="mt-2">
                     <a
-                      href={`tel:${delivery.shipper_phone.replace(/\./g, "")}`}
+                      href={`tel:${delivery.shipper_phone.replace(/\./g, '')}`}
                       className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2"
                     >
                       <svg
@@ -506,15 +480,15 @@ export default function OrderTrackingPage() {
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="small text-secondary">Phí vận chuyển:</span>
-                <span className="small fw-semibold">{money(order.shipping_fee)}</span>
+                <span className="small fw-semibold">{formatMoney(order.shipping_fee)}</span>
               </div>
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="small text-secondary">Hình thức thanh toán:</span>
                 <span className="small fw-semibold">
-                  {order.payment_status === "paid"
-                    ? "Đã thanh toán trước"
-                    : "Thanh toán khi nhận hàng (COD)"}
+                  {order.payment_status === 'paid'
+                    ? 'Đã thanh toán trước'
+                    : 'Thanh toán khi nhận hàng (COD)'}
                 </span>
               </div>
 
@@ -522,11 +496,13 @@ export default function OrderTrackingPage() {
                 <div>
                   <span className="fw-bold d-block">Số tiền cần thanh toán:</span>
                   <small className="text-secondary">
-                    {order.payment_status === "paid" ? "0 ₫ (Đã trả trước)" : "Thu hộ khi nhận hàng"}
+                    {order.payment_status === 'paid'
+                      ? '0 ₫ (Đã trả trước)'
+                      : 'Thu hộ khi nhận hàng'}
                   </small>
                 </div>
                 <span className="fs-5 fw-bold text-danger">
-                  {order.payment_status === "paid" ? "0 ₫" : money(order.total_amount)}
+                  {order.payment_status === 'paid' ? '0 ₫' : formatMoney(order.total_amount)}
                 </span>
               </div>
             </Card.Body>

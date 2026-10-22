@@ -1,14 +1,7 @@
 import { Button, Card, Collapse } from 'react-bootstrap';
-import { formatPrice } from '../utils/paymentMapper';
+import { formatMoney } from '@/shared/utils/format';
 
-function PaymentSummary({
-  isExpanded,
-  items,
-  onToggle,
-  shippingFee,
-  subtotal,
-  total,
-}) {
+function PaymentSummary({ isExpanded, items, onToggle, shippingFee, subtotal, total }) {
   const itemCount = items.reduce((count, item) => count + item.quantity, 0);
 
   return (
@@ -36,24 +29,34 @@ function PaymentSummary({
           <div className="review-items">
             {items.map((item) => (
               <div className="review-item" key={item.id}>
-                <div className="review-item-image" aria-hidden="true">BS</div>
+                <div className="review-item-image" aria-hidden="true">
+                  BS
+                </div>
                 <div className="review-item-copy">
                   <p className="fw-semibold mb-1">{item.name}</p>
-                  <p className="small text-secondary mb-0">{item.detail} · SL: {item.quantity}</p>
+                  <p className="small text-secondary mb-0">
+                    {item.detail} · SL: {item.quantity}
+                  </p>
                 </div>
-                <span className="review-item-price">{formatPrice(item.price * item.quantity)}</span>
+                <span className="review-item-price">{formatMoney(item.price * item.quantity)}</span>
               </div>
             ))}
           </div>
         </Collapse>
 
         <div className="review-totals mt-3">
-          <div><span>Tạm tính</span><span>{formatPrice(subtotal)}</span></div>
-          <div><span>Phí vận chuyển</span><span>{formatPrice(shippingFee)}</span></div>
+          <div>
+            <span>Tạm tính</span>
+            <span>{formatMoney(subtotal)}</span>
+          </div>
+          <div>
+            <span>Phí vận chuyển</span>
+            <span>{formatMoney(shippingFee)}</span>
+          </div>
         </div>
         <div className="review-grand-total">
           <span>Tổng thanh toán</span>
-          <strong>{formatPrice(total)}</strong>
+          <strong>{formatMoney(total)}</strong>
         </div>
         <p className="review-caption small text-secondary mb-0 mt-3">
           Đã bao gồm thuế. Phí vận chuyển có thể thay đổi theo địa chỉ nhận hàng.

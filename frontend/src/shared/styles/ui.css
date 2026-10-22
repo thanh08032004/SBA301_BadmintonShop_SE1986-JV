@@ -1,5 +1,18 @@
-﻿body {
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+/* Design tokens: use these instead of typing new colors in module CSS. */
+:root {
+  --color-primary: #2386c8;
+  --color-primary-dark: #196ba2;
+  --color-text: #173d5b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-surface: #ffffff;
+  --color-background: #f8fafc;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+}
+
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 .btn {
   --bs-btn-border-radius: 10px;

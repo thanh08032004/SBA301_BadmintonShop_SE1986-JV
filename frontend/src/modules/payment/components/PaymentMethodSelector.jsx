@@ -1,5 +1,5 @@
 import { Form } from 'react-bootstrap';
-import { paymentMethods } from '../constants/paymentConstants';
+import { paymentMethods } from '@/modules/payment/constants';
 
 function PaymentMethodSelector({ paymentMethod, onChange }) {
   return (
@@ -19,7 +19,10 @@ function PaymentMethodSelector({ paymentMethod, onChange }) {
             onChange={() => onChange(method.id)}
             aria-label={method.name}
           />
-          <span className={`payment-method-mark payment-method-mark-${method.id}`} aria-hidden="true">
+          <span
+            className={`payment-method-mark payment-method-mark-${method.id}`}
+            aria-hidden="true"
+          >
             {method.mark}
           </span>
           <span className="payment-method-copy">

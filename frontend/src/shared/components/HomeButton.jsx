@@ -1,10 +1,10 @@
-﻿import { Button } from "react-bootstrap";
-import { Link } from "react-router";
+import { Button } from 'react-bootstrap';
+import { Link } from 'react-router';
 
 export default function HomeButton({ onClick }) {
   return (
     <Button
-      {...(onClick ? { onClick } : { as: Link, to: "/" })}
+      {...(onClick ? { onClick } : { as: Link, to: '/' })}
       variant="outline-secondary"
       className="home-button"
     >

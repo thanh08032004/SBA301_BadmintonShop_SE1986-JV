@@ -1,43 +1,27 @@
-import { useState } from "react";
-import { Alert, Badge, Button, Card, Col, Row, Spinner, Table } from "react-bootstrap";
-import { Link, useParams } from "react-router";
-import {
-  carriers,
-  carrierServices,
-  deliveryStatuses,
-} from "../deliveryConstants";
-import { money, useShop } from "../../shop/ShopContext";
-import "../delivery.css";
-
-function formatDate(date) {
-  if (!date) return "Chưa cập nhật";
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "Chưa cập nhật";
-  return parsedDate.toLocaleString("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { useState } from 'react';
+import { Alert, Badge, Button, Card, Col, Row, Spinner, Table } from 'react-bootstrap';
+import { Link, useParams } from 'react-router';
+import { carriers, carrierServices, deliveryStatuses } from '@/modules/delivery/constants';
+import { useShop } from '@/app/providers/shop/ShopContext';
+import { formatDateTime, formatMoney } from '@/shared/utils/format';
+import '@/modules/delivery/delivery.css';
+import { deliveryApi } from '@/modules/delivery/api/delivery.api';
 
 export default function DeliveryManagementDetailPage() {
   const { deliveryId } = useParams();
   const { data, act } = useShop();
   const [isSyncing, setIsSyncing] = useState(false);
-  const [syncMessage, setSyncMessage] = useState("");
-  const [error, setError] = useState("");
+  const [syncMessage, setSyncMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const delivery = (data.deliveries || []).find(
-    (item) => String(item.id) === deliveryId,
-  );
+  const delivery = (data.deliveries || []).find((item) => String(item.id) === deliveryId);
 
   if (!delivery) {
     return (
       <>
         <div className="eyebrow">QUẢN LÝ VẬN HÀNH & GIAO VẬN</div>
         <h1 className="h2 fw-bold mb-2">Không tìm thấy vận đơn</h1>
-        <p className="text-secondary mb-4">
-          Vận đơn không tồn tại hoặc đã bị xóa khỏi hệ thống.
-        </p>
+        <p className="text-secondary mb-4">Vận đơn không tồn tại hoặc đã bị xóa khỏi hệ thống.</p>
         <Button as={Link} to="/management/deliveries" variant="outline-primary">
           Quay lại danh sách vận đơn
         </Button>
@@ -45,35 +29,32 @@ export default function DeliveryManagementDetailPage() {
     );
   }
 
-  const orderItems = (data.order_items || []).filter(
-    (item) => item.order_id === delivery.order_id,
-  );
+  const orderItems = (data.order_items || []).filter((item) => item.order_id === delivery.order_id);
   const carrier = carriers[delivery.carrier] || {
-    name: delivery.carrier?.toUpperCase() || "Đối tác vận chuyển",
-    shortName: delivery.carrier?.toUpperCase() || "ĐVVC",
-    badgeColor: "#333",
-    badgeBg: "#eee",
-    hotline: "1900 xxxx",
+    name: delivery.carrier?.toUpperCase() || 'Đối tác vận chuyển',
+    shortName: delivery.carrier?.toUpperCase() || 'ĐVVC',
+    badgeColor: '#333',
+    badgeBg: '#eee',
+    hotline: '1900 xxxx',
   };
   const statusInfo = deliveryStatuses[delivery.status] || {
-    label: delivery.status || "Chưa xác định",
-    variant: "secondary",
+    label: delivery.status || 'Chưa xác định',
+    variant: 'secondary',
   };
 
   async function handleSync() {
     setIsSyncing(true);
-    setError("");
-    setSyncMessage("");
+    setError('');
+    setSyncMessage('');
     try {
-      await act({
-        type: "sync_carrier_status",
-        delivery_id: delivery.id,
-      });
-      setSyncMessage(
-        `Đã đồng bộ thành công dữ liệu mới nhất từ cổng thông tin ${carrier.name}.`,
+      await act(() =>
+        deliveryApi.syncCarrierStatus({
+          delivery_id: delivery.id,
+        }),
       );
+      setSyncMessage(`Đã đồng bộ thành công dữ liệu mới nhất từ cổng thông tin ${carrier.name}.`);
     } catch (err) {
-      setError(err.message || "Không thể đồng bộ với đối tác vận chuyển.");
+      setError(err.message || 'Không thể đồng bộ với đối tác vận chuyển.');
     } finally {
       setIsSyncing(false);
     }
@@ -99,38 +80,25 @@ export default function DeliveryManagementDetailPage() {
             </span>
           </div>
           <p className="text-secondary mb-0">
-            Mã đơn hàng liên kết: <strong>{delivery.order_code}</strong> · Đồng bộ lần cuối: {formatDate(delivery.last_synced_at)}
+            Mã đơn hàng liên kết: <strong>{delivery.order_code}</strong> · Đồng bộ lần cuối:{' '}
+            {formatDateTime(delivery.last_synced_at)}
           </p>
         </div>
         <div className="d-flex gap-2">
-          <Button
-            as={Link}
-            to="/management/deliveries"
-            variant="outline-secondary"
-          >
+          <Button as={Link} to="/management/deliveries" variant="outline-secondary">
             ← Quay lại danh sách
           </Button>
         </div>
       </div>
 
       {syncMessage && (
-        <Alert
-          variant="success"
-          dismissible
-          onClose={() => setSyncMessage("")}
-          className="mb-4"
-        >
+        <Alert variant="success" dismissible onClose={() => setSyncMessage('')} className="mb-4">
           {syncMessage}
         </Alert>
       )}
 
       {error && (
-        <Alert
-          variant="danger"
-          dismissible
-          onClose={() => setError("")}
-          className="mb-4"
-        >
+        <Alert variant="danger" dismissible onClose={() => setError('')} className="mb-4">
           {error}
         </Alert>
       )}
@@ -150,7 +118,7 @@ export default function DeliveryManagementDetailPage() {
                 </div>
                 <Badge
                   bg={statusInfo.variant}
-                  text={statusInfo.variant === "warning" ? "dark" : undefined}
+                  text={statusInfo.variant === 'warning' ? 'dark' : undefined}
                   className="fs-6 px-3 py-2"
                 >
                   {statusInfo.label}
@@ -166,22 +134,20 @@ export default function DeliveryManagementDetailPage() {
                   {trackingLogs.map((log, index) => {
                     const isLatest = index === 0;
                     const logClass =
-                      log.status === "delivered"
-                        ? "delivered"
-                        : log.status === "delivery_failed"
-                          ? "failed"
+                      log.status === 'delivered'
+                        ? 'delivered'
+                        : log.status === 'delivery_failed'
+                          ? 'failed'
                           : isLatest
-                            ? "active"
-                            : "";
+                            ? 'active'
+                            : '';
 
                     return (
                       <div className={`timeline-item ${logClass}`} key={log.id || index}>
                         <div className="timeline-dot" />
                         <div className="timeline-content">
                           <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                            <span className="timeline-time">
-                              {formatDate(log.timestamp)}
-                            </span>
+                            <span className="timeline-time">{formatDateTime(log.timestamp)}</span>
                             {isLatest && (
                               <span className="badge bg-primary-subtle text-primary border border-primary-subtle small">
                                 Mới nhất
@@ -207,9 +173,7 @@ export default function DeliveryManagementDetailPage() {
                               <span>{log.location}</span>
                             </div>
                           )}
-                          {log.note && (
-                            <div className="timeline-note">{log.note}</div>
-                          )}
+                          {log.note && <div className="timeline-note">{log.note}</div>}
                         </div>
                       </div>
                     );
@@ -222,9 +186,7 @@ export default function DeliveryManagementDetailPage() {
           {/* Card 2: Sản phẩm trong kiện hàng */}
           <Card className="border-0 shadow-sm">
             <Card.Body className="p-4">
-              <h2 className="h5 fw-bold mb-3 border-bottom pb-2">
-                Sản phẩm trong kiện hàng
-              </h2>
+              <h2 className="h5 fw-bold mb-3 border-bottom pb-2">Sản phẩm trong kiện hàng</h2>
 
               <Table responsive className="align-middle mb-0">
                 <thead className="table-light">
@@ -248,13 +210,11 @@ export default function DeliveryManagementDetailPage() {
                       <tr key={item.id}>
                         <td className="fw-semibold">{item.product_name}</td>
                         <td className="text-secondary small">
-                          {item.variant_info || "Tiêu chuẩn"}
+                          {item.variant_info || 'Tiêu chuẩn'}
                         </td>
                         <td className="text-center">{item.quantity}</td>
-                        <td className="text-end">{money(item.unit_price)}</td>
-                        <td className="text-end fw-semibold">
-                          {money(item.line_total)}
-                        </td>
+                        <td className="text-end">{formatMoney(item.unit_price)}</td>
+                        <td className="text-end fw-semibold">{formatMoney(item.line_total)}</td>
                       </tr>
                     ))
                   )}
@@ -276,10 +236,10 @@ export default function DeliveryManagementDetailPage() {
                   Trạng thái nguyên bản từ {carrier.shortName}:
                 </div>
                 <div className="fw-semibold text-dark mb-2">
-                  {delivery.carrier_status_text || "Chưa có thông báo"}
+                  {delivery.carrier_status_text || 'Chưa có thông báo'}
                 </div>
                 <div className="small text-secondary">
-                  Cập nhật: {formatDate(delivery.last_synced_at)}
+                  Cập nhật: {formatDateTime(delivery.last_synced_at)}
                 </div>
               </div>
 
@@ -341,9 +301,9 @@ export default function DeliveryManagementDetailPage() {
               <hr />
 
               <div className="small text-secondary">
-                Hotline hỗ trợ đối tác:{" "}
+                Hotline hỗ trợ đối tác:{' '}
                 <a
-                  href={`tel:${carrier.hotline.replace(/\s+/g, "")}`}
+                  href={`tel:${carrier.hotline.replace(/\s+/g, '')}`}
                   className="fw-bold text-decoration-none text-primary"
                 >
                   {carrier.hotline}
@@ -355,9 +315,7 @@ export default function DeliveryManagementDetailPage() {
           {/* Card 4: Thông tin Giao nhận & Người nhận */}
           <Card className="border-0 shadow-sm mb-4">
             <Card.Body className="p-4">
-              <h3 className="h6 fw-bold mb-3 border-bottom pb-2">
-                Thông tin người nhận
-              </h3>
+              <h3 className="h6 fw-bold mb-3 border-bottom pb-2">Thông tin người nhận</h3>
 
               <div className="mb-2">
                 <span className="text-secondary small d-block">Khách hàng:</span>
@@ -382,24 +340,20 @@ export default function DeliveryManagementDetailPage() {
               {delivery.note && (
                 <div className="mb-2">
                   <span className="text-secondary small d-block">Ghi chú giao:</span>
-                  <span className="small fst-italic text-secondary">
-                    {delivery.note}
-                  </span>
+                  <span className="small fst-italic text-secondary">{delivery.note}</span>
                 </div>
               )}
 
               {/* Thông tin shipper ĐVVC */}
               {delivery.shipper_name && (
                 <div className="shipper-card mt-3">
-                  <div className="small fw-bold text-primary mb-1">
-                    Bưu tá phụ trách giao hàng
-                  </div>
+                  <div className="small fw-bold text-primary mb-1">Bưu tá phụ trách giao hàng</div>
                   <div className="fw-semibold">{delivery.shipper_name}</div>
                   {delivery.shipper_phone && (
                     <div className="small text-secondary">
-                      SĐT:{" "}
+                      SĐT:{' '}
                       <a
-                        href={`tel:${delivery.shipper_phone.replace(/\./g, "")}`}
+                        href={`tel:${delivery.shipper_phone.replace(/\./g, '')}`}
                         className="fw-bold text-decoration-none"
                       >
                         {delivery.shipper_phone}
@@ -414,28 +368,24 @@ export default function DeliveryManagementDetailPage() {
           {/* Card 5: Tài chính & Tiền thu hộ COD */}
           <Card className="border-0 shadow-sm">
             <Card.Body className="p-4">
-              <h3 className="h6 fw-bold mb-3 border-bottom pb-2">
-                Cước phí & Thu hộ
-              </h3>
+              <h3 className="h6 fw-bold mb-3 border-bottom pb-2">Cước phí & Thu hộ</h3>
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-secondary small">Gói dịch vụ:</span>
                 <span className="fw-semibold small">
-                  {carrierServices[delivery.service_type] || "Tiêu chuẩn"}
+                  {carrierServices[delivery.service_type] || 'Tiêu chuẩn'}
                 </span>
               </div>
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-secondary small">Phí vận chuyển:</span>
-                <span className="fw-semibold small">
-                  {money(delivery.shipping_fee)}
-                </span>
+                <span className="fw-semibold small">{formatMoney(delivery.shipping_fee)}</span>
               </div>
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-secondary small">Dự kiến giao:</span>
                 <span className="fw-semibold small">
-                  {formatDate(delivery.estimated_delivery_date)}
+                  {formatDateTime(delivery.estimated_delivery_date)}
                 </span>
               </div>
 
@@ -443,14 +393,10 @@ export default function DeliveryManagementDetailPage() {
                 <div>
                   <span className="fw-bold d-block">Tiền thu hộ COD:</span>
                   <small className="text-secondary">
-                    {delivery.cod_amount > 0
-                      ? "Bưu tá ĐVVC sẽ thu"
-                      : "Đã thanh toán online"}
+                    {delivery.cod_amount > 0 ? 'Bưu tá ĐVVC sẽ thu' : 'Đã thanh toán online'}
                   </small>
                 </div>
-                <span className="fs-5 fw-bold text-danger">
-                  {money(delivery.cod_amount)}
-                </span>
+                <span className="fs-5 fw-bold text-danger">{formatMoney(delivery.cod_amount)}</span>
               </div>
             </Card.Body>
           </Card>

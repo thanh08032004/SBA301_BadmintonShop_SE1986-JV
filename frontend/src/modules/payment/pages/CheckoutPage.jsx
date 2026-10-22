@@ -1,15 +1,31 @@
 import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router';
-import PaymentSummary from '../components/PaymentSummary';
-import usePayment from '../hooks/usePayment';
+import PaymentSummary from '@/modules/payment/components/PaymentSummary';
+import usePayment from '@/modules/payment/hooks/usePayment';
 import PaymentPage from './PaymentPage';
-import '../assets/PaymentPage.css';
+import '@/modules/payment/PaymentPage.css';
 
 function CheckoutPage() {
   const payment = usePayment();
 
-  if (payment.loading) return <Container className="py-5 text-center"><Spinner animation="border" /><p>Đang tải đơn hàng…</p></Container>;
-  if (!payment.available) return <Container className="py-5"><Alert variant="info">{payment.error || 'Chọn đơn hàng trả trước để tiếp tục thanh toán.'}</Alert><Button as={Link} to="/orders">Xem đơn hàng</Button></Container>;
+  if (payment.loading)
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" />
+        <p>Đang tải đơn hàng…</p>
+      </Container>
+    );
+  if (!payment.available)
+    return (
+      <Container className="py-5">
+        <Alert variant="info">
+          {payment.error || 'Chọn đơn hàng trả trước để tiếp tục thanh toán.'}
+        </Alert>
+        <Button as={Link} to="/orders">
+          Xem đơn hàng
+        </Button>
+      </Container>
+    );
   return (
     <main className="payment-page">
       <Container>
@@ -19,7 +35,9 @@ function CheckoutPage() {
         </div>
 
         {payment.error && <Alert variant="danger">{payment.error}</Alert>}
-        <p className="text-secondary">Đơn hàng: <strong>{payment.order.order_code}</strong></p>
+        <p className="text-secondary">
+          Đơn hàng: <strong>{payment.order.order_code}</strong>
+        </p>
         <Row className="g-4 align-items-start">
           <Col lg={7}>
             <PaymentPage
@@ -49,7 +67,9 @@ function CheckoutPage() {
                     Xem đơn hàng
                   </Button>
                 </div>
-                <p className="delivery-recipient fw-semibold mb-1">{payment.order.receiver_name} <span>•</span> {payment.order.receiver_phone}</p>
+                <p className="delivery-recipient fw-semibold mb-1">
+                  {payment.order.receiver_name} <span>•</span> {payment.order.receiver_phone}
+                </p>
                 <p className="text-secondary small mb-0">{payment.order.shipping_address}</p>
               </Card.Body>
             </Card>

@@ -1,13 +1,13 @@
-import { apiFetch } from "../../../shared/utils/apiFetch";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
-import { paymentMethods } from "../constants/paymentConstants";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
+import { paymentMethods } from '@/modules/payment/constants';
+import { paymentApi } from '../api/payment.api';
 
 export default function usePayment() {
   const [params] = useSearchParams();
-  const orderId = params.get("order");
+  const orderId = params.get('order');
   const [snapshot, setSnapshot] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0].id);
   const [isOrderExpanded, setIsOrderExpanded] = useState(true);
@@ -16,17 +16,12 @@ export default function usePayment() {
   useEffect(() => {
     if (!orderId) return;
     const controller = new AbortController();
-    apiFetch("/api/shop", { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Không tải được đơn hàng.");
-        return response.json();
-      })
+    paymentApi
+      .getShopData({ signal: controller.signal })
       .then((data) => setSnapshot({ orderId, data }))
       .catch((err) => {
-        if (err.name !== "AbortError")
-          setError(
-            "Không tải được đơn hàng. Hãy kiểm tra server và tải lại trang.",
-          );
+        if (err.name !== 'CanceledError')
+          setError('Không tải được đơn hàng. Hãy kiểm tra server và tải lại trang.');
       });
     return () => controller.abort();
   }, [orderId]);
@@ -42,11 +37,7 @@ export default function usePayment() {
       quantity: i.quantity,
       price: i.unit_price,
     }));
-  const available =
-    !!order &&
-    !!record &&
-    record.method !== "cod" &&
-    order.status !== "cancelled";
+  const available = !!order && !!record && record.method !== 'cod' && order.status !== 'cancelled';
   const payment = available
     ? {
         orderId,
@@ -60,21 +51,14 @@ export default function usePayment() {
     if (lock.current || !available) return;
     lock.current = true;
     setBusy(true);
-    setError("");
+    setError('');
     try {
-      const response = await apiFetch("/api/shop", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "start_payment",
-          order_id: orderId,
-          gateway: paymentMethod,
-        }),
+      const result = await paymentApi.startPayment({
+        order_id: orderId,
+        gateway: paymentMethod,
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message);
       setSnapshot({ orderId, data: result });
-      navigate("/payments/qr?order=" + encodeURIComponent(orderId));
+      navigate('/payments/qr?order=' + encodeURIComponent(orderId));
     } catch (err) {
       setError(err.message);
     } finally {

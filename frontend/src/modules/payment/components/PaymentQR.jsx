@@ -1,12 +1,13 @@
 import { Button, Container } from 'react-bootstrap';
-import { getPaymentQrImageUrl } from '../services/paymentService';
-import { formatPrice } from '../utils/paymentMapper';
+import { getPaymentQrImageUrl } from '@/modules/payment/utils/paymentQr';
+import { formatMoney } from '@/shared/utils/format';
 
 function PaymentQR({ payment, onCheckResult, onChooseAnotherMethod }) {
   const qrImageUrl = getPaymentQrImageUrl(payment);
-  const instructions = payment.paymentMethod === 'momo'
-    ? 'Sử dụng ứng dụng MoMo để quét mã QR.'
-    : 'Sử dụng ứng dụng MB Bank hoặc ứng dụng ngân hàng hỗ trợ quét QR.';
+  const instructions =
+    payment.paymentMethod === 'momo'
+      ? 'Sử dụng ứng dụng MoMo để quét mã QR.'
+      : 'Sử dụng ứng dụng MB Bank hoặc ứng dụng ngân hàng hỗ trợ quét QR.';
 
   return (
     <main className="qr-payment-page">
@@ -29,7 +30,7 @@ function PaymentQR({ payment, onCheckResult, onChooseAnotherMethod }) {
 
           <div className="qr-payment-amount">
             <span>Số tiền thanh toán</span>
-            <strong>{formatPrice(payment.total)}</strong>
+            <strong>{formatMoney(payment.total)}</strong>
           </div>
 
           <div className="qr-payment-details">

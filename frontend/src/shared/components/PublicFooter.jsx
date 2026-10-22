@@ -1,5 +1,5 @@
-import BrandLogo from "./BrandLogo";
-import { Link } from "react-router";
+import BrandLogo from './BrandLogo';
+import { Link } from 'react-router';
 export default function PublicFooter() {
   return (
     <footer className="shop-footer">
