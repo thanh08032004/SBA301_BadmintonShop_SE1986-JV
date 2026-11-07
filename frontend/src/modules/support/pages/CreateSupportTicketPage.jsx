@@ -3,7 +3,7 @@ import { Alert, Badge, Button, Card, Col, Form, Image, Row, Table } from 'react-
 import { Link, useNavigate } from 'react-router';
 import { useShop } from '@/app/providers/shop/ShopContext';
 import { supportApi } from '@/modules/support/api/support.api';
-import { RETURN_WINDOW_DAYS } from '@/modules/support/constants';
+import { ticketTypes, RETURN_WINDOW_DAYS } from '@/modules/support/constants';
 import { formatDateTime, formatMoney } from '@/shared/utils/format';
 
 export default function CreateSupportTicketPage() {
@@ -11,7 +11,8 @@ export default function CreateSupportTicketPage() {
   const navigate = useNavigate();
 
   const [orderId, setOrderId] = useState('');
-  const [selectedItems, setSelectedItems] = useState({}); // { [orderItemId]: { checked: boolean, quantity: number } }
+  const [ticketType, setTicketType] = useState('REFUND');
+  const [selectedItems, setSelectedItems] = useState({}); // { [orderItemId]: { checked: boolean, quantity: number, replacementVariantId: string } }
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
   const [qrImage, setQrImage] = useState('');
@@ -20,9 +21,10 @@ export default function CreateSupportTicketPage() {
   const [error, setError] = useState('');
 
   // Orders eligible for support ticket
-  const allOrders = data?.orders || [];
-  const existingTickets = data?.support_tickets || [];
-  const allOrderItems = data?.order_items || [];
+  const allOrders = useShop().data?.orders || [];
+  const existingTickets = useShop().data?.support_tickets || [];
+  const allOrderItems = useShop().data?.order_items || [];
+  const allVariants = useShop().data?.product_variants || [];
 
   // Filter orders that don't already have an active ticket
   const eligibleOrders = useMemo(() => {
@@ -57,6 +59,7 @@ export default function CreateSupportTicketPage() {
       initialItems[item.id] = {
         checked: false,
         quantity: 1,
+        replacementVariantId: '',
       };
     }
     setSelectedItems(initialItems);
@@ -67,7 +70,7 @@ export default function CreateSupportTicketPage() {
     setSelectedItems((prev) => ({
       ...prev,
       [itemId]: {
-        ...(prev[itemId] || { quantity: 1 }),
+        ...(prev[itemId] || { quantity: 1, replacementVariantId: '' }),
         checked,
       },
     }));
@@ -79,8 +82,19 @@ export default function CreateSupportTicketPage() {
     setSelectedItems((prev) => ({
       ...prev,
       [itemId]: {
-        ...(prev[itemId] || { checked: true }),
+        ...(prev[itemId] || { checked: true, replacementVariantId: '' }),
         quantity: val,
+      },
+    }));
+  }
+
+  // Handle replacement variant selection
+  function handleReplacementVariantChange(itemId, variantId) {
+    setSelectedItems((prev) => ({
+      ...prev,
+      [itemId]: {
+        ...(prev[itemId] || { checked: true, quantity: 1 }),
+        replacementVariantId: variantId,
       },
     }));
   }
@@ -130,8 +144,19 @@ export default function CreateSupportTicketPage() {
     setEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // Find same-price replacement variants for an item
+  function getEligibleReplacementVariants(orderItem) {
+    return allVariants.filter(
+      (v) =>
+        v.product_id === orderItem.product_id &&
+        v.id !== orderItem.variant_id &&
+        Number(v.price) === Number(orderItem.unit_price),
+    );
+  }
+
   // Calculated estimated refund amount
   const estimatedRefundAmount = useMemo(() => {
+    if (ticketType !== 'REFUND') return 0;
     let sum = 0;
     for (const [itemId, state] of Object.entries(selectedItems)) {
       if (state.checked) {
@@ -142,7 +167,7 @@ export default function CreateSupportTicketPage() {
       }
     }
     return sum;
-  }, [selectedItems, currentOrderItems]);
+  }, [ticketType, selectedItems, currentOrderItems]);
 
   async function submitSupportTicket(event) {
     event.preventDefault();
@@ -155,13 +180,17 @@ export default function CreateSupportTicketPage() {
 
     const itemsToSubmit = Object.entries(selectedItems)
       .filter(([, s]) => s.checked)
-      .map(([orderItemId, s]) => ({
-        order_item_id: orderItemId,
-        quantity: s.quantity,
-      }));
+      .map(([orderItemId, s]) => {
+        const item = currentOrderItems.find((oi) => String(oi.id) === String(orderItemId));
+        return {
+          order_item_id: orderItemId,
+          quantity: s.quantity,
+          replacement_variant_id: ticketType === 'EXCHANGE' ? (item?.variant_id || null) : null,
+        };
+      });
 
     if (itemsToSubmit.length === 0) {
-      setError('Vui lòng tích chọn ít nhất 1 sản phẩm trong đơn hàng cần trả.');
+      setError('Vui lòng tích chọn ít nhất 1 sản phẩm trong đơn hàng cần đổi/trả.');
       return;
     }
 
@@ -179,7 +208,7 @@ export default function CreateSupportTicketPage() {
       await act(() =>
         supportApi.createTicket({
           order_id: orderId,
-          ticket_type: 'REFUND',
+          ticket_type: ticketType,
           reason: reason.trim(),
           description: description.trim(),
           items: itemsToSubmit,
@@ -189,70 +218,69 @@ export default function CreateSupportTicketPage() {
       );
       navigate('/support-tickets', { state: { created: true } });
     } catch (ticketError) {
-      setError(ticketError.message || 'Lỗi khi tạo yêu cầu trả hàng & hoàn tiền.');
+      setError(ticketError.message || 'Không thể gửi phiếu hỗ trợ. Vui lòng thử lại.');
     }
   }
 
   return (
     <>
       <div className="eyebrow">HỖ TRỢ KHÁCH HÀNG (UC15)</div>
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-        <div>
-          <h1 className="h2 fw-bold mb-1">Tạo yêu cầu Trả hàng & Hoàn tiền</h1>
-          <p className="text-secondary mb-0">
-            Hỗ trợ xử lý trả hàng và hoàn tiền trực tiếp cho các đơn hàng đã thanh toán trực tuyến.
-          </p>
-        </div>
-        <Button as={Link} to="/support-tickets" variant="outline-secondary">
-          ← Quay lại danh sách
-        </Button>
-      </div>
+      <h1 className="h2 fw-bold mb-2">Tạo yêu cầu Đổi trả & Hoàn tiền</h1>
+      <p className="text-secondary mb-4">
+        Gửi yêu cầu đổi sản phẩm hoặc trả hàng hoàn tiền theo quy định trong vòng {RETURN_WINDOW_DAYS} ngày kể từ ngày nhận hàng.
+      </p>
 
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
 
       {eligibleOrders.length === 0 ? (
-        <Alert variant="warning" className="border-warning">
-          <h4 className="alert-heading fw-bold fs-6">Không có đơn hàng đủ điều kiện</h4>
-          <p className="mb-0">
-            Bạn hiện không có đơn hàng nào đã giao trong vòng {RETURN_WINDOW_DAYS} ngày hoặc tất cả đơn hàng đã có yêu cầu hỗ trợ đang được xử lý.
-          </p>
-        </Alert>
+        <Card className="border-0 p-4 text-center">
+          <Card.Body>
+            <h2 className="h5 fw-bold mb-2">Không có đơn hàng đủ điều kiện tạo yêu cầu</h2>
+            <p className="text-secondary mb-3">
+              Mỗi đơn hàng chỉ được tạo tối đa 1 phiếu hỗ trợ và phải trong thời hạn cho phép.
+            </p>
+            <Button as={Link} to="/orders" variant="primary">
+              Xem lịch sử đơn hàng
+            </Button>
+          </Card.Body>
+        </Card>
       ) : (
         <Form onSubmit={submitSupportTicket}>
-          {/* BƯỚC 1: CHỌN ĐƠN HÀNG */}
+          {/* BƯỚC 1: CHỌN ĐƠN HÀNG & LOẠI YÊU CẦU */}
           <Card className="border-0 mb-4 shadow-sm">
             <Card.Header className="bg-white py-3 border-bottom">
-              <h2 className="h6 fw-bold mb-0 text-primary">1. CHỌN ĐƠN HÀNG CẦN HỖ TRỢ</h2>
+              <h2 className="h6 fw-bold mb-0 text-primary">1. THÔNG TIN ĐƠN HÀNG & HÌNH THỨC HỖ TRỢ</h2>
             </Card.Header>
             <Card.Body className="p-4">
               <Row className="g-3">
                 <Col md={6}>
-                  <Form.Group controlId="order-select">
+                  <Form.Group controlId="ticket-order">
                     <Form.Label className="fw-semibold">
-                      Đơn hàng đã nhận <span className="text-danger">*</span>
+                      Chọn đơn hàng <span className="text-danger">*</span>
                     </Form.Label>
-                    <Form.Select value={orderId} onChange={handleOrderChange} required>
+                    <Form.Select required value={orderId} onChange={handleOrderChange}>
                       <option value="">-- Chọn đơn hàng của bạn --</option>
-                      {eligibleOrders.map((ord) => (
-                        <option key={ord.id} value={ord.id}>
-                          {ord.order_code || `Đơn hàng #${ord.id}`} - {formatDateTime(ord.created_at)} - {formatMoney(ord.total_amount)}
+                      {eligibleOrders.map((order) => (
+                        <option key={order.id} value={order.id}>
+                          {order.order_code} · {formatMoney(order.total_amount)} ({formatDateTime(order.created_at)})
                         </option>
                       ))}
                     </Form.Select>
-                    <Form.Text muted>Chỉ áp dụng cho đơn hàng đã giao thành công trong vòng {RETURN_WINDOW_DAYS} ngày.</Form.Text>
                   </Form.Group>
                 </Col>
 
                 <Col md={6}>
                   <Form.Group controlId="ticket-type">
                     <Form.Label className="fw-semibold">
-                      Hình thức hỗ trợ
+                      Loại yêu cầu <span className="text-danger">*</span>
                     </Form.Label>
-                    <Form.Control
-                      readOnly
-                      value="Trả hàng & Hoàn tiền (REFUND)"
-                      className="bg-light fw-bold text-success"
-                    />
+                    <Form.Select
+                      value={ticketType}
+                      onChange={(e) => setTicketType(e.target.value)}
+                    >
+                      <option value="REFUND">{ticketTypes.REFUND} (Hoàn tiền vào tài khoản)</option>
+                      <option value="EXCHANGE">{ticketTypes.EXCHANGE} (Đổi size / màu cùng giá)</option>
+                    </Form.Select>
                   </Form.Group>
                 </Col>
               </Row>
@@ -278,11 +306,11 @@ export default function CreateSupportTicketPage() {
             </Card.Body>
           </Card>
 
-          {/* BƯỚC 2: CHỌN SẢN PHẨM TRẢ & HOÀN TIỀN */}
+          {/* BƯỚC 2: CHỌN SẢN PHẨM & BIẾN THỂ ĐỔI */}
           {selectedOrder && (
             <Card className="border-0 mb-4 shadow-sm">
               <Card.Header className="bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h2 className="h6 fw-bold mb-0 text-primary">2. CHỌN SẢN PHẨM CẦN TRẢ & HOÀN TIỀN</h2>
+                <h2 className="h6 fw-bold mb-0 text-primary">2. CHỌN SẢN PHẨM CẦN {ticketType === 'REFUND' ? 'HOÀN TIỀN' : 'ĐỔI'}</h2>
                 <Badge bg="info" text="dark">Tối đa số lượng đã mua</Badge>
               </Card.Header>
               <Card.Body className="p-0">
@@ -293,12 +321,14 @@ export default function CreateSupportTicketPage() {
                       <th>Sản phẩm đã mua</th>
                       <th style={{ width: '130px' }} className="text-end">Đơn giá</th>
                       <th style={{ width: '120px' }} className="text-center">Số lượng</th>
+                      {ticketType === 'EXCHANGE' && <th>Sản phẩm thay thế (Cùng giá)</th>}
                       <th style={{ width: '140px' }} className="text-end">Thành tiền</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentOrderItems.map((item) => {
-                      const itemState = selectedItems[item.id] || { checked: false, quantity: 1 };
+                      const itemState = selectedItems[item.id] || { checked: false, quantity: 1, replacementVariantId: '' };
+                      const replacementVariants = ticketType === 'EXCHANGE' ? getEligibleReplacementVariants(item) : [];
 
                       return (
                         <tr key={item.id} className={itemState.checked ? 'table-active' : ''}>
@@ -330,6 +360,15 @@ export default function CreateSupportTicketPage() {
                             />
                             <small className="text-muted d-block mt-1">Đã mua: {item.quantity}</small>
                           </td>
+
+                          {ticketType === 'EXCHANGE' && (
+                            <td>
+                              <Badge bg="primary-subtle" text="primary" className="border border-primary-subtle p-2">
+                                🔄 Đổi mới cùng loại ({item.variant_info || 'Mặc định'})
+                              </Badge>
+                            </td>
+                          )}
+
                           <td className="text-end fw-semibold">
                             {formatMoney((item.unit_price || 0) * (itemState.checked ? itemState.quantity : 0))}
                           </td>
@@ -339,12 +378,12 @@ export default function CreateSupportTicketPage() {
                   </tbody>
                 </Table>
 
-                {estimatedRefundAmount > 0 && (
+                {ticketType === 'REFUND' && estimatedRefundAmount > 0 && (
                   <div className="p-3 bg-light border-top text-end">
                     <span className="text-secondary me-2">Số tiền hoàn hàng dự kiến:</span>
                     <strong className="fs-5 text-primary">{formatMoney(estimatedRefundAmount)}</strong>
                     <div className="small text-muted mt-1">
-                      * Phí vận chuyển ban đầu sẽ được hoàn thêm nếu nguyên nhân được xác định là lỗi từ phía cửa hàng (STORE_FAULT).
+                      * Phí vận chuyển ban đầu sẽ được hoàn thêm nếu lỗi được xác định từ phía cửa hàng (STORE_FAULT).
                     </div>
                   </div>
                 )}
@@ -367,7 +406,7 @@ export default function CreateSupportTicketPage() {
                   maxLength={300}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  placeholder="Ví dụ: Sản phẩm bị nứt khung khi mở hộp, giao nhầm mã sản phẩm..."
+                  placeholder="Ví dụ: Sản phẩm bị nứt khung khi mở hộp, giao nhầm size 42 thành 43..."
                 />
                 <Form.Text muted>Tối đa 300 ký tự.</Form.Text>
               </Form.Group>
@@ -403,7 +442,7 @@ export default function CreateSupportTicketPage() {
                         <Badge bg="danger">Bắt buộc</Badge>
                       </Form.Label>
                       <p className="small text-secondary mb-2">
-                        Tải lên ảnh mã QR tài khoản ngân hàng của bạn. Nhân viên sẽ quét mã này để chuyển khoản hoàn tiền.
+                        Tải lên ảnh mã QR tài khoản ngân hàng của bạn. Nhân viên sẽ quét mã này để chuyển khoản hoàn tiền (áp dụng cho cả Đổi hàng nếu hết sản phẩm thay thế).
                       </p>
                       <Form.Control
                         type="file"
@@ -495,7 +534,7 @@ export default function CreateSupportTicketPage() {
           {/* HÀNH ĐỘNG SUBMIT */}
           <div className="d-flex flex-wrap gap-3 mb-5">
             <Button type="submit" size="lg" variant="primary" disabled={busy || !orderId}>
-              {busy ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu trả hàng & hoàn tiền'}
+              {busy ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu hỗ trợ'}
             </Button>
             <Button as={Link} to="/support-tickets" variant="outline-secondary" size="lg" disabled={busy}>
               Hủy bỏ

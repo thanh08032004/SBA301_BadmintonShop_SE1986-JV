@@ -12,6 +12,7 @@ export function mergeShopSnapshot(snapshot, catalog) {
     'order_status_history',
     'support_tickets',
     'ticket_items',
+    'deliveries',
   ]) {
     if (!Array.isArray(data[table])) data[table] = [];
   }

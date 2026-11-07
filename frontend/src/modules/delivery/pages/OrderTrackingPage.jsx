@@ -3,21 +3,19 @@ import { Alert, Badge, Button, Card, Col, Row, Spinner, Table } from 'react-boot
 import { Link, useParams } from 'react-router';
 import { carriers, carrierServices, deliveryStatuses } from '@/modules/delivery/constants';
 import { useShop } from '@/app/providers/shop/ShopContext';
-import { useOrderShipment } from '@/modules/delivery/hooks/useDelivery';
-import { toDelivery } from '@/modules/delivery/api/delivery.mapper';
 import { formatDateTime, formatMoney } from '@/shared/utils/format';
 import '@/modules/delivery/delivery.css';
 import { deliveryApi } from '@/modules/delivery/api/delivery.api';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
-  const { data } = useShop();
+  const { data, act } = useShop();
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState('');
   const [error, setError] = useState('');
 
   const order = (data.orders || []).find((item) => String(item.id) === orderId);
-  const { data: delivery, setData: setDelivery } = useOrderShipment(orderId, Boolean(order));
+  const delivery = (data.deliveries || []).find((item) => String(item.order_id) === orderId);
   const orderItems = (data.order_items || []).filter((item) => String(item.order_id) === orderId);
 
   if (!order) {
@@ -58,7 +56,11 @@ export default function OrderTrackingPage() {
     setError('');
     setSyncMessage('');
     try {
-      setDelivery(toDelivery(await deliveryApi.syncOrderShipment(orderId)));
+      await act(() =>
+        deliveryApi.syncCarrierStatus({
+          delivery_id: delivery.id,
+        }),
+      );
       setSyncMessage(`Đã làm mới thông tin hành trình mới nhất từ ${carrier?.name || 'ĐVVC'}.`);
     } catch (err) {
       setError(err.message || 'Không thể làm mới hành trình giao hàng.');
@@ -106,7 +108,7 @@ export default function OrderTrackingPage() {
             {delivery ? (
               <>
                 Mã vận đơn:{' '}
-                <strong className="font-monospace text-dark">{delivery.tracking_number || 'Đang chờ cấp mã'}</strong> ·
+                <strong className="font-monospace text-dark">{delivery.tracking_number}</strong> ·
                 Cập nhật: {formatDateTime(delivery.last_synced_at)}
               </>
             ) : (
@@ -374,14 +376,14 @@ export default function OrderTrackingPage() {
                 <div className="mb-3">
                   <span className="small text-secondary d-block">Mã tra cứu vận đơn:</span>
                   <span className="fs-6 font-monospace fw-bold text-primary">
-                    {delivery.tracking_number || 'Đang chờ cấp mã'}
+                    {delivery.tracking_number}
                   </span>
                 </div>
 
                 <div className="d-grid gap-2 mb-3">
-                  {delivery.tracking_number && (delivery.tracking_url || carrier.trackingUrl) && (
+                  {carrier.trackingUrl && (
                     <a
-                      href={delivery.tracking_url || carrier.trackingUrl(delivery.tracking_number)}
+                      href={carrier.trackingUrl(delivery.tracking_number)}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center gap-2"

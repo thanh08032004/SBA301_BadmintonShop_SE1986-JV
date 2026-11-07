@@ -7,16 +7,12 @@ import fu.se.badmintonshop.modules.delivery.entity.ShipmentEvent;
 import fu.se.badmintonshop.modules.delivery.enums.ShipmentStatus;
 import fu.se.badmintonshop.modules.delivery.exception.DeliveryException;
 import fu.se.badmintonshop.modules.delivery.gateway.CarrierGateway;
-import fu.se.badmintonshop.modules.delivery.gateway.CarrierTracking;
 import fu.se.badmintonshop.modules.delivery.mapper.ShipmentMapper;
 import fu.se.badmintonshop.modules.delivery.repository.CarrierRepository;
 import fu.se.badmintonshop.modules.delivery.repository.ShipmentRepository;
 import fu.se.badmintonshop.modules.order.entity.Order;
 import fu.se.badmintonshop.modules.order.repository.OrderRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,9 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShipmentService {
@@ -45,13 +43,11 @@ public class ShipmentService {
     private final CarrierRepository carrierRepository;
     private final OrderRepository orderRepository;
     private final CarrierGateway carrierGateway;
-    private final OrderFulfillmentService fulfillment;
-    private final EntityManager entityManager;
 
     // ---------- doc (manager / staff) ----------
 
     @Transactional(readOnly = true)
-    public PageResponse<ShipmentResponse> list(String status, String carrierCode, String q, Long orderId, int page, int size) {
+    public PageResponse<ShipmentResponse> list(String status, String carrierCode, String q, int page, int size) {
         if (status != null && !status.isBlank() && ShipmentStatus.fromValue(status.trim()).isEmpty()) {
             throw DeliveryException.badRequest("Trạng thái vận đơn không hợp lệ: " + status);
         }
@@ -59,8 +55,7 @@ public class ShipmentService {
         int safeSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
         PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Shipment> result = shipmentRepository.findAll(
-                ShipmentSpecifications.filter(status, carrierCode, q, orderId), pageable);
+        Page<Shipment> result = shipmentRepository.findAll(ShipmentSpecifications.filter(status, carrierCode, q), pageable);
         return PageResponse.of(result, s -> ShipmentMapper.toResponse(s, false));
     }
 
@@ -74,12 +69,11 @@ public class ShipmentService {
         return carrierRepository.findByIsActiveTrue().stream().map(ShipmentMapper::toCarrierResponse).toList();
     }
 
-    // ---------- tao / gui lai / huy ----------
+    // ---------- tao / huy ----------
 
     @Transactional
     public ShipmentResponse create(CreateShipmentRequest request, Long staffId) {
-        // khoa dong don hang: 2 request tao cung luc cho 1 don se chay lan luot
-        Order order = Optional.ofNullable(entityManager.find(Order.class, request.getOrderId(), LockModeType.PESSIMISTIC_WRITE))
+        Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> DeliveryException.notFound("Không tìm thấy đơn hàng #" + request.getOrderId()));
 
         if (!SHIPPABLE_ORDER_STATUSES.contains(order.getStatus())) {
@@ -105,28 +99,16 @@ public class ShipmentService {
                 .createdBy(staffId)
                 .build();
         shipment.addEvent(event(ShipmentStatus.REQUESTED, "Shop gửi yêu cầu tạo vận đơn",
-                "Gửi tới " + carrier.getName(), "manual"));
+                "Gửi tới " + carrier.getName() + ", chờ đối tác duyệt"));
 
-        // luu DB truoc roi moi goi doi tac: goi loi van giu van don requested de "Gui lai"
         Shipment saved = shipmentRepository.save(shipment);
-        submitToCarrier(saved, staffId);
-        return ShipmentMapper.toResponse(shipmentRepository.save(saved), true);
-    }
-
-    // gui lai yeu cau cho doi tac khi lan truoc goi loi (van don requested, chua co partnerRef)
-    @Transactional
-    public ShipmentResponse resend(Long id, Long staffId) {
-        Shipment shipment = findDetail(id);
-        if (!ShipmentStatus.REQUESTED.getValue().equals(shipment.getStatus()) || shipment.getPartnerRef() != null) {
-            throw DeliveryException.conflict("Vận đơn đã được đối tác tiếp nhận, không cần gửi lại.");
-        }
-        carrierGateway.requestShipment(shipment);
-        afterCarrierAccepted(shipment, staffId);
-        return ShipmentMapper.toResponse(shipmentRepository.save(shipment), true);
+        // luu DB truoc roi moi goi doi tac (GD4: loi goi doi tac thi giu requested, cho gui lai)
+        carrierGateway.requestShipment(saved);
+        return ShipmentMapper.toResponse(saved, true);
     }
 
     @Transactional
-    public ShipmentResponse cancel(Long id, CancelShipmentRequest request, Long staffId) {
+    public ShipmentResponse cancel(Long id, CancelShipmentRequest request) {
         Shipment shipment = findDetail(id);
         ShipmentStatus current = currentStatus(shipment);
 
@@ -135,33 +117,13 @@ public class ShipmentService {
         }
 
         String reason = request.getReason().trim();
-        // chua gui duoc sang doi tac thi chi huy o shop
-        if (shipment.getPartnerRef() != null) {
-            carrierGateway.cancelShipment(shipment, reason);
-        }
+        carrierGateway.cancelShipment(shipment, reason);
 
         shipment.setStatus(ShipmentStatus.CANCELLED.getValue());
         shipment.setCancelledAt(LocalDateTime.now());
         shipment.setCancelReason(reason);
-        shipment.addEvent(event(ShipmentStatus.CANCELLED, "Shop huỷ vận đơn", reason, "manual"));
-        fulfillment.onShipmentStatus(shipment.getOrder(), ShipmentStatus.CANCELLED, staffId);
+        shipment.addEvent(event(ShipmentStatus.CANCELLED, "Shop huỷ vận đơn", reason));
         return ShipmentMapper.toResponse(shipmentRepository.save(shipment), true);
-    }
-
-    // ---------- dong bo tu doi tac (pull sync) ----------
-
-    @Transactional
-    public ShipmentResponse sync(Long id, Long actorId) {
-        Shipment shipment = shipmentRepository.findById(id)
-                .orElseThrow(() -> DeliveryException.notFound("Không tìm thấy vận đơn #" + id));
-        return ShipmentMapper.toResponse(pull(shipment, actorId), true);
-    }
-
-    @Transactional
-    public ShipmentResponse syncForCustomer(Long orderId, Long userId) {
-        Shipment shipment = latestOfOwnOrder(orderId, userId)
-                .orElseThrow(() -> DeliveryException.notFound("Đơn hàng chưa có vận đơn."));
-        return ShipmentMapper.toCustomerResponse(pull(shipment, userId));
     }
 
     // ---------- khach hang ----------
@@ -169,120 +131,20 @@ public class ShipmentService {
     // van don moi nhat cua don; Optional.empty() khi don chua co van don
     @Transactional(readOnly = true)
     public Optional<ShipmentResponse> getForCustomer(Long orderId, Long userId) {
-        return latestOfOwnOrder(orderId, userId).map(ShipmentMapper::toCustomerResponse);
-    }
-
-    // van don cua tat ca don hang cua khach (trang "Don hang cua toi")
-    @Transactional(readOnly = true)
-    public List<ShipmentResponse> listForCustomer(Long userId) {
-        requireLogin(userId);
-        return shipmentRepository.findByOrderUserIdOrderByCreatedAtDesc(userId).stream()
-                .map(s -> {
-                    ShipmentResponse r = ShipmentMapper.toResponse(s, false);
-                    r.setNote(null);
-                    r.setCreatedBy(null);
-                    r.setPartnerRef(null);
-                    r.setCancellable(null);
-                    return r;
-                })
-                .toList();
-    }
-
-    // ---------- helper ----------
-
-    private void submitToCarrier(Shipment shipment, Long actorId) {
-        try {
-            carrierGateway.requestShipment(shipment);
-            afterCarrierAccepted(shipment, actorId);
-        } catch (DeliveryException e) {
-            if (e.getStatus() != HttpStatus.BAD_GATEWAY) {
-                throw e;
-            }
-            log.warn("[delivery] van don #{} chua gui duoc sang doi tac: {}", shipment.getId(), e.getMessage());
-            shipment.addEvent(event(ShipmentStatus.REQUESTED, "Chưa gửi được sang đối tác", e.getMessage(), "manual"));
+        if (userId == null) {
+            throw new DeliveryException(HttpStatus.UNAUTHORIZED, "Vui lòng đăng nhập để xem vận đơn.");
         }
-    }
-
-    private void afterCarrierAccepted(Shipment shipment, Long actorId) {
-        shipment.setLastSyncedAt(LocalDateTime.now());
-        ShipmentStatus status = currentStatus(shipment);
-        if (status != ShipmentStatus.REQUESTED) {
-            shipment.addEvent(event(status, "Đối tác tiếp nhận vận đơn",
-                    shipment.getTrackingCode() != null ? "Mã vận đơn " + shipment.getTrackingCode() : null, "carrier"));
-        } else if (shipment.getPartnerRef() != null) {
-            shipment.addEvent(event(status, "Đối tác đã nhận yêu cầu", "Chờ đối tác duyệt và cấp mã vận đơn", "carrier"));
-        }
-        fulfillment.onShipmentStatus(shipment.getOrder(), status, actorId);
-    }
-
-    private Shipment pull(Shipment shipment, Long actorId) {
-        if (shipment.getPartnerRef() == null) {
-            throw DeliveryException.conflict("Vận đơn chưa được gửi sang đối tác, hãy bấm \"Gửi lại\".");
-        }
-        entityManager.lock(shipment, LockModeType.PESSIMISTIC_WRITE);
-        CarrierTracking remote = carrierGateway.track(shipment);
-
-        if (remote.trackingCode() != null && shipment.getTrackingCode() != null
-                && !remote.trackingCode().equals(shipment.getTrackingCode())) {
-            throw new DeliveryException(HttpStatus.BAD_GATEWAY, "Mã vận đơn từ đối tác không khớp.");
-        }
-        // doi tac vua duyet: nhan ma van don, link tra cuu, phi, ngay du kien
-        if (remote.trackingCode() != null) shipment.setTrackingCode(remote.trackingCode());
-        if (remote.trackingUrl() != null) shipment.setTrackingUrl(remote.trackingUrl());
-        if (remote.shippingFee() != null) shipment.setShippingFee(remote.shippingFee());
-        if (remote.estimatedDeliveryDate() != null) shipment.setEstimatedDeliveryDate(remote.estimatedDeliveryDate());
-        ShipmentStatus next = ShipmentStatus.fromValue(remote.status())
-                .orElseThrow(() -> new DeliveryException(HttpStatus.BAD_GATEWAY, "Đối tác trả trạng thái lạ: " + remote.status()));
-        ShipmentStatus current = currentStatus(shipment);
-
-        // pull sync co the bo qua cac buoc trung gian, nen chi chan khi van don da ket thuc
-        if (!current.isFinal() && next != current) {
-            shipment.setStatus(next.getValue());
-            if (next == ShipmentStatus.CANCELLED && shipment.getCancelledAt() == null) {
-                shipment.setCancelledAt(LocalDateTime.now());
-            }
-            fulfillment.onShipmentStatus(shipment.getOrder(), next, actorId);
-        }
-        shipment.setCarrierStatusText(remote.statusText());
-        shipment.setShipperName(remote.shipperName());
-        shipment.setShipperPhone(remote.shipperPhone());
-        if (remote.shippedAt() != null) shipment.setShippedAt(remote.shippedAt());
-        if (remote.deliveredAt() != null) shipment.setDeliveredAt(remote.deliveredAt());
-        shipment.setLastSyncedAt(LocalDateTime.now());
-
-        Set<String> known = new HashSet<>();
-        shipment.getEvents().forEach(e -> known.add(e.getExternalEventId()));
-        for (CarrierTracking.Event e : remote.events()) {
-            if (e.externalId() == null || !known.add(e.externalId())) {
-                continue;
-            }
-            shipment.addEvent(ShipmentEvent.builder()
-                    .externalEventId(e.externalId())
-                    .status(e.status() != null ? e.status() : next.getValue())
-                    .title(cut(e.title(), 150))
-                    .description(cut(e.description(), 300))
-                    .location(cut(e.location(), 200))
-                    .source("sync")
-                    .occurredAt(e.occurredAt() != null ? e.occurredAt() : LocalDateTime.now())
-                    .build());
-        }
-        return shipmentRepository.save(shipment);
-    }
-
-    private Optional<Shipment> latestOfOwnOrder(Long orderId, Long userId) {
-        requireLogin(userId);
         Order order = orderRepository.findById(orderId)
                 .filter(o -> userId.equals(o.getUserId()))
                 // khong phai don cua minh thi bao khong tim thay, tranh lo don nguoi khac
                 .orElseThrow(() -> DeliveryException.notFound("Không tìm thấy đơn hàng #" + orderId));
-        return shipmentRepository.findByOrderIdOrderByCreatedAtDesc(order.getId()).stream().findFirst();
+
+        return shipmentRepository.findByOrderIdOrderByCreatedAtDesc(order.getId()).stream()
+                .findFirst()
+                .map(ShipmentMapper::toCustomerResponse);
     }
 
-    private void requireLogin(Long userId) {
-        if (userId == null) {
-            throw new DeliveryException(HttpStatus.UNAUTHORIZED, "Vui lòng đăng nhập để xem vận đơn.");
-        }
-    }
+    // ---------- helper ----------
 
     private Shipment findDetail(Long id) {
         return shipmentRepository.findWithDetailsById(id)
@@ -294,17 +156,13 @@ public class ShipmentService {
                 .orElseThrow(() -> DeliveryException.conflict("Vận đơn có trạng thái lạ: " + shipment.getStatus()));
     }
 
-    private ShipmentEvent event(ShipmentStatus status, String title, String description, String source) {
+    private ShipmentEvent event(ShipmentStatus status, String title, String description) {
         return ShipmentEvent.builder()
                 .status(status.getValue())
                 .title(title)
-                .description(cut(description, 300))
-                .source(source)
+                .description(description)
+                .source("manual")
                 .occurredAt(LocalDateTime.now())
                 .build();
-    }
-
-    private static String cut(String text, int max) {
-        return text == null ? null : text.substring(0, Math.min(text.length(), max));
     }
 }

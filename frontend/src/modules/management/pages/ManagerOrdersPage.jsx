@@ -7,7 +7,6 @@ import { formatDateTime, formatMoney } from '@/shared/utils/format';
 import { statuses, payments } from '@/modules/management/constants';
 import { exportCsv, localDate, orderTransitions } from '@/modules/management/utils/managementUtils';
 import { managerOrderApi } from '@/modules/management/api/management.api';
-import CreateShipmentAction from '@/modules/delivery/components/CreateShipmentAction';
 
 export default function ManagerOrdersPage() {
   const { data, act, busy, refresh } = useShop();
@@ -353,11 +352,21 @@ export default function ManagerOrdersPage() {
                   <Button as={Link} to="/management/deliveries" variant="outline-primary">
                     Quản lý giao hàng
                   </Button>
-                  <CreateShipmentAction
-                    key={selected.id}
-                    order={selected}
-                    onCreated={() => refresh().catch(() => {})}
-                  />
+                  {['confirmed', 'preparing'].includes(selected.status) &&
+                    !data.deliveries.some(
+                      (d) =>
+                        d.order_id === selected.id && !['cancelled', 'rejected'].includes(d.status),
+                    ) && (
+                      <Button
+                        disabled={busy}
+                        variant="outline-primary"
+                        onClick={() =>
+                          act(() => managerOrderApi.createShipment(selected.id)).catch(() => {})
+                        }
+                      >
+                        Tạo vận đơn FastShip
+                      </Button>
+                    )}
                 </div>
                 {edit && (
                   <Form onSubmit={update} className="mt-3">

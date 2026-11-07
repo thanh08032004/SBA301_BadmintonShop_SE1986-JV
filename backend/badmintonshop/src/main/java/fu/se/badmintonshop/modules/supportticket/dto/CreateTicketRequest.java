@@ -20,7 +20,7 @@ public class CreateTicketRequest {
 
     private Long userId; // Can be set from authenticated context
 
-    @NotBlank(message = "ticketType is required (REFUND)")
+    @NotBlank(message = "ticketType is required (REFUND or EXCHANGE)")
     private String ticketType;
 
     @NotBlank(message = "reason is required")
@@ -30,10 +30,10 @@ public class CreateTicketRequest {
     @Size(max = 5000, message = "description cannot exceed 5000 characters")
     private String description;
 
-    @NotBlank(message = "refundQrUrl is required")
+    @NotBlank(message = "refundQrUrl is required for both REFUND and EXCHANGE")
     private String refundQrUrl;
 
-    @NotEmpty(message = "At least one item must be selected for return and refund")
+    @NotEmpty(message = "At least one item must be selected for return or exchange")
     @Valid
     private List<TicketItemRequest> items;
 

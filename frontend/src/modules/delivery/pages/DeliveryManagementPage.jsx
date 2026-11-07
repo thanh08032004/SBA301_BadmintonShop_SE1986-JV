@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Alert, Badge, Button, Card, Form, Spinner, Table } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router';
 import { carriers, carrierServices, deliveryStatuses } from '@/modules/delivery/constants';
-import { useShipments } from '@/modules/delivery/hooks/useDelivery';
+import { useShop } from '@/app/providers/shop/ShopContext';
 import { formatDateTime, formatMoney } from '@/shared/utils/format';
 import { deliveryApi } from '@/modules/delivery/api/delivery.api';
 
@@ -10,7 +10,7 @@ import { deliveryApi } from '@/modules/delivery/api/delivery.api';
 const EMPTY_LIST = [];
 
 export default function DeliveryManagementPage() {
-  const { data: shipmentPage, isLoading, error, reload } = useShipments();
+  const { data, act } = useShop();
   const { state } = useLocation();
   const [query, setQuery] = useState('');
   const [carrierFilter, setCarrierFilter] = useState('all');
@@ -19,9 +19,8 @@ export default function DeliveryManagementPage() {
   const [syncMessage, setSyncMessage] = useState(
     state?.updated ? "Đã cập nhật vận đơn thành công." : "",
   );
-  const [syncFailed, setSyncFailed] = useState(false);
 
-  const deliveries = shipmentPage?.content || EMPTY_LIST;
+  const deliveries = data.deliveries || EMPTY_LIST;
   const normalizedQuery = query.trim().toLocaleLowerCase('vi');
 
   const filteredDeliveries = useMemo(
@@ -58,22 +57,17 @@ export default function DeliveryManagementPage() {
   async function handleSync(delivery) {
     setSyncingId(delivery.id);
     setSyncMessage('');
-    setSyncFailed(false);
     try {
-      // chua gui duoc sang doi tac thi gui lai, nguoc lai doc trang thai moi nhat
-      if (delivery.resendable) {
-        await deliveryApi.resend(delivery.id);
-        setSyncMessage(`Đã gửi lại yêu cầu vận đơn cho đơn ${delivery.order_code}.`);
-      } else {
-        await deliveryApi.sync(delivery.id);
-        const carrierInfo = carriers[delivery.carrier];
-        setSyncMessage(
-          `Đã đồng bộ trạng thái mới nhất từ ${carrierInfo?.name || 'đối tác vận chuyển'} cho mã vận đơn ${delivery.tracking_number}.`,
-        );
-      }
-      reload();
+      await act(() =>
+        deliveryApi.syncCarrierStatus({
+          delivery_id: delivery.id,
+        }),
+      );
+      const carrierInfo = carriers[delivery.carrier];
+      setSyncMessage(
+        `Đã đồng bộ trạng thái mới nhất từ ${carrierInfo?.name || 'đối tác vận chuyển'} cho mã vận đơn ${delivery.tracking_number}.`,
+      );
     } catch (err) {
-      setSyncFailed(true);
       setSyncMessage(err.message || 'Không thể đồng bộ với đối tác vận chuyển.');
 
     } finally {
@@ -101,17 +95,8 @@ export default function DeliveryManagementPage() {
       </div>
 
       {syncMessage && (
-        <Alert variant={syncFailed ? 'danger' : 'success'} dismissible onClose={() => setSyncMessage('')} className="mb-4">
+        <Alert variant="success" dismissible onClose={() => setSyncMessage('')} className="mb-4">
           {syncMessage}
-        </Alert>
-      )}
-
-      {error && (
-        <Alert variant="danger" className="mb-4">
-          {error.message || 'Không tải được danh sách vận đơn.'}{' '}
-          <Button variant="link" size="sm" className="p-0 align-baseline" onClick={reload}>
-            Thử lại
-          </Button>
         </Alert>
       )}
 
@@ -192,12 +177,7 @@ export default function DeliveryManagementPage() {
             </div>
           </div>
 
-          {isLoading && !shipmentPage ? (
-            <div className="py-5 text-center">
-              <Spinner animation="border" size="sm" className="me-2" />
-              Đang tải vận đơn...
-            </div>
-          ) : filteredDeliveries.length === 0 ? (
+          {filteredDeliveries.length === 0 ? (
             <div className="empty-state py-5 text-center">
               <h2 className="h5 fw-bold mb-2">
                 Không tìm thấy vận đơn phù hợp
@@ -227,7 +207,7 @@ export default function DeliveryManagementPage() {
                   <th>Mã vận đơn</th>
                   <th>Đơn hàng & Người nhận</th>
                   <th>Đối tác & Gói dịch vụ</th>
-                  <th>Phí vận chuyển</th>
+                  <th>Tiền COD & Phí</th>
                   <th>Trạng thái ĐVVC</th>
                   <th>Đồng bộ gần nhất</th>
                   <th className="text-end">Thao tác</th>
@@ -255,7 +235,7 @@ export default function DeliveryManagementPage() {
                           to={`/management/deliveries/${encodeURIComponent(delivery.id)}`}
                           className="fw-bold text-decoration-none"
                         >
-                          {delivery.tracking_number || 'Chưa có mã'}
+                          {delivery.tracking_number}
                         </Link>
                         <div
                           className="small text-secondary text-truncate"
@@ -306,12 +286,19 @@ export default function DeliveryManagementPage() {
                         </div>
                       </td>
 
-                      {/* Cột 4: Phí vận chuyển (không thu hộ COD) */}
+                      {/* Cột 4: Tiền COD & Phí */}
                       <td>
-                        <div className="fw-semibold">
-                          {formatMoney(delivery.shipping_fee)}
-                          <small className="d-block text-secondary fw-normal">Đối tác báo</small>
-                        </div>
+                        {delivery.cod_amount > 0 ? (
+                          <div className="fw-bold text-danger">
+                            {formatMoney(delivery.cod_amount)}
+                            <small className="d-block text-secondary fw-normal">Thu hộ (COD)</small>
+                          </div>
+                        ) : (
+                          <div className="text-success fw-semibold">
+                            0 ₫
+                            <small className="d-block text-secondary fw-normal">Đã trả trước</small>
+                          </div>
+                        )}
                       </td>
 
                       {/* Cột 5: Trạng thái ĐVVC */}
@@ -337,9 +324,9 @@ export default function DeliveryManagementPage() {
                           <Button
                             variant="outline-secondary"
                             size="sm"
-                            title={delivery.resendable ? 'Gửi lại yêu cầu cho ĐVVC' : 'Đồng bộ trạng thái từ ĐVVC'}
+                            title="Đồng bộ trạng thái từ ĐVVC"
                             onClick={() => handleSync(delivery)}
-                            disabled={isSyncing || (!delivery.partner_ref && !delivery.resendable)}
+                            disabled={isSyncing}
                             className="btn-sync-carrier"
                           >
                             {isSyncing ? (
@@ -359,7 +346,7 @@ export default function DeliveryManagementPage() {
                               </svg>
                             )}
                             <span className="d-none d-md-inline ms-1">
-                              {delivery.resendable ? 'Gửi lại' : 'Đồng bộ'}
+                              Đồng bộ
                             </span>
                           </Button>
 
@@ -370,11 +357,11 @@ export default function DeliveryManagementPage() {
                             Chi tiết
                           </Link>
 
-                          {delivery.tracking_number && (delivery.tracking_url || carrier.trackingUrl) && (
+                          {carrier.trackingUrl && (
                             <a
-                              href={
-                                delivery.tracking_url || carrier.trackingUrl(delivery.tracking_number)
-                              }
+                              href={carrier.trackingUrl(
+                                delivery.tracking_number,
+                              )}
                               target="_blank"
                               rel="noreferrer noopener"
                               className="btn btn-sm btn-light text-secondary"
