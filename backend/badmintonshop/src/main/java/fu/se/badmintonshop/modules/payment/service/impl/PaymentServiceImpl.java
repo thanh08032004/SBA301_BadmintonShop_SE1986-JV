@@ -90,7 +90,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment;
         boolean hasActiveLink = false;
 
-        // đã có phiên pending 14p -> tái sử dụng qr
+        // đã có phiên pending < 14p -> tái sử dụng qr
         if (existingPendingOpt.isPresent()) {
             payment = existingPendingOpt.get();
             payment.setMethod("qr");
